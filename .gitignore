@@ -1,10 +1,13 @@
-### IntelliJ IDEA ###
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+### IDE files ###
+# IntelliJ IDEA
+.idea/*
+!.idea/libraries/
+.idea/libraries/*
+!.idea/libraries/mysql_connector_j_9_6_0.xml
+*.iml
 .kotlin
 
-### Eclipse ###
+# Eclipse
 .apt_generated
 .classpath
 .factorypath
@@ -16,32 +19,28 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
+# VS Code
 .vscode/
 
-### Mac OS ###
-.DS_Store
+### Build outputs ###
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+target/
+build/
 
-# Compiled class file
+### Java artifacts and logs ###
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -49,23 +48,9 @@ bin/
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
 
-# IntelliJ IDEA
-.idea/
-*.iml
-
-# Build output
-out/
-target/
-build/
-
-# OS-specific
+### OS files ###
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
