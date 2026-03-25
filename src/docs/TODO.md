@@ -2,8 +2,9 @@
 # Att göra först
 1. [ ] Skapa Book-klassen
 2. [ ] Skapa controller-lagret för Book-klassen 
-3. [ ] Skapa Repository-lagret
-4. [ ] Koppla Service-lagret till Repository
+3. [x] Skapa BaseRepository-lagret
+4. [x] Skapa BaseService och BaseController
+5. [ ] Koppla Service-lagret till BaseRepository
 
 
 ## Viktiga klasser:
