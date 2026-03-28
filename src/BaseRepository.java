@@ -27,12 +27,15 @@ public abstract class BaseRepository<T, ID> {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
+
     // Hämtar en sak av typ T om man matar in ett ID i funktionen
-    public abstract T getById(ID id);
+    public abstract T getById(ID id) throws SQLException;
 
     // Hämtar alla saker av typ T och returnerar en lista
     public abstract List<T> getAll();
 
     // Hämtar alla saker av typ T som matchar söktermen searchTerm och returnerar dem i en lista
     public abstract List<T> search(String searchTerm) throws SQLException;
+
+
 }

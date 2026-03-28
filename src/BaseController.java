@@ -1,4 +1,4 @@
 public abstract class BaseController {
-    public void showMenu() {
+    public static void showMenu() {
     }
 }
