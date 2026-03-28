@@ -11,7 +11,7 @@ public class Main {
         mainMenu.setSubtitle("Subtitle");
         mainMenu.setMenuInfo("Menu Info");
         mainMenu.setExitOption("Exit");
-        mainMenu.addMenuOption("Option 1");
+        mainMenu.addMenuOption("Show Book Menu");
         mainMenu.addMenuOption("Option 2");
         mainMenu.addMenuOption("Option 3");
         mainMenu.addMenuOption("Option 4");
@@ -25,7 +25,7 @@ public class Main {
                     System.exit(0);
                 }
                 case 1: {
-                    System.out.println("Option 1 not implemented yet");
+                    BookController.showMenu();
                     break;
                 }
                 case 2: {
