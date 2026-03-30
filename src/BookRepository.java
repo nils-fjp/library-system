@@ -3,14 +3,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class BookRepository extends BaseRepository {
+public class BookRepository extends BaseRepository<Book, Integer> {
     @Override
-    public Book getById(int Id) throws SQLException {
+    public Object getById(int Id) throws SQLException {
 
         Book book = new Book();
         try (Connection connection = getConnection();
              java.sql.Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM library.books WHERE id = id");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM library.books WHERE id = ?");
 
             while (resultSet.next()) {
 
@@ -31,8 +31,13 @@ public class BookRepository extends BaseRepository {
         return book;
     }
 
+//    @Override
+//    public Object getById(Object o) {
+//        return null;
+//    }
+
     @Override
-    public Object getById(Object o) {
+    public Book getById(Integer integer) throws SQLException {
         return null;
     }
 
