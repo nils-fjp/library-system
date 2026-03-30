@@ -28,6 +28,8 @@ public abstract class BaseRepository<T, ID> {
     }
 
 
+    public abstract Object getById(int Id) throws SQLException;
+
     // Hämtar en sak av typ T om man matar in ett ID i funktionen
     public abstract T getById(ID id) throws SQLException;
 
