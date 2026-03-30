@@ -88,6 +88,11 @@ public class BookRepository extends BaseRepository<Book, Integer> {
         return Optional.empty();
     }
 
+//    @Override
+//    public Object getById(Object o) {
+//        return null;
+//    }
+
     @Override
     public List<Book> getAll() throws SQLException {
         return List.of();
