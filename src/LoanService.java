@@ -1,5 +1,6 @@
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class LoanService extends BaseService {
 
@@ -10,12 +11,12 @@ public class LoanService extends BaseService {
     }
 
     @Override
-    public Object getById(Object o) throws SQLException {
+    protected BaseRepository getRepository() {
         return null;
     }
 
     @Override
-    public Object getById(int id) throws SQLException {
+    public Optional getById(Object o) throws SQLException {
         return null;
     }
 
@@ -24,8 +25,4 @@ public class LoanService extends BaseService {
         return List.of();
     }
 
-    @Override
-    public List search(String searchTerm) throws SQLException {
-        return List.of();
-    }
 }
