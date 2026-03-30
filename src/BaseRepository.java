@@ -36,6 +36,4 @@ public abstract class BaseRepository<T, ID> {
 
     // Hämtar alla saker av typ T som matchar söktermen searchTerm och returnerar dem i en lista
     public abstract List<T> search(String searchTerm) throws SQLException;
-
-
 }
