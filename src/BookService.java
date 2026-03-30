@@ -1,31 +1,26 @@
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class BookService extends BaseService {
     BookRepository bookRepository = new BookRepository();
 
     @Override
-    public Object getById(int id) throws SQLException {
-        Book book = (Book) bookRepository.getById(id);
-        return book;
+    public Object getById(Object id) throws SQLException {
+        return bookRepository.getById(id);
     }
 
-    /**
-     * @return
-     */
+    @Override
+    public Book getById(int id) throws SQLException {
+        return (Book) bookRepository.getById(id);
+    }
+
     @Override
     public ArrayList<Book> getAll() {
-        return List.of();
+        return new ArrayList<>();
     }
 
-    /**
-     * @param searchTerm
-     * @return
-     * @throws SQLException
-     */
     @Override
     public ArrayList<Book> search(String searchTerm) throws SQLException {
-        return List.of();
+        return new ArrayList<>();
     }
 }
