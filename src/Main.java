@@ -3,33 +3,33 @@
 public class Main {
     public static void main(String[] args) {
 
-        // Skapa en ny meny för att visa information
+        // skapa meny som visar information och läser input
         Menu mainMenu = new Menu();
 
-        // Välj vad det ska stå överst i menyn
-        mainMenu.setTitle("Main Menu");
-        mainMenu.setSubtitle("Subtitle");
+        // Välj vad det ska stå i menytexten med följande metoder:
+        mainMenu.setTopTitle("Main Menu");
+        mainMenu.setMidTitle("Subtitle");
         mainMenu.setMenuInfo("Menu Info");
         mainMenu.setExitOption("Exit");
         mainMenu.addMenuOption("Show Book Menu");
         mainMenu.addMenuOption("Option 2");
         mainMenu.addMenuOption("Option 3");
-        mainMenu.addMenuOption("Option 4");
         mainMenu.setPrePrompt("Type a number and press enter...");
         mainMenu.setPromptLine("Enter: ");
+        // Visa menyn genom showMenu() som returnerar en boolean.
         while (mainMenu.showMenu()) {
-
+            // Läs in valet med en getter i meny-klassen.
+            // Menyn läser bara input. Logiken måste hanteras med en switch.
             switch (mainMenu.getChoice()) {
                 case 0: {
-                    System.out.println("Exiting...");
-                    System.exit(0);
+                    break; // Avslutar while-loopen (lämnar menyn)
                 }
                 case 1: {
-                    BookController.showMenu();
+                    BookController.showMenu(); // Kan vara en annan meny
                     break;
                 }
                 case 2: {
-                    System.out.println("Cption 2 implemented yet");
+                    System.out.println("Option 2 not implemented yet");
                     break;
                 }
                 case 3: {
@@ -40,5 +40,8 @@ public class Main {
                     System.out.println("Invalid Input");
             }
         }
+        System.out.println(ANSI.CLEAR_SCREEN);
+        System.out.println("Exiting application...");
+        System.exit(0);
     }
 }
