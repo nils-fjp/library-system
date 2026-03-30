@@ -59,7 +59,7 @@ public class Menu {
         this.promptLine = promptLine;
     }
 
-    public void drawMenuHeader() {
+    private void drawMenuHeader() {
         // Klassen ANSI innehåller olika typer av formatering. Varje ANSI-property är en vanlig String.
         System.out.print(ANSI.CLEAR_SCREEN);
 
@@ -67,7 +67,7 @@ public class Menu {
         String titleFlex = "─".repeat(PADDING);
 
         if (title.isEmpty()) {
-            headerTitle = "─" + titleFlex;
+            headerTitle = "─";
         } else {
             titleFlex = "─".repeat(PADDING - headerTitle.length() - 1);
             headerTitle = " " + ANSI.BOLD + title + ANSI.NO_BOLD + " ";
@@ -87,7 +87,7 @@ public class Menu {
     }
 
     // Visar information under menyns titel. Man behöver inte ha någon information om man inte vill.
-    public void drawMenuInfo() {
+    private void drawMenuInfo() {
         if (!menuInfo.isEmpty()) {
 
             System.out.println("  " + menuInfo);
@@ -95,7 +95,7 @@ public class Menu {
     }
 
     // Motsvarar raderna 19-25 i Nils BookController.showBookMenu()
-    public void drawMenuOptions() {
+    private void drawMenuOptions() {
         System.out.println(
             "  ╭──" + "─".repeat(PADDING) + "╮"
         );
@@ -104,7 +104,7 @@ public class Menu {
             String menuOption = menuOptions.get(i);
             String optionFlex = " ".repeat(PADDING - (menuOption.length() + 3));
             System.out.println(
-                "  │  " + ANSI.YELLOW + i + ". " + ANSI.DEFAULT_FG + menuOption + optionFlex + "│");
+                "  │  " + "\033[1m" + i + ". " + ANSI.DEFAULT_FG + menuOption + optionFlex + "│");
         }
         System.out.println("  ├──" + "─".repeat(PADDING) + "┤");
 
@@ -115,13 +115,13 @@ public class Menu {
     }
 
     // Visar tips strax ovanför raden där man skriver sitt val
-    public void drawPrePrompt() {
+    private void drawPrePrompt() {
         System.out.println(
             ANSI.BRIGHT_BLACK + "  " + prePrompt + ANSI.DEFAULT_FG);
     }
 
     // Visar den text som finns på samma rad man skriver på. Typ, "Enter:"
-    public void drawPromptLine() {
+    private void drawPromptLine() {
         System.out.print(
             ANSI.BRIGHT_BLACK + "  " + promptLine + ANSI.DEFAULT_FG);
     }
