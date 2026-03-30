@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class LoanRepository extends BaseRepository {
 
@@ -31,7 +32,7 @@ public class LoanRepository extends BaseRepository {
     public void returnLoan(String loanID) throws SQLException {}
 
     @Override
-    public Object getById(Object o) throws SQLException {
+    public Optional getById(Object o) throws SQLException {
         return null;
     }
 
@@ -41,7 +42,17 @@ public class LoanRepository extends BaseRepository {
     }
 
     @Override
-    public List search(String searchTerm) throws SQLException {
-        return List.of();
+    public void save(Object entity) throws SQLException {
+
+    }
+
+    @Override
+    public void update(Object entity) throws SQLException {
+
+    }
+
+    @Override
+    public void deleteById(Object o) throws SQLException {
+
     }
 }
