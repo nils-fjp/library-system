@@ -94,3 +94,12 @@ public abstract class BaseRepository<T, ID> {
     public abstract void update(T entity) throws SQLException;
     public abstract void deleteById(ID id) throws SQLException;
 }
+    // Hämtar en sak av typ T om man matar in ett ID i funktionen
+    public abstract T getById(ID id) throws SQLException;
+
+    // Hämtar alla saker av typ T och returnerar en lista
+    public abstract List<T> getAll();
+
+    // Hämtar alla saker av typ T som matchar söktermen searchTerm och returnerar dem i en lista
+    public abstract List<T> search(String searchTerm) throws SQLException;
+}
