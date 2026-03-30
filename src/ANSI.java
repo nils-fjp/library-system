@@ -3,14 +3,17 @@ public class ANSI {
     // https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters
     // ANSI escape sequences for styling terminal output
 
-    public static final String RESET = "\033[0m"; // reset all styling to their default values
+    public static final String RESET = "\033[0m";
     public static final String BOLD = "\033[1m";
+    public static final String FAINT = "\033[2m";
     public static final String ITALIC = "\033[3m";
     public static final String UNDERLINE = "\033[4m";
+    public static final String SLOW_BLINK = "\033[5m";
 
     public static final String NO_BOLD = "\033[22m";
     public static final String NO_ITALIC = "\033[23m";
     public static final String NO_UNDERLINE = "\033[24m";
+    public static final String NO_BLINK = "\033[25m";
 
     public static final String RED = "\033[31m";
     public static final String GREEN = "\033[32m";
@@ -21,9 +24,9 @@ public class ANSI {
     public static final String WHITE = "\033[37m";
 
     public static final String ORANGE = "\033[38;5;166m";
-    public static final String DEFAULT_FG = "\033[39m"; // reset foreground color to default
+    public static final String DEFAULT_FG = "\033[39m";
 
-    public static final String BRIGHT_BLACK = "\033[90m"; // usually looks gray
+    public static final String BRIGHT_BLACK = "\033[90m";
     public static final String BRIGHT_RED = "\033[91m";
     public static final String BRIGHT_GREEN = "\033[92m";
     public static final String BRIGHT_YELLOW = "\033[93m";

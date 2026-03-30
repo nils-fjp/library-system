@@ -2,21 +2,21 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
-    private static final int BORDER = 36;
+    private static final int BORDER = 48;
     private static final int PADDING = BORDER - 4;
     private static final Scanner scanner = new Scanner(System.in);
     private final ArrayList<String> menuOptions;
     private int choice;
-    private String topTitle;
-    private String midTitle;
+    private String title;
+    private String subtitle;
     private String menuInfo;
     private String exitOption;
     private String prePrompt;
     private String promptLine;
 
     public Menu() {
-        this.topTitle = "";
-        this.midTitle = "";
+        this.title = "";
+        this.subtitle = "";
         this.menuInfo = "";
         this.exitOption = "Exit";
         this.menuOptions = new ArrayList<>();
@@ -30,12 +30,12 @@ public class Menu {
         return choice;
     }
 
-    public void setTopTitle(String topTitle) {
-        this.topTitle = topTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setMidTitle(String midTitle) {
-        this.midTitle = midTitle;
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
     }
 
     public void setMenuInfo(String menuInfo) {
@@ -63,73 +63,74 @@ public class Menu {
         // Klassen ANSI innehåller olika typer av formatering. Varje ANSI-property är en vanlig String.
         System.out.print(ANSI.CLEAR_SCREEN);
 
-        String headerTop = topTitle;
-        String topFlex = "─".repeat(PADDING);
+        String headerTitle = title;
+        String titleFlex = "─".repeat(PADDING);
 
-        if (topTitle.isEmpty()) {
-            headerTop = "─" + topFlex;
+        if (title.isEmpty()) {
+            headerTitle = "─" + titleFlex;
         } else {
-            topFlex = "─".repeat(PADDING - headerTop.length() - 1);
-            headerTop = " " + ANSI.BOLD + topTitle + ANSI.NO_BOLD + " ";
+            titleFlex = "─".repeat(PADDING - headerTitle.length() - 1);
+            headerTitle = " " + ANSI.BOLD + title + ANSI.NO_BOLD + " ";
         }
         System.out.println(
-            "\t╭─" + headerTop + topFlex + "╮");
+            "  ╭─" + headerTitle + titleFlex + "╮");
 
-        if (!midTitle.isEmpty()) {
-            String centerFlex = " ".repeat((PADDING - midTitle.length()) / 2);
-            String flexRest = " ".repeat((PADDING - midTitle.length()) % 2);
+        if (!subtitle.isEmpty()) {
+            String centerFlex = " ".repeat((PADDING - subtitle.length()) / 2);
             System.out.println(
-                "\t│ " + centerFlex + midTitle + centerFlex + flexRest + " │"
+                "  │ " + centerFlex + subtitle + centerFlex + " │"
             );
         }
         System.out.println(
-            "\t╰──" + "─".repeat(PADDING) + "╯"
+            "  ╰──" + "─".repeat(PADDING) + "╯"
         );
     }
 
     // Visar information under menyns titel. Man behöver inte ha någon information om man inte vill.
     public void drawMenuInfo() {
         if (!menuInfo.isEmpty()) {
-            System.out.println("\t " + menuInfo);
+
+            System.out.println("  " + menuInfo);
         }
     }
 
     // Motsvarar raderna 19-25 i Nils BookController.showBookMenu()
     public void drawMenuOptions() {
         System.out.println(
-            "\t╭──" + "─".repeat(PADDING) + "╮"
+            "  ╭──" + "─".repeat(PADDING) + "╮"
         );
 
         for (int i = 1; i < menuOptions.size(); i++) {
             String menuOption = menuOptions.get(i);
             String optionFlex = " ".repeat(PADDING - (menuOption.length() + 3));
             System.out.println(
-                "\t│  " + ANSI.YELLOW + i + ". " + ANSI.DEFAULT_FG + menuOption + optionFlex + "│");
+                "  │  " + ANSI.YELLOW + i + ". " + ANSI.DEFAULT_FG + menuOption + optionFlex + "│");
         }
-        System.out.println("\t├──" + "─".repeat(PADDING) + "┤");
+        System.out.println("  ├──" + "─".repeat(PADDING) + "┤");
 
         String exitOptionFlex = " ".repeat(PADDING - (exitOption.length() + 3));
         System.out.println(
-            "\t│  " + ANSI.BRIGHT_BLACK + 0 + ". " + ANSI.DEFAULT_FG + exitOption + exitOptionFlex + "│");
-        System.out.println("\t╰──" + "─".repeat(PADDING) + "╯");
+            "  │  " + ANSI.BRIGHT_BLACK + 0 + ". " + ANSI.DEFAULT_FG + exitOption + exitOptionFlex + "│");
+        System.out.println("  ╰──" + "─".repeat(PADDING) + "╯");
     }
 
     // Visar tips strax ovanför raden där man skriver sitt val
     public void drawPrePrompt() {
         System.out.println(
-            ANSI.BRIGHT_BLACK + ANSI.ITALIC + "\t " + prePrompt + ANSI.NO_ITALIC + ANSI.DEFAULT_FG);
+            ANSI.BRIGHT_BLACK + "  " + prePrompt + ANSI.DEFAULT_FG);
     }
 
     // Visar den text som finns på samma rad man skriver på. Typ, "Enter:"
     public void drawPromptLine() {
         System.out.print(
-            "\t " + promptLine
-        );
+            ANSI.BRIGHT_BLACK + "  " + promptLine + ANSI.DEFAULT_FG);
     }
 
     // Baseras på Nils Main och BookController-menyer
     public boolean showMenu() {
-        while (true) {
+        boolean showing = true;
+        while (showing) {
+
             drawMenuHeader();
             drawMenuInfo();
             drawMenuOptions();
@@ -140,13 +141,18 @@ public class Menu {
             try {
                 input = Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
+                continue;
+            }
+
+            if (input == 0) {
+                choice = input;
                 return false;
             }
             if (input > 0 && input < this.menuOptions.size()) {
                 choice = input;
                 return true;
             }
-            return false;
         }
+        return showing;
     }
 }
