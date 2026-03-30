@@ -5,8 +5,8 @@ public class BookController extends BaseController {
 
         Menu bookMenu = new Menu();
 
-        bookMenu.setTopTitle("Main Menu » Book Menu");
-        bookMenu.setMidTitle("Book Menu");
+        bookMenu.setTitle("Book Menu");
+        // bookMenu.setSubtitle("Subtitle");
         // bookMenu.setMenuInfo("Menu Info");
         bookMenu.setExitOption("Back to Menu");
         bookMenu.addMenuOption("Search all books");
@@ -19,6 +19,7 @@ public class BookController extends BaseController {
             switch (bookMenu.getChoice()) {
                 case 0: {
                     break;
+
                 }
                 case 1: {
                     System.out.println("WIP!");

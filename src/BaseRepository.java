@@ -4,14 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 
 public abstract class BaseRepository<T, ID> {
     protected String URL, USER, PASSWORD;
 
     public BaseRepository() {
-        String rootPath = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("")).getPath();
+        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
         Properties properties = new Properties();
 
         try {
@@ -37,4 +36,6 @@ public abstract class BaseRepository<T, ID> {
 
     // Hämtar alla saker av typ T som matchar söktermen searchTerm och returnerar dem i en lista
     public abstract List<T> search(String searchTerm) throws SQLException;
+
+
 }
