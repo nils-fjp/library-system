@@ -1,8 +1,9 @@
-public class BookService extends BaseService {
-    BookRepository bookRepository = new BookRepository();
+public class BookService extends BaseService<Book, Integer> {
 
-    public Book getById() {
-        Book book = bookRepository.getById();
-        return book;
+    private final BookRepository bookRepository = new BookRepository();
+
+    @Override
+    protected BaseRepository<Book, Integer> getRepository() {
+        return bookRepository;
     }
 }
