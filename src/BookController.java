@@ -19,7 +19,6 @@ public class BookController extends BaseController {
             switch (bookMenu.getChoice()) {
                 case 0: {
                     break;
-
                 }
                 case 1: {
                     System.out.println("WIP!");

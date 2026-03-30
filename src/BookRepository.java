@@ -24,7 +24,6 @@ public class BookRepository extends BaseRepository {
                 book = new Book(title, yearPublished, availableCopies, summary, language, pageCount, author);
 
             }
-
         } catch (SQLException e) {
             System.out.println("Error : " + e.getMessage());
         }
