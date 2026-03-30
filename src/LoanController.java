@@ -37,6 +37,7 @@ public class LoanController extends BaseController {
             }
         }
     }
+
     private void returnLoan() throws SQLException {
         Scanner scanner = new Scanner(System.in);
 
