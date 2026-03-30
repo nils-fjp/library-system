@@ -6,7 +6,7 @@ src/database.properties
 .idea/*
 !.idea/libraries/
 .idea/libraries/*
-!.idea/libraries/mysql_connector_j_9_6_0.xml
+#!.idea/libraries/mysql_connector_j_9_6_0.xml
 *.iml
 .kotlin
 
@@ -44,7 +44,7 @@ build/
 *.log
 *.ctxt
 .mtj.tmp/
-*.jar
+#*.jar
 *.war
 *.nar
 *.ear
