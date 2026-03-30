@@ -81,6 +81,8 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                     return Optional.of(book);
                 }
             }
+        } catch (SQLException e) {
+            System.out.println("Error : " + e.getMessage());
         }
 
         return Optional.empty();
