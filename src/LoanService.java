@@ -4,6 +4,7 @@ import java.util.List;
 public class LoanService extends BaseService {
 
     static LoanRepository loanRepository = new LoanRepository();
+
     public static void returnLoan(Loan loan) throws SQLException {
         loanRepository.returnLoan(loan);
     }

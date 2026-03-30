@@ -110,7 +110,7 @@ public class Menu {
 
         String exitOptionFlex = " ".repeat(PADDING - (exitOption.length() + 3));
         System.out.println(
-            "  │  " + "\033[1m"+ 0 + ". " + ANSI.DEFAULT_FG + exitOption + exitOptionFlex + "│");
+            "  │  " + ANSI.BRIGHT_BLACK + 0 + ". " + ANSI.DEFAULT_FG + exitOption + exitOptionFlex + "│");
         System.out.println("  ╰──" + "─".repeat(PADDING) + "╯");
     }
 
