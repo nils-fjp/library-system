@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.util.Optional;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -15,7 +16,7 @@ public class Main {
         mainMenu.setExitOption("Exit");
         mainMenu.addMenuOption("Show Book Menu");
         mainMenu.addMenuOption("Show Loan Menu");
-        mainMenu.addMenuOption("Option 3");
+        mainMenu.addMenuOption("Show Member Menu");
         mainMenu.setPrePrompt("Type a number and press enter...");
         mainMenu.setPromptLine("Enter: ");
 
@@ -37,7 +38,7 @@ public class Main {
                     break;
                 }
                 case 3: {
-                    System.out.println("Option 3 not implemented yet");
+                    MemberController.showMenu();
                     break;
                 }
                 default:
