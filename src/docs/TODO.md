@@ -1,16 +1,18 @@
 # TODO.md
 # Att göra först
-1. [ ] Skapa Book-klassen
-2. [ ] Skapa controller-lagret för Book-klassen 
+
+1. [x] Skapa Book-klassen
+2. [x] Skapa controller-lagret för Book-klassen
 3. [x] Skapa BaseRepository-lagret
 4. [x] Skapa BaseService och BaseController
 5. [ ] Koppla Service-lagret till BaseRepository
 
 
 ## Viktiga klasser:
-1. [ ] Book
-2. [ ] Loan
-3. [ ] Member
+
+1. [x] Book
+2. [x] Loan
+3. [x] Member
 
 Mindre viktiga klasser:
 
