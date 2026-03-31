@@ -401,6 +401,616 @@ INSERT INTO author_descriptions (author_id, biography, website) VALUES
 /*!40000 ALTER TABLE `author_descriptions` ENABLE KEYS */;
 UNLOCK TABLES;
 
+-- BOOKS
+LOCK TABLES books WRITE;
+/*!40000 ALTER TABLE books
+    DISABLE KEYS */;
+INSERT INTO books (
+    id, title, isbn, year_published, total_copies, available_copies
+)
+VALUES (
+    1, 'Wild Throne of Secrets', '978-1-709-18907-3', 1995, 1, 0
+),
+    (
+        2, 'Shattered Wind of Kings', '978-9-183-64948-9', 2006, 5, 2
+    ),
+    (
+        3, 'Golden Night of Light', '978-5-344-44814-6', 1978, 3, 3
+    ),
+    (
+        4, 'Forgotten Key of the Lost', '978-0-569-91416-9', 1976, 1, 0
+    ),
+    (
+        5, 'Wild Night of Ice', '978-5-170-42018-5', 1988, 2, 1
+    ),
+    (
+        6, 'Glass Fire of Memory', '978-9-926-95717-8', 1970, 5, 2
+    ),
+    (
+        7, 'Golden Dark of Fire', '978-2-370-25129-1', 2017, 5, 1
+    ),
+    (
+        8, 'Last Dawn Forsaken', '978-3-834-54942-3', 2013, 3, 3
+    ),
+    (
+        9, 'Last Gate of Kings', '978-1-749-65518-4', 1972, 1, 1
+    ),
+    (
+        10, 'Crimson Forest Eternal', '978-4-265-67912-8', 2015, 4, 4
+    ),
+    (
+        11, 'The Ocean of the Lost', '978-2-658-14722-5', 2007, 5, 1
+    ),
+    (
+        12, 'Hollow Forest of Kings', '978-4-473-15229-5', 1983, 2, 2
+    ),
+    (
+        13, 'Dark River Undone', '978-6-735-30257-3', 1980, 2, 1
+    ),
+    (
+        14, 'The Mountain of Dreams', '978-6-921-97806-3', 1987, 2, 2
+    ),
+    (
+        15, 'Dark Road of Kings', '978-7-327-36158-7', 1992, 3, 1
+    ),
+    (
+        16, 'Final Garden Untold', '978-3-508-53025-4', 1974, 3, 2
+    ),
+    (
+        17, 'Falling Peace and Ash', '978-8-439-13617-1', 1986, 2, 2
+    ),
+    (
+        18, 'Last Kingdom of Fire', '978-9-544-55309-5', 1997, 5, 4
+    ),
+    (
+        19, 'Dark Road Awakened', '978-3-360-15817-6', 1970, 5, 4
+    ),
+    (
+        20, 'Stolen Voice Untold', '978-3-472-66531-1', 2012, 3, 2
+    ),
+    (
+        21, 'Stolen World of Fire', '978-4-619-50538-6', 1990, 4, 2
+    ),
+    (
+        22, 'Infinite Forest of Light', '978-6-780-59695-2', 2009, 5, 2
+    ),
+    (
+        23, 'Frozen Fire of Shadows', '978-4-393-37549-6', 2020, 5, 4
+    ),
+    (
+        24, 'Falling Storm and Bone', '978-7-552-98555-3', 2002, 4, 1
+    ),
+    (
+        25, 'Stolen Throne of Memory', '978-8-779-92960-9', 1991, 1, 0
+    ),
+    (
+        26, 'Stolen Dawn of Darkness', '978-3-250-13201-0', 1985, 4, 4
+    ),
+    (
+        27, 'Storm Heart of the Lost', '978-7-524-92544-9', 1982, 4, 3
+    ),
+    (
+        28, 'Frozen Dream of Ice', '978-0-868-23970-6', 1984, 2, 2
+    ),
+    (
+        29, 'Wild Journey of Kings', '978-8-355-25906-7', 1978, 4, 4
+    ),
+    (
+        30, 'Infinite Wind of Dreams', '978-7-727-76162-6', 2023, 5, 3
+    ),
+    (
+        31, 'Shadow Mountain and Steel', '978-7-365-42406-4', 2019, 5, 3
+    ),
+    (
+        32, 'Falling Dream of Time', '978-7-179-47450-3', 1987, 3, 2
+    ),
+    (
+        33, 'Shadow Fire of the Lost', '978-2-254-40311-6', 2014, 2, 2
+    ),
+    (
+        34, 'Hidden Throne and Blood', '978-6-438-81121-7', 1996, 1, 0
+    ),
+    (
+        35, 'Glass Path and Ash', '978-9-812-12560-9', 1994, 4, 0
+    ),
+    (
+        36, 'Burning Dawn and Ash', '978-6-651-81582-9', 1984, 4, 1
+    ),
+    (
+        37, 'Last Path and Steel', '978-0-498-54057-6', 2016, 2, 1
+    ),
+    (
+        38, 'Golden Forest Forsaken', '978-8-127-61645-9', 2006, 1, 0
+    ),
+    (
+        39, 'Falling Path of Ice', '978-7-286-16590-4', 1994, 3, 1
+    ),
+    (
+        40, 'Distant Storm of Dreams', '978-6-384-65255-4', 2023, 1, 1
+    ),
+    (
+        41, 'The Voice Undone', '978-0-458-39389-1', 2019, 1, 0
+    ),
+    (
+        42, 'Final City of Shadows', '978-9-256-41266-2', 2000, 1, 0
+    ),
+    (
+        43, 'Distant Song of Time', '978-5-271-89415-9', 2017, 1, 0
+    ),
+    (
+        44, 'Secret Ocean Awakened', '978-0-419-85470-6', 1995, 2, 0
+    ),
+    (
+        45, 'Shattered Song Eternal', '978-3-204-49529-9', 2021, 1, 0
+    ),
+    (
+        46, 'Burning Fire and Blood', '978-5-170-76317-5', 1970, 4, 3
+    ),
+    (
+        47, 'Dark Path and Dust', '978-7-824-30052-6', 1981, 5, 5
+    ),
+    (
+        48, 'Last Wind Undone', '978-7-576-67091-9', 1987, 3, 1
+    ),
+    (
+        49, 'Glass Key of the Lost', '978-4-561-41963-7', 2006, 5, 5
+    ),
+    (
+        50, 'Frozen Storm of Shadows', '978-7-971-52600-2', 2001, 2, 1
+    ),
+    (
+        51, 'Iron Night of Dreams', '978-4-710-46211-8', 1970, 5, 1
+    ),
+    (
+        52, 'Lost Dream and Blood', '978-7-668-41499-7', 2011, 4, 3
+    ),
+    (
+        53, 'Iron Garden of the Lost', '978-4-326-63005-3', 1989, 5, 2
+    ),
+    (
+        54, 'Ancient Fire Reborn', '978-5-535-82140-5', 1992, 4, 2
+    ),
+    (
+        55, 'Secret Night of Darkness', '978-1-838-35242-5', 1977, 5, 5
+    ),
+    (
+        56, 'Broken City of Light', '978-7-383-87278-8', 2008, 3, 0
+    ),
+    (
+        57, 'Glass City of Memory', '978-3-469-33519-4', 1970, 5, 1
+    ),
+    (
+        58, 'Last Kingdom of Kings', '978-8-399-26551-7', 1976, 1, 1
+    ),
+    (
+        59, 'Ancient War and Bone', '978-5-288-16734-4', 2000, 1, 0
+    ),
+    (
+        60, 'Frozen War of the Lost', '978-9-744-99974-0', 1979, 2, 2
+    ),
+    (
+        61, 'Secret Throne of Darkness', '978-1-671-64548-9', 2008, 5, 1
+    ),
+    (
+        62, 'Crimson Peace and Ash', '978-7-553-48974-9', 1997, 3, 0
+    ),
+    (
+        63, 'Rising Voice of Fire', '978-3-740-37659-4', 2012, 1, 0
+    ),
+    (
+        64, 'Final Mountain Undone', '978-1-260-10350-6', 1998, 5, 3
+    ),
+    (
+        65, 'Secret Kingdom of Darkness', '978-4-823-47056-7', 1974, 2, 1
+    ),
+    (
+        66, 'Iron Mind Eternal', '978-9-777-35928-6', 1977, 5, 1
+    ),
+    (
+        67, 'Falling Forest of Time', '978-2-173-17816-2', 2020, 3, 2
+    ),
+    (
+        68, 'Distant Ocean and Bone', '978-4-816-62757-4', 2002, 5, 3
+    ),
+    (
+        69, 'Distant Throne Forsaken', '978-0-542-52247-9', 1986, 1, 0
+    ),
+    (
+        70, 'Final Dark Awakened', '978-9-121-98117-4', 2006, 1, 0
+    ),
+    (
+        71, 'Ancient Peace Eternal', '978-7-384-33788-9', 1997, 4, 0
+    ),
+    (
+        72, 'Ancient River and Blood', '978-5-428-97835-1', 1980, 3, 3
+    ),
+    (
+        73, 'Cursed War of Memory', '978-6-933-82102-0', 1999, 1, 1
+    ),
+    (
+        74, 'Last Storm of Fire', '978-6-985-77449-0', 2012, 5, 3
+    ),
+    (
+        75, 'Hollow Kingdom of Light', '978-8-470-91609-7', 2010, 4, 0
+    ),
+    (
+        76, 'Hidden Night Undone', '978-2-394-67424-7', 1977, 1, 0
+    ),
+    (
+        77, 'Cursed Mountain of Memory', '978-8-114-82384-6', 1975, 2, 0
+    ),
+    (
+        78, 'Distant Ocean Eternal', '978-2-610-48254-8', 2015, 3, 3
+    ),
+    (
+        79, 'Glass War and Steel', '978-3-567-82255-2', 1994, 2, 2
+    ),
+    (
+        80, 'Wild Voice of Ice', '978-1-382-64387-5', 2020, 5, 2
+    ),
+    (
+        81, 'Glass Garden of Memory', '978-4-957-86931-9', 2012, 4, 1
+    ),
+    (
+        82, 'Distant Fire and Steel', '978-5-440-82340-8', 1994, 4, 2
+    ),
+    (
+        83, 'Storm City of Darkness', '978-9-492-40613-6', 1972, 3, 3
+    ),
+    (
+        84, 'Cursed Key and Ash', '978-6-779-95461-2', 2001, 1, 0
+    ),
+    (
+        85, 'Wild Ice of Dreams', '978-1-995-67711-1', 2003, 4, 0
+    ),
+    (
+        86, 'Fading Forest and Blood', '978-2-176-71537-4', 1991, 5, 5
+    ),
+    (
+        87, 'Frozen Light of the Lost', '978-5-972-98389-8', 1994, 3, 3
+    ),
+    (
+        88, 'Storm Fire of Kings', '978-9-170-40771-4', 1984, 1, 1
+    ),
+    (
+        89, 'Dark Heart Eternal', '978-1-554-31805-4', 1971, 1, 1
+    ),
+    (
+        90, 'Iron Kingdom of Memory', '978-5-483-66450-2', 1985, 5, 3
+    ),
+    (
+        91, 'Shattered Dark of Secrets', '978-2-279-20350-9', 1994, 5, 5
+    ),
+    (
+        92, 'Final War Awakened', '978-2-337-70443-4', 1999, 3, 0
+    ),
+    (
+        93, 'Shadow Mind and Bone', '978-4-793-81643-2', 1974, 4, 2
+    ),
+    (
+        94, 'Shattered Dawn Eternal', '978-6-806-42780-7', 1989, 2, 1
+    ),
+    (
+        95, 'Storm War of Fire', '978-3-490-84963-5', 2006, 3, 2
+    ),
+    (
+        96, 'The Soul Untold', '978-6-381-11061-9', 2013, 1, 1
+    ),
+    (
+        97, 'Glass Gate of Memory', '978-3-721-56179-3', 2010, 2, 2
+    ),
+    (
+        98, 'Last Dark Untold', '978-2-743-22735-0', 1989, 4, 0
+    ),
+    (
+        99, 'Shattered River of Ice', '978-1-402-52823-6', 1981, 2, 0
+    ),
+    (
+        100, 'Iron Fire and Dust', '978-8-613-45720-2', 1986, 4, 2
+    ),
+    (
+        101, 'Fading World of Dreams', '978-1-579-19869-2', 2018, 2, 2
+    ),
+    (
+        102, 'Fading Dark and Ash', '978-8-474-21836-6', 1970, 3, 0
+    ),
+    (
+        103, 'Distant River Untold', '978-4-698-59941-5', 1976, 2, 1
+    ),
+    (
+        104, 'The Wind Undone', '978-5-724-39015-1', 2010, 4, 2
+    ),
+    (
+        105, 'Falling Path of Fire', '978-2-146-14877-4', 2001, 1, 0
+    ),
+    (
+        106, 'Final Gate Undone', '978-2-497-69459-5', 2012, 5, 3
+    ),
+    (
+        107, 'Shattered Voice of Ice', '978-6-770-22978-7', 2009, 4, 2
+    ),
+    (
+        108, 'A Song and Dust', '978-3-554-68287-3', 1993, 1, 1
+    ),
+    (
+        109, 'Infinite Gate Eternal', '978-5-162-62184-4', 1982, 1, 1
+    ),
+    (
+        110, 'Lost Dark of Light', '978-9-121-16629-5', 1985, 2, 2
+    ),
+    (
+        111, 'Hidden Throne Undone', '978-3-700-38305-3', 1991, 2, 2
+    ),
+    (
+        112, 'The Night of Ice', '978-2-653-42853-2', 1977, 1, 0
+    ),
+    (
+        113, 'The River of Darkness', '978-9-431-12068-2', 1986, 1, 0
+    ),
+    (
+        114, 'Fading Path Reborn', '978-1-863-18330-7', 1998, 3, 0
+    ),
+    (
+        115, 'Distant Peace of Darkness', '978-9-144-96363-8', 1989, 4, 0
+    ),
+    (
+        116, 'A War and Ash', '978-6-802-24150-7', 2015, 4, 0
+    ),
+    (
+        117, 'Shadow Throne of Dreams', '978-9-251-18609-2', 1987, 5, 5
+    ),
+    (
+        118, 'Shattered Fire of Dreams', '978-6-711-79541-4', 1999, 5, 4
+    ),
+    (
+        119, 'Hollow Ocean of Fire', '978-8-838-38183-6', 1998, 2, 1
+    ),
+    (
+        120, 'Forgotten Soul and Bone', '978-6-525-22463-5', 1997, 3, 2
+    ),
+    (
+        121, 'Burning Forest Untold', '978-7-168-21957-1', 1975, 4, 0
+    ),
+    (
+        122, 'Fading Voice and Dust', '978-2-669-17861-9', 2005, 5, 2
+    ),
+    (
+        123, 'Stolen Ocean and Blood', '978-5-994-97207-6', 2016, 1, 1
+    ),
+    (
+        124, 'Rising Dawn and Dust', '978-1-691-76507-3', 1979, 4, 1
+    ),
+    (
+        125, 'Storm Ocean and Dust', '978-8-476-25058-4', 2006, 2, 1
+    ),
+    (
+        126, 'Storm Fire Forsaken', '978-9-791-94239-8', 1971, 5, 5
+    ),
+    (
+        127, 'Glass Song of Time', '978-0-284-45818-4', 1991, 3, 0
+    ),
+    (
+        128, 'Broken World of Ice', '978-9-773-62531-1', 1979, 1, 0
+    ),
+    (
+        129, 'Fading Peace of Light', '978-6-529-69460-5', 1980, 3, 2
+    ),
+    (
+        130, 'Fading Storm Awakened', '978-9-186-16895-2', 1980, 5, 0
+    ),
+    (
+        131, 'Stolen Throne of Time', '978-7-777-65576-7', 2008, 4, 3
+    ),
+    (
+        132, 'Last City Reborn', '978-1-453-66349-1', 1988, 5, 3
+    ),
+    (
+        133, 'Wild Dark of Memory', '978-0-325-61807-9', 1973, 1, 0
+    ),
+    (
+        134, 'Secret City of Ice', '978-4-396-53007-1', 1970, 4, 3
+    ),
+    (
+        135, 'Broken Forest and Ash', '978-8-820-40161-8', 2005, 3, 0
+    ),
+    (
+        136, 'Frozen World of Kings', '978-6-119-70260-1', 1990, 5, 3
+    ),
+    (
+        137, 'Shattered Road Eternal', '978-6-396-25096-6', 1971, 3, 1
+    ),
+    (
+        138, 'Iron Wind and Bone', '978-5-190-67240-1', 1985, 4, 4
+    ),
+    (
+        139, 'Frozen Peace of the Lost', '978-6-991-50668-5', 1984, 3, 1
+    ),
+    (
+        140, 'Lost Peace Eternal', '978-1-643-76840-3', 2019, 3, 2
+    ),
+    (
+        141, 'Fading Soul Eternal', '978-2-341-23474-2', 1986, 2, 0
+    ),
+    (
+        142, 'Rising Forest Eternal', '978-1-281-92306-7', 1999, 5, 4
+    ),
+    (
+        143, 'Distant Dark Awakened', '978-9-430-92210-5', 1979, 4, 0
+    ),
+    (
+        144, 'Ancient Journey Eternal', '978-4-915-46002-9', 1973, 3, 0
+    ),
+    (
+        145, 'Secret Journey and Bone', '978-0-158-58331-4', 1974, 1, 1
+    ),
+    (
+        146, 'Distant Ice Undone', '978-0-560-84928-3', 1990, 5, 3
+    ),
+    (
+        147, 'Wild Forest of Kings', '978-7-205-55015-1', 2002, 2, 0
+    ),
+    (
+        148, 'Final Song and Bone', '978-7-636-78517-9', 1980, 3, 2
+    ),
+    (
+        149, 'Golden Dawn and Ash', '978-6-893-54350-9', 1973, 3, 0
+    ),
+    (
+        150, 'Forgotten Ocean Undone', '978-6-390-43029-9', 1979, 3, 0
+    ),
+    (
+        151, 'Shattered Dark of Ice', '978-5-417-95990-6', 1978, 5, 5
+    ),
+    (
+        152, 'Lost Dawn Undone', '978-6-758-53054-2', 2012, 5, 0
+    ),
+    (
+        153, 'Falling Dark and Blood', '978-8-470-12389-5', 1989, 2, 0
+    ),
+    (
+        154, 'Forgotten Heart and Steel', '978-3-331-28030-2', 1974, 3, 0
+    ),
+    (
+        155, 'Wild Heart Undone', '978-8-138-96760-5', 2019, 5, 1
+    ),
+    (
+        156, 'Rising Road of Ice', '978-2-285-91885-2', 2016, 4, 0
+    ),
+    (
+        157, 'Hollow River Untold', '978-3-554-90031-4', 2018, 4, 1
+    ),
+    (
+        158, 'Infinite Dream of Memory', '978-7-955-35430-5', 2013, 5, 3
+    ),
+    (
+        159, 'Distant Heart of Memory', '978-6-614-79135-6', 1980, 2, 2
+    ),
+    (
+        160, 'Silent World of Time', '978-0-756-72991-5', 2005, 1, 0
+    ),
+    (
+        161, 'Secret Throne of Secrets', '978-4-560-77286-2', 2023, 4, 0
+    ),
+    (
+        162, 'Golden Dream and Bone', '978-5-127-64381-0', 1995, 5, 2
+    ),
+    (
+        163, 'Final Road of the Lost', '978-5-329-13694-5', 1976, 3, 1
+    ),
+    (
+        164, 'Silent Kingdom of Memory', '978-7-812-28191-7', 1998, 5, 0
+    ),
+    (
+        165, 'Shadow Throne of Shadows', '978-4-320-29597-8', 2016, 5, 4
+    ),
+    (
+        166, 'Hollow Ocean of Memory', '978-3-408-25970-0', 1985, 4, 4
+    ),
+    (
+        167, 'Distant Throne of Fire', '978-7-711-80261-0', 2010, 5, 4
+    ),
+    (
+        168, 'Final Song of Ice', '978-4-539-10205-9', 1992, 2, 2
+    ),
+    (
+        169, 'Hollow Mountain Untold', '978-1-636-57265-1', 2003, 5, 4
+    ),
+    (
+        170, 'Iron Peace Undone', '978-0-499-71621-0', 2010, 4, 2
+    ),
+    (
+        171, 'Last Voice of Shadows', '978-5-907-18855-5', 1985, 1, 1
+    ),
+    (
+        172, 'Silent Kingdom and Dust', '978-8-446-94252-2', 2023, 4, 3
+    ),
+    (
+        173, 'Falling Mountain of Ice', '978-1-833-69988-0', 1988, 2, 0
+    ),
+    (
+        174, 'Iron City of Kings', '978-5-417-77552-6', 2022, 5, 3
+    ),
+    (
+        175, 'Last Kingdom Eternal', '978-3-392-56789-0', 2011, 3, 2
+    ),
+    (
+        176, 'Dark Mind and Dust', '978-6-509-67637-6', 1991, 2, 1
+    ),
+    (
+        177, 'Cursed War and Dust', '978-8-373-20828-6', 1975, 4, 4
+    ),
+    (
+        178, 'Glass Mountain Undone', '978-4-428-23447-1', 1990, 3, 2
+    ),
+    (
+        179, 'Distant Wind and Blood', '978-2-806-68183-5', 1998, 1, 1
+    ),
+    (
+        180, 'Rising Path of Time', '978-0-176-97973-6', 1993, 5, 5
+    ),
+    (
+        181, 'Stolen Mountain of Shadows', '978-2-969-89635-7', 1972, 2, 0
+    ),
+    (
+        182, 'Final Heart Eternal', '978-5-470-60181-9', 1972, 5, 1
+    ),
+    (
+        183, 'Stolen Journey and Dust', '978-5-554-20077-9', 1978, 5, 2
+    ),
+    (
+        184, 'Frozen Storm Eternal', '978-4-355-24869-0', 2017, 2, 1
+    ),
+    (
+        185, 'Wild Road Undone', '978-1-368-44116-7', 1983, 5, 2
+    ),
+    (
+        186, 'Cursed Key and Steel', '978-3-225-27790-1', 1998, 2, 2
+    ),
+    (
+        187, 'Distant Throne Untold', '978-5-783-55537-1', 2005, 5, 2
+    ),
+    (
+        188, 'Shadow Dawn of Secrets', '978-2-912-57381-8', 1984, 1, 0
+    ),
+    (
+        189, 'Iron Forest of Darkness', '978-7-126-57303-8', 2006, 3, 3
+    ),
+    (
+        190, 'Iron Fire of Ice', '978-9-188-18617-4', 1995, 4, 4
+    ),
+    (
+        191, 'Hollow Heart and Blood', '978-9-175-26426-5', 2011, 1, 1
+    ),
+    (
+        192, 'Distant Dark Reborn', '978-5-231-82260-9', 1981, 2, 1
+    ),
+    (
+        193, 'Wild Key of Kings', '978-1-630-30056-4', 1980, 2, 1
+    ),
+    (
+        194, 'Golden Song of Darkness', '978-5-631-47230-1', 1986, 2, 2
+    ),
+    (
+        195, 'Infinite Night of Ice', '978-4-729-79924-1', 2002, 2, 2
+    ),
+    (
+        196, 'Shattered Forest of Secrets', '978-9-837-89316-5', 2023, 5, 0
+    ),
+    (
+        197, 'Glass World of Shadows', '978-1-146-94076-9', 1986, 2, 2
+    ),
+    (
+        198, 'Hollow Wind Eternal', '978-0-609-92203-8', 1988, 3, 3
+    ),
+    (
+        199, 'Final Mind Untold', '978-6-404-69446-1', 2014, 1, 0
+    ),
+    (
+        200, 'Distant Path and Steel', '978-7-308-54589-9', 1979, 3, 2
+    );
+/*!40000 ALTER TABLE books
+    ENABLE KEYS */;
+
 -- BOOK_DESCRIPTIONS
 LOCK TABLES `book_descriptions` WRITE;
 /*!40000 ALTER TABLE `book_descriptions` DISABLE KEYS */;
