@@ -27,7 +27,7 @@ public class LoanController extends BaseController {
                     break;
                 }
                 case 1: {
-                    LoanService.returnLoan(new Loan(5,29));
+                    LoanService.returnLoan(new Loan(5, 29));
                     break;
                 }
 /*
