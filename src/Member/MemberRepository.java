@@ -1,5 +1,11 @@
-import java.sql.*;
-import java.util.ArrayList;
+package Member;
+
+import Base.BaseRepository;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 

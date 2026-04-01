@@ -1,3 +1,8 @@
+package Loan;
+
+import Base.BaseController;
+import UI.Menu;
+
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -7,10 +12,10 @@ public class LoanController extends BaseController {
 
     public static void showMenu() throws SQLException {
 
-        loanMenu.setTopTitle("Main Menu » Loan Menu");
-        loanMenu.setMidTitle("Loan Menu");
-        // loanMenu.setMenuInfo("Menu Info");
-        loanMenu.setExitOption("Back to Menu");
+        loanMenu.setTopTitle("Main UI.Menu » Loan.Loan UI.Menu");
+        loanMenu.setMidTitle("Loan.Loan UI.Menu");
+        // loanMenu.setMenuInfo("UI.Menu Info");
+        loanMenu.setExitOption("Back to UI.Menu");
         loanMenu.addMenuOption("Return loan");
         // loanMenu.addMenuOption("Option 2");
         loanMenu.setPrePrompt("Type a number and press enter...");
@@ -47,7 +52,7 @@ public class LoanController extends BaseController {
         loanMenu.setMenuInfo("Enter book ID");
         int bookID = Integer.parseInt(scanner.nextLine().trim());
 
-        // LoanService.returnLoan(Loan );
+        // Loan.LoanService.returnLoan(Loan.Loan );
 
     }
 }

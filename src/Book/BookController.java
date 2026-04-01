@@ -1,3 +1,8 @@
+package Book;
+
+import Base.BaseController;
+import UI.Menu;
+
 public class BookController extends BaseController {
 
 
@@ -5,10 +10,10 @@ public class BookController extends BaseController {
 
         Menu bookMenu = new Menu();
 
-        bookMenu.setTopTitle("Book Menu");
+        bookMenu.setTopTitle("Book.Book UI.Menu");
         // bookMenu.setMidTitle("Subtitle");
-        // bookMenu.setMenuInfo("Menu Info");
-        bookMenu.setExitOption("Back to Menu");
+        // bookMenu.setMenuInfo("UI.Menu Info");
+        bookMenu.setExitOption("Back to UI.Menu");
         bookMenu.addMenuOption("Search all books");
         bookMenu.addMenuOption("Add new books");
         bookMenu.addMenuOption("Search by categories");
