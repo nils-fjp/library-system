@@ -1,13 +1,13 @@
-package Book;//import java.sql.Connection;
+//import java.sql.Connection;
 //import java.sql.ResultSet;
 //import java.sql.SQLException;
 //import java.util.List;
 //
-//public class Book.BookRepository extends Base.BaseRepository <Book.Book, Integer> {
+//public class BookRepository extends BaseRepository <Book, Integer> {
 //    @Override
-//    public Book.Book getById(Integer id) throws SQLException {
+//    public Book getById(Integer id) throws SQLException {
 //
-//        Book.Book book = null;
+//        Book book = null;
 //        try (Connection connection = getConnection();
 //             java.sql.Statement statement = connection.createStatement()) {
 //            ResultSet resultSet = statement.executeQuery("SELECT * FROM library.books WHERE id = ?");
@@ -21,7 +21,7 @@ package Book;//import java.sql.Connection;
 //                String language = resultSet.getString("language");
 //                int pageCount = resultSet.getInt("page_count");
 //                String author = resultSet.getString("author");
-//                book = new Book.Book(title, yearPublished, availableCopies, summary, language, pageCount, author);
+//                book = new Book(title, yearPublished, availableCopies, summary, language, pageCount, author);
 //
 //            }
 //
@@ -31,18 +31,18 @@ package Book;//import java.sql.Connection;
 //        return book;
 //    }
 //
-////    @Override
-////    public Object getById(Object o) {
-////        return null;
-////    }
+/// /    @Override
+/// /    public Object getById(Object o) {
+/// /        return null;
+/// /    }
 //
 //    @Override
-//    public List <Book.Book> getAll() {
+//    public List <Book> getAll() {
 //        return List.of();
 //    }
 //
 //    @Override
-//    public List <Book.Book> search(String searchTerm) throws SQLException {
+//    public List <Book> search(String searchTerm) throws SQLException {
 //        return List.of();
 //    }
 //
