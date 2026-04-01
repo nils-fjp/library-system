@@ -2,17 +2,18 @@
 
 # Att göra först
 
-1. [x] Skapa Book-klassen
-2. [x] Skapa controller-lagret för Book-klassen
-3. [x] Skapa BaseRepository-lagret
-4. [x] Skapa BaseService och BaseController
-5. [ ] Koppla Service-lagret till BaseRepository
+1. [x] Skapa Book.Book-klassen
+2. [x] Skapa controller-lagret för Book.Book-klassen
+3. [x] Skapa Base.BaseRepository-lagret
+4. [x] Skapa Base.BaseService och Base.BaseController
+5. [ ] Koppla Service-lagret till Base.BaseRepository
+
 
 ## Viktiga klasser:
 
-1. [x] Book
-2. [x] Loan
-3. [x] Member
+1. [x] Book.Book
+2. [x] Loan.Loan
+3. [x] Member.Member
 
 Mindre viktiga klasser:
 
@@ -46,6 +47,7 @@ Mindre viktiga klasser:
     1. [ ] Lägga till ny bok
     2. [ ] Uppdatera en bok
     3. [ ] Ta bort en bok
+
 
 Repositories:
 BookRepository
