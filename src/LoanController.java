@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class LoanController extends BaseController {
@@ -22,7 +23,7 @@ public class LoanController extends BaseController {
                     break;
                 }
                 case 1: {
-                    LoanService.returnLoan(new Loan(5, 29));
+                    LoanService.returnLoan(new Loan(5,29));
                     break;
                 }
 /*
@@ -38,7 +39,7 @@ public class LoanController extends BaseController {
         }
     }
 
-    private void returnLoan() throws SQLException {
+    private static void returnLoan() throws SQLException {
         Scanner scanner = new Scanner(System.in);
 
         loanMenu.setMenuInfo("Enter loan ID");
@@ -47,7 +48,10 @@ public class LoanController extends BaseController {
         loanMenu.setMenuInfo("Enter book ID");
         int bookID = Integer.parseInt(scanner.nextLine().trim());
 
-        // LoanService.returnLoan(Loan );
+        ArrayList<String> menuOptions = loanMenu.getMenuOptions();
+
+        Loan loan = new Loan(loanID, bookID);
+        LoanService.returnLoan(loan);
 
     }
 }
