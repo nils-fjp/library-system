@@ -1,3 +1,5 @@
+package UI;
+
 public class ConsolePrinter {
 
     public void printHeader(String title) {
