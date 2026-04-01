@@ -27,7 +27,7 @@ public class Loan {
     */
 
     // ?
-    public Loan(int loanId,  int bookId) {
+    public Loan(int loanId, int bookId) {
         this.loanId = loanId;
         this.bookId = bookId;
     }
