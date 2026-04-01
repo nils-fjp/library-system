@@ -21,6 +21,7 @@ public class Menu {
         this.exitOption = "Exit";
         this.menuOptions = new ArrayList<>();
         this.menuOptions.addFirst(this.exitOption);
+       // this.menuOptions.add(0,this.exitOption);
         this.prePrompt = "";
         this.promptLine = "Enter: ";
     }
