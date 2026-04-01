@@ -3,29 +3,20 @@ package Book;
 import Base.BaseController;
 import UI.Menu;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
-
 public class BookController extends BaseController {
 
-    // Patrons Menu
-    public static void showMenu() throws SQLException {
+
+    public static void showMenu() {
 
         Menu bookMenu = new Menu();
-        BookService bookService = new BookService();
-        Scanner scanner = new Scanner(System.in);
 
-        bookMenu.setTopTitle("Book Menu");
+        bookMenu.setTopTitle("Book.Book UI.Menu");
         // bookMenu.setMidTitle("Subtitle");
-        // bookMenu.setMenuInfo("Menu Info");
-        bookMenu.setExitOption("Back to Menu");
-        bookMenu.addMenuOption("Show available books");
-        // bookMenu.addMenuOption("Add new books");
-        bookMenu.addMenuOption("Search Books");
-        bookMenu.addMenuOption("Search by ID");
-
+        // bookMenu.setMenuInfo("UI.Menu Info");
+        bookMenu.setExitOption("Back to UI.Menu");
+        bookMenu.addMenuOption("Search all books");
+        bookMenu.addMenuOption("Add new books");
+        bookMenu.addMenuOption("Search by categories");
         bookMenu.setPrePrompt("Type a number and press enter...");
         bookMenu.setPromptLine("Enter: ");
 
@@ -35,17 +26,7 @@ public class BookController extends BaseController {
                     break;
                 }
                 case 1: {
-                    try {
-                        List<Book> books = bookService.getAll();
-                        for (Book book : books) {
-                            System.out.println("Title " + book.getTitle());
-                            System.out.println("Author " + book.getAuthor());
-                            System.out.println("Available copies " + book.getAvailableCopies());
-                            System.out.println("-----");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Error: " + e.getMessage());
-                    }
+                    System.out.println("WIP!");
                     break;
                 }
                 case 2: {
@@ -55,24 +36,6 @@ public class BookController extends BaseController {
                 case 3: {
                     System.out.println("wip");
                     break;
-                }
-                case 4: {
-                    // 2026-04-01 Fungerar!
-                    System.out.print("Enter book ID: ");
-                    try {
-                        int id = Integer.parseInt(scanner.nextLine());
-                        Optional<Book> book = bookService.getById(id);
-
-                        if (book.isPresent()) {
-                            System.out.println("Title: " + book.get().getTitle());
-                        } else {
-                            System.out.println("No book found with ID: " + id);
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Please enter a valid number!");
-                    } catch (SQLException e) {
-                        System.out.println("Database error: " + e.getMessage());
-                    }
                 }
                 default: {
                     bookMenu.setMenuInfo("Invalid Input!");
