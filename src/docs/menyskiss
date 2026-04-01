@@ -1,0 +1,91 @@
+## Menyer:
+
+0. Main Menu
+    1. Search Books --> (1. Book menu)
+    2. Log in
+    0. Exit
+
+    1. Book Menu
+       1. View Books
+       2. Search Books
+       3. Search Authors
+       4.
+       0. Back to Main Menu --> (0. Main Menu)
+
+    2. Log in
+        Enter your username:
+        Enter your password:
+        Welcome, $reader!
+        --> (3. Reader Menu) / (4. Librarian Menu)
+
+    3. Reader Menu
+        1. Books
+            1. View Books
+            2. Search Books
+            3. Search Authors
+            0. Back to Main Menu --> (3. Reader Menu)
+
+        2. My Loans
+            1. View active loans
+                1. Harry Potter
+                2. Lord Of the Rings
+                3. Catcher in the Rye
+                    1. Extend
+                    2. Return
+                    0. Back to My Loans --> (2. My Loans)
+                0. Back to My Loans     --> (2. My Loans)
+            2. View loan history
+            0. Back to Main Menu --> (3. Reader Menu)
+        3. My profile
+        0. Log Out --> (0. Main Menu)
+
+    4. Librarian Menu
+        1. Manage Books
+            1. View Books
+                1. View all books
+                2. Search Books
+                3. Search Authors
+                0. Back to Main Menu --> (4. Librarian Menu)
+
+            2. Add book
+            3. Modify book
+            4. Delete book
+            0. Back to Main Menu --> (4. Librarian Menu)
+
+        2. Manage Loans
+            1. View loans
+            2. Add loan
+            3. Modify loan
+            4. Delete loan
+            0. Back to Main Menu --> (4. Librarian Menu)
+
+        3. Manage Readers
+            1. View readers
+                1. View all readers
+                2. Search reader by email
+                0. Back to Manage Readers --> (3. Manage Readers)
+
+            2. Add reader
+            3. Modify reader
+            4. Delete reader
+            0. Back to Main Menu --> (4. Librarian Menu)
+
+        4. Manage Authors
+            1. View authors
+            2. Add author
+            3. Modify author
+            4. Delete author
+            0. Back to Main Menu --> (4. Librarian Menu)
+
+        5. Manage Categories
+            1. View categories
+            2. Add category
+            3. Modify category
+            4. Delete category
+            0. Back to Main Menu --> (4. Librarian Menu)
+
+        0. Log Out --> (0. Main Menu)
+
+
+
+
