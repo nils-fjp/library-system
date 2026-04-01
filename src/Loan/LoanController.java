@@ -1,5 +1,9 @@
+package Loan;
+
+import Base.BaseController;
+import UI.Menu;
+
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class LoanController extends BaseController {
@@ -8,10 +12,10 @@ public class LoanController extends BaseController {
 
     public static void showMenu() throws SQLException {
 
-        loanMenu.setTopTitle("Main Menu » Loan Menu");
-        loanMenu.setMidTitle("Loan Menu");
-        // loanMenu.setMenuInfo("Menu Info");
-        loanMenu.setExitOption("Back to Menu");
+        loanMenu.setTopTitle("Main UI.Menu » Loan.Loan UI.Menu");
+        loanMenu.setMidTitle("Loan.Loan UI.Menu");
+        // loanMenu.setMenuInfo("UI.Menu Info");
+        loanMenu.setExitOption("Back to UI.Menu");
         loanMenu.addMenuOption("Return loan");
         // loanMenu.addMenuOption("Option 2");
         loanMenu.setPrePrompt("Type a number and press enter...");
@@ -39,7 +43,7 @@ public class LoanController extends BaseController {
         }
     }
 
-    private static void returnLoan() throws SQLException {
+    private void returnLoan() throws SQLException {
         Scanner scanner = new Scanner(System.in);
 
         loanMenu.setMenuInfo("Enter loan ID");
@@ -48,10 +52,7 @@ public class LoanController extends BaseController {
         loanMenu.setMenuInfo("Enter book ID");
         int bookID = Integer.parseInt(scanner.nextLine().trim());
 
-        ArrayList<String> menuOptions = loanMenu.getMenuOptions();
-
-        Loan loan = new Loan(loanID, bookID);
-        LoanService.returnLoan(loan);
+        // Loan.LoanService.returnLoan(Loan.Loan );
 
     }
 }

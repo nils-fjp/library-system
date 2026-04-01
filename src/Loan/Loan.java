@@ -1,3 +1,5 @@
+package Loan;
+
 import java.time.LocalDate;
 
 public class Loan {
@@ -18,7 +20,7 @@ public class Loan {
     }
 
     /*
-    public Loan(int bookId, int memberId) {
+    public Loan.Loan(int bookId, int memberId) {
         this.bookId = bookId;
         this.memberId = memberId;
         this.loanDate = LocalDate.now();

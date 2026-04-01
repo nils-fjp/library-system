@@ -2,15 +2,15 @@
 
 # Att göra först
 
-1. [x] Skapa book.Book-klassen
-2. [x] Skapa controller-lagret för book.Book-klassen
+1. [x] Skapa Book-klassen
+2. [x] Skapa controller-lagret för Book-klassen
 3. [x] Skapa BaseRepository-lagret
 4. [x] Skapa BaseService och BaseController
 5. [ ] Koppla Service-lagret till BaseRepository
 
 ## Viktiga klasser:
 
-1. [x] book.Book
+1. [x] Book
 2. [x] Loan
 3. [x] Member
 
