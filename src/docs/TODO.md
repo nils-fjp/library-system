@@ -61,7 +61,7 @@ Member.MemberService
 
 ### Arv: 
 Class User
--> Admin extends User
+    -> Admin extends User
 -> Member.Member extends User
 
 Abstract classes: X extends Y
