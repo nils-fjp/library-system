@@ -1,18 +1,18 @@
 # TODO.md
 # Att göra först
 
-1. [x] Skapa Book.Book-klassen
-2. [x] Skapa controller-lagret för Book.Book-klassen
-3. [x] Skapa Base.BaseRepository-lagret
-4. [x] Skapa Base.BaseService och Base.BaseController
-5. [ ] Koppla Service-lagret till Base.BaseRepository
+1. [x] Skapa Book-klassen
+2. [x] Skapa controller-lagret för Book-klassen
+3. [x] Skapa BaseRepository-lagret
+4. [x] Skapa BaseService och BaseController
+5. [ ] Koppla Service-lagret till BaseRepository
 
 
 ## Viktiga klasser:
 
-1. [x] Book.Book
-2. [x] Loan.Loan
-3. [x] Member.Member
+1. [x] Book
+2. [x] Loan
+3. [x] Member
 
 Mindre viktiga klasser:
 
@@ -48,21 +48,21 @@ Mindre viktiga klasser:
 
 
 Repositories:
-Book.BookRepository
-Member.MemberRepository
+BookRepository
+MemberRepository
 
 Controllers:
-Book.BookController
-Member.MemberController
+BookController
+MemberController
 
 Services:
-Book.BookService
-Member.MemberService
+BookService
+MemberService
 
 ### Arv: 
 Class User
-    -> Admin extends User
--> Member.Member extends User
+    -> Admin extends User 
+    -> Member extends User 
 
 Abstract classes: X extends Y
 
@@ -80,8 +80,8 @@ admin
 
 1. Huvudmeny (Main.java)
    1. Logga in --> UserController.java (inloggningsmeny)
-   2. Sök böcker --> Book.BookController.java (bok-meny)
-   3. Låna --> Loan.LoanController.java (lån-meny)
+   2. Sök böcker --> BookController.java (bok-meny)
+   3. Låna --> LoanController.java (lån-meny)
    4. Avsluta
 2. Inloggningsmeny
    1. 
