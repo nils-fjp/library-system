@@ -109,12 +109,12 @@ public class MemberController extends BaseController<Member, Integer> {
     private static final Scanner scanner = new Scanner(System.in);
     private static final ConsolePrinter printer = new ConsolePrinter();
 
-    public static void showMenu() {
+    public static void showLibrarianMenu() {
 
         Menu memberMenu = new Menu();
 
-        memberMenu.setTopTitle("Member Menu");
-        memberMenu.setExitOption("Back to Menu");
+        memberMenu.setTopTitle("Librarians Menu");
+        memberMenu.setExitOption("Back");
         memberMenu.addMenuOption("Search all members");
         memberMenu.addMenuOption("Add new members");
         memberMenu.addMenuOption("Search member by id");
@@ -127,7 +127,7 @@ public class MemberController extends BaseController<Member, Integer> {
                     break;
                 }
                 case 1: {
-                    System.out.println("WIP!");
+                    System.out.println("WIP");
                     break;
                 }
                 case 2: {
@@ -135,7 +135,40 @@ public class MemberController extends BaseController<Member, Integer> {
                     break;
                 }
                 case 3: {
-                    showMemberById();
+                   showMemberById();
+                    break;
+                }
+                default: {
+                    memberMenu.setMenuInfo("Invalid Input!");
+                }
+            }
+        }
+    }
+
+    public static void showReaderMenu(){
+        Menu memberMenu = new Menu();
+
+        memberMenu.setTopTitle("My Profile");
+        memberMenu.setTopTitle("My Reader");
+        //memberMenu.setMenuInfo("Show all active loans");
+        memberMenu.setExitOption("Back");
+        //memberMenu.addMenuOption("View profile");
+        memberMenu.addMenuOption("Show all active loans");
+        memberMenu.setPrePrompt("Type a number and press enter...");
+        memberMenu.setPromptLine("Enter: ");
+
+        while (true){
+            memberMenu.showMenu();
+            switch (memberMenu.getChoice()){
+                case 0: {
+                    return;
+                }
+                case 1: {
+                    System.out.println("WIP: Information about your loans");
+                    break;
+                }
+                case 2: {
+                    System.out.println("WIP: All active loans");
                     break;
                 }
                 default: {
