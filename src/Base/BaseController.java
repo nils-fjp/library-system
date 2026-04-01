@@ -1,3 +1,5 @@
+package Base;
+
 import java.sql.SQLException;
 
 public abstract class BaseController<T, ID> {

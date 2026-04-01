@@ -1,3 +1,5 @@
+package Member;
+
 import java.time.LocalDate;
 
 public class Member {
@@ -53,7 +55,7 @@ public class Member {
 
 //    @Override
 //    public String toString() {
-//        return "Member{" +
+    //        return "Member.Member{" +
 //                "id=" + id +
 //                ", firstName='" + firstName + '\'' +
 //                ", lastName='" + lastName + '\'' +

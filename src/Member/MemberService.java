@@ -1,5 +1,7 @@
-import java.sql.SQLException;
-import java.util.ArrayList;
+package Member;
+
+import Base.BaseRepository;
+import Base.BaseService;
 
 public class MemberService extends BaseService<Member, Integer> {
 
@@ -15,7 +17,7 @@ public class MemberService extends BaseService<Member, Integer> {
         super.validateId(id);
 
         if (id <= 0) {
-            throw new IllegalArgumentException("Member id must be greater than 0.");
+            throw new IllegalArgumentException("Member.Member id must be greater than 0.");
         }
     }
 }

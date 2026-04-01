@@ -1,3 +1,5 @@
+package UI;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -61,7 +63,7 @@ public class Menu {
     }
 
     public void drawMenuHeader() {
-        // Klassen ANSI innehåller olika typer av formatering. Varje ANSI-property är en vanlig String.
+        // Klassen UI.ANSI innehåller olika typer av formatering. Varje UI.ANSI-property är en vanlig String.
         System.out.print(ANSI.CLEAR_SCREEN);
 
         String headerTop = topTitle;
@@ -95,7 +97,7 @@ public class Menu {
         }
     }
 
-    // Motsvarar raderna 19-25 i Nils BookController.showBookMenu()
+    // Motsvarar raderna 19-25 i Nils Book.BookController.showBookMenu()
     public void drawMenuOptions() {
         System.out.println(
             "\t╭──" + "─".repeat(PADDING) + "╮"
@@ -128,7 +130,7 @@ public class Menu {
         );
     }
 
-    // Baseras på Nils Main och BookController-menyer
+    // Baseras på Nils Main och Book.BookController-menyer
     public boolean showMenu() {
         while (true) {
             drawMenuHeader();

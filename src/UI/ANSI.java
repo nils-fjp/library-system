@@ -1,7 +1,9 @@
+package UI;
+
 @SuppressWarnings("unused")
 public class ANSI {
     // https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters
-    // ANSI escape sequences for styling terminal output
+    // UI.ANSI escape sequences for styling terminal output
 
     public static final String RESET = "\033[0m"; // reset all styling to their default values
     public static final String BOLD = "\033[1m";

@@ -1,3 +1,8 @@
+package Book;
+
+import Base.BaseRepository;
+import Base.BaseService;
+
 public class BookService extends BaseService<Book, Integer> {
 
     private final BookRepository bookRepository = new BookRepository();
