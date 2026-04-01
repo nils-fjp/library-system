@@ -25,7 +25,10 @@ public class Menu {
         this.promptLine = "Enter: ";
     }
 
-    //
+    public ArrayList<String> getMenuOptions() {
+        return menuOptions;
+    }
+
     public int getChoice() {
         return choice;
     }
