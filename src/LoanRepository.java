@@ -8,13 +8,13 @@ public class LoanRepository extends BaseRepository {
 
     public void returnLoan(Loan loan) throws SQLException {
         try (
-            Connection connection = getConnection();
-            PreparedStatement statementOne = connection.prepareStatement(
-                "UPDATE loans SET return_date = CURRENT_DATE WHERE id = ?"
-            );
-            PreparedStatement statementTwo = connection.prepareStatement(
-                "UPDATE books SET available_copies = available_copies +1 WHERE id = ?"
-            )
+                Connection connection = getConnection();
+                PreparedStatement statementOne = connection.prepareStatement(
+                        "UPDATE loans SET return_date = CURRENT_DATE WHERE id = ?"
+                );
+                PreparedStatement statementTwo = connection.prepareStatement(
+                        "UPDATE books SET available_copies = available_copies +1 WHERE id = ?"
+                )
         ) {
             statementOne.setInt(1, loan.getLoanId());
             statementTwo.setInt(1, loan.getBookId());
@@ -22,14 +22,16 @@ public class LoanRepository extends BaseRepository {
             int bookRowsAffected = statementTwo.executeUpdate();
 
             System.out.println(
-                "Affected rows: " + loanRowsAffected +
-                "Books updated: " + bookRowsAffected
+                    "Affected rows: " + loanRowsAffected +
+                            "Books updated: " + bookRowsAffected
             );
         } catch (SQLException e) {
             System.out.println("Error : " + e.getMessage());
         }
     }
-    public void returnLoan(String loanID) throws SQLException {}
+
+    public void returnLoan(String loanID) throws SQLException {
+    }
 
     @Override
     public Optional getById(Object o) throws SQLException {

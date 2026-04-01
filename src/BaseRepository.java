@@ -1,4 +1,3 @@
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -52,6 +51,8 @@ public abstract class BaseRepository<T, ID> {
     public abstract List<T> getAll() throws SQLException;
 
     public abstract void save(T entity) throws SQLException;
+
     public abstract void update(T entity) throws SQLException;
+
     public abstract void deleteById(ID id) throws SQLException;
 }
