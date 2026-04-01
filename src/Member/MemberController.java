@@ -40,7 +40,7 @@ public class MemberController extends BaseController<Member, Integer> {
                     break;
                 }
                 case 3: {
-                    showMemberById();
+                   showMemberById();
                     break;
                 }
                 default: {
@@ -49,8 +49,8 @@ public class MemberController extends BaseController<Member, Integer> {
             }
         }
     }
-    
-    public static void showReaderMenu() {
+
+    public static void showReaderMenu(){
         Menu memberMenu = new Menu();
 
         memberMenu.setTopTitle("My Profile");
@@ -62,8 +62,7 @@ public class MemberController extends BaseController<Member, Integer> {
         memberMenu.setPrePrompt("Type a number and press enter...");
         memberMenu.setPromptLine("Enter: ");
         
-        while (true) {
-            memberMenu.showMenu();
+        while (memberMenu.showMenu()) {
             switch (memberMenu.getChoice()){
                 case 0: {
                     return;
