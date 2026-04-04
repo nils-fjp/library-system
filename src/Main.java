@@ -9,12 +9,15 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         Menu mainMenu = new Menu();
 
-        mainMenu.setTopTitle("Main UI.Menu");
-        mainMenu.setMidTitle("Choose role");
+        mainMenu.setTopTitle("Main Menu");
+        mainMenu.setMidTitle("Test Menu");
         mainMenu.setMenuInfo("Select which menu to open");
-        mainMenu.setExitOption("Exit");
-        mainMenu.addMenuOption("Reader");
-        mainMenu.addMenuOption("Librarian");
+        mainMenu.setExitOption("Exit program");
+        mainMenu.addMenuOption("ReaderMenuController.showMenu()");
+        mainMenu.addMenuOption("LibrarianMenuController.showMenu()");
+        mainMenu.addMenuOption("BookController.showMenu()");
+        mainMenu.addMenuOption("MemberController.showMenu()");
+        mainMenu.addMenuOption("LoanController.showMenu()");
         mainMenu.setPrePrompt("Type a number and press enter...");
         mainMenu.setPromptLine("Enter: ");
 
@@ -27,6 +30,9 @@ public class Main {
                 }
                 case 1 -> ReaderMenuController.showMenu();
                 case 2 -> LibrarianMenuController.showMenu();
+                case 3 -> Book.BookController.showMenu();
+                case 4 -> Member.MemberController.showMenu();
+                case 5 -> Loan.LoanController.showMenu();
                 default -> System.out.println("Invalid input");
             }
         }
