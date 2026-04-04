@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
-    private static final int BORDER = 36;
+    private static final int BORDER = 48;
     private static final int PADDING = BORDER - 4;
     private static final Scanner scanner = new Scanner(System.in);
-    private final ArrayList<String> menuOptions;
+    private ArrayList<String> menuOptions;
     private int choice;
     private String topTitle;
     private String midTitle;
@@ -28,8 +28,35 @@ public class Menu {
         this.promptLine = "Enter: ";
     }
 
+    public Menu(
+            String topTitle,
+            String midTitle,
+            String menuInfo,
+            String exitOption,
+            ArrayList<String> menuOptions,
+            String prePrompt,
+            String promptLine
+    ) {
+        this.topTitle = topTitle;
+        this.midTitle = midTitle;
+        this.menuInfo = menuInfo;
+        this.exitOption = exitOption;
+        if (menuOptions.contains(this.exitOption)) {
+            this.menuOptions = menuOptions;
+        } else {
+            this.menuOptions = menuOptions;
+            this.menuOptions.addFirst(this.exitOption);
+        }
+        this.prePrompt = prePrompt;
+        this.promptLine = promptLine;
+    }
+
     public ArrayList<String> getMenuOptions() {
         return menuOptions;
+    }
+
+    public void setMenuOptions(ArrayList<String> menuOptions) {
+        this.menuOptions = menuOptions;
     }
 
     public int getChoice() {
@@ -100,7 +127,7 @@ public class Menu {
         }
     }
 
-    // Motsvarar raderna 19-25 i Nils Book.BookController.showBookMenu()
+    // Motsvarar raderna 19-25 i Nils BookController.showBookMenu()
     public void drawMenuOptions() {
         System.out.println(
             "\t╭──" + "─".repeat(PADDING) + "╮"
@@ -133,7 +160,7 @@ public class Menu {
         );
     }
 
-    // Baseras på Nils Main och Book.BookController-menyer
+    // Baseras på Nils Main och BookController-menyer
     public boolean showMenu() {
         while (true) {
             drawMenuHeader();
@@ -148,7 +175,7 @@ public class Menu {
             } catch (NumberFormatException e) {
                 return false;
             }
-            if (input > 0 && input < this.menuOptions.size()) {
+            if (input > 0) {
                 choice = input;
                 return true;
             }
