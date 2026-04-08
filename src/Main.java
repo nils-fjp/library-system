@@ -25,6 +25,7 @@ public class Main {
        // mainMenu.addMenuOption("MemberController.showMenu()");
         mainMenu.addMenuOption("LoanController.showMenu()");
         mainMenu.addMenuOption("Log in");
+        mainMenu.addMenuOption("MemberController.showMenu()");
         mainMenu.setPrePrompt("Type a number and press enter...");
         mainMenu.setPromptLine("Enter: ");
 
@@ -38,9 +39,9 @@ public class Main {
                 //case 1 -> ReaderMenuController.showMenu();
                // case 2 -> LibrarianMenuController.showMenu(currentMember);
                 case 1 -> book.BookController.showMenu();
-                //case 4 -> MemberController.showMenu();
                 case 2 -> loan.LoanController.showMenu();
                 case 3 -> login();
+                case 4 -> MemberController.showMenu(); // for testing
                 default -> System.out.println("Invalid input");
             }
         }

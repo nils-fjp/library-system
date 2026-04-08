@@ -9,6 +9,7 @@ import ui.Menu;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -18,29 +19,41 @@ public class MemberController extends BaseController<Member, Integer> {
     private static final Scanner scanner = new Scanner(System.in);
     private static final ConsolePrinter printer = new ConsolePrinter();
 
-//    public static void showMenu() throws SQLException {
-//        Menu menu = new Menu();
-//        menu.setTopTitle("Your Profile");
-//        menu.addMenuOption("Change your data");
-//        menu.addMenuOption("Manage Loans");
-//
-//        while (menu.showMenu()) {
-//
-//            switch (menu.getChoice()) {
-//
-//                //case 1 -> BookController.showManageBooksMenu();
-//                case 1 -> System.out.println("BookController.showManageBooksMenu()");
-//                case 2 -> LoanController.showManageLoansMenu();
-//                //case 3 -> MemberController.showManageMembersMenu();
-//                case 3 -> System.out.println("MemberController.showManageMembersMenu()");
-//                //case 4 -> AuthorController.showManageAuthorMenu();
-//                case 4 -> System.out.println("AuthorController.showManageAuthorMenu()");
-//                //case 5 -> CategoryController.showManageCategoriesMenu();
-//                case 5 -> System.out.println("ategoryController.showManageCategoriesMenu()");
-//                case 0 -> { return; }
-//            }
-//        }
-//    }
+    public static void showMenu() throws SQLException {
+        Menu menu = new Menu();
+        menu.setTopTitle("showMenu()");
+        menu.addMenuOption("showReaderMenu(testMember)");
+        menu.addMenuOption("showLibrarianMenu(testMember)");
+        menu.addMenuOption("showCurrentMemberProfile(testMember)");
+        menu.addMenuOption("showManageMembersMenu(testMember)");
+        menu.addMenuOption("Print Nils");
+
+        Member testMember = new Member(); // för att kunna testa menyer utan att logga in
+
+        while (menu.showMenu()) {
+
+            switch (menu.getChoice()) {
+
+                case 1 -> showReaderMenu(testMember);
+                case 2 -> showLibrarianMenu(testMember);
+                case 3 -> showCurrentMemberProfile(testMember);
+                case 4 -> showManageMembersMenu(testMember);
+                // print out my name
+                case 5 -> printCommonMemberInfo(
+                        "Nils",
+                        "Paulsson",
+                        "nilspaulsson@example.com",
+                        new Date(),
+                        "PREMIUM",
+                        "ACTIVE"
+                );
+
+                case 0 -> {
+                    return;
+                }
+            }
+        }
+    }
 public static void showReaderMenu(Member currentMember) throws SQLException {
     Menu menu = new Menu();
 
@@ -59,7 +72,7 @@ public static void showReaderMenu(Member currentMember) throws SQLException {
         switch (menu.getChoice()) {
             case 1 -> BookController.showMenu();
             case 2 -> LoanController.showMenu();
-            case 3 -> MemberController.showCurrentMemberProfile(currentMember);
+            case 3 -> showCurrentMemberProfile(currentMember);
             case 0 -> {
                 return;
             }
