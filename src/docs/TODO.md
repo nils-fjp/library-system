@@ -2,18 +2,18 @@
 
 # Att göra först
 
-1. [x] Skapa Book.Book-klassen
-2. [x] Skapa controller-lagret för Book.Book-klassen
-3. [x] Skapa Base.BaseRepository-lagret
-4. [x] Skapa Base.BaseService och Base.BaseController
-5. [ ] Koppla Service-lagret till Base.BaseRepository
+1. [x] Skapa book.book-klassen
+2. [x] Skapa controller-lagret för book.book-klassen
+3. [x] Skapa base.BaseRepository-lagret
+4. [x] Skapa base.BaseService och base.BaseController
+5. [ ] Koppla Service-lagret till base.BaseRepository
 
 
 ## Viktiga klasser:
 
-1. [x] Book.Book
-2. [x] Loan.Loan
-3. [x] Member.Member
+1. [x] book.book
+2. [x] loan.loan
+3. [x] member.member
 
 Mindre viktiga klasser:
 
@@ -65,7 +65,7 @@ MemberService
 
 Class User
 -> Admin extends User
--> Member extends User
+-> member extends User
 
 Abstract classes: X extends Y
 
