@@ -1,10 +1,8 @@
-
-import Member.LibrarianMenuController;
-import Member.Member;
-import Member.MemberService;
-import Member.ReaderMenuController;
-import UI.ANSI;
-import UI.Menu;
+import member.Member;
+import member.MemberController;
+import member.MemberService;
+import ui.ANSI;
+import ui.Menu;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -39,9 +37,9 @@ public class Main {
                 }
                 //case 1 -> ReaderMenuController.showMenu();
                // case 2 -> LibrarianMenuController.showMenu(currentMember);
-                case 1 -> Book.BookController.showMenu();
+                case 1 -> book.BookController.showMenu();
                 //case 4 -> MemberController.showMenu();
-                case 2 -> Loan.LoanController.showMenu();
+                case 2 -> loan.LoanController.showMenu();
                 case 3 -> login();
                 default -> System.out.println("Invalid input");
             }
@@ -72,9 +70,9 @@ public class Main {
             Member currentMember = optionalMember.get();
             System.out.println("Welcome, " + currentMember.getFirstName() + "!");
             if ("LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
-                LibrarianMenuController.showMenu(currentMember);
+                MemberController.showLibrarianMenu(currentMember);
             } else {
-                ReaderMenuController.showMenu(currentMember);
+                MemberController.showReaderMenu(currentMember);
             }
         }catch (SQLException e) {
             System.out.println("Database error: " + e.getMessage());
