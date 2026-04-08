@@ -1,7 +1,7 @@
-package Book;
+package book;
 
-import Base.BaseController;
-import UI.Menu;
+import base.BaseController;
+import ui.Menu;
 
 import java.sql.SQLException;
 import java.util.List;

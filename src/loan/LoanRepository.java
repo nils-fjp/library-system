@@ -1,6 +1,6 @@
-package Loan;
+package loan;
 
-import Base.BaseRepository;
+import base.BaseRepository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

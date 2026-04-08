@@ -1,4 +1,4 @@
-package UI;
+package ui;
 
 @SuppressWarnings("unused")
 public class ANSI {
