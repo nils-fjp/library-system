@@ -33,7 +33,7 @@ public class MemberService extends BaseService<Member, Integer> {
     }
 
     // =========================================================
-    // DTO mappers
+    // DTO mappers (перенести в класс MemberMapper)
     // =========================================================
 
     //Maps Member to MemberProfileDto for reader view
@@ -152,7 +152,7 @@ public class MemberService extends BaseService<Member, Integer> {
     }
 
     // =========================================================
-    // Validation helpers
+    // Validation helpers (подумать про класс MemberSuspendedExaption extends RuntimeException)
     // =========================================================
 
     private void validateEmail(String email) {
@@ -197,6 +197,7 @@ public class MemberService extends BaseService<Member, Integer> {
         }
     }
 
+    // улучшить (добавить проверку введения символов)
     private void validateEmailUniqueness(Member member) throws SQLException {
         Optional<Member> existing = memberRepository.getByEmail(member.getEmail());
 
