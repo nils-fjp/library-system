@@ -2,7 +2,7 @@ package Member;
 
 import java.time.LocalDate;
 
-public class Member {
+public class MemberAdminDto {
     private int id;
     private String firstName;
     private String lastName;
@@ -10,14 +10,13 @@ public class Member {
     private LocalDate membershipDate;
     private String membershipType;
     private String status;
-    private String password;
     private String role;
 
-    public Member() {
+    public MemberAdminDto() {
     }
 
-    public Member(Integer id, String firstName, String lastName, String email,
-                  LocalDate membershipDate, String membershipType, String status, String password, String role) {
+    public MemberAdminDto(Integer id, String firstName, String lastName, String email,
+                  LocalDate membershipDate, String membershipType, String status, String role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -25,7 +24,6 @@ public class Member {
         this.membershipDate = membershipDate;
         this.membershipType = membershipType;
         this.status = status;
-        this.password = password;
         this.role = role;
     }
 
@@ -89,20 +87,4 @@ public class Member {
         return role;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-//    @Override
-//    public String toString() {
-    //        return "Member.Member{" +
-//                "id=" + id +
-//                ", firstName='" + firstName + '\'' +
-//                ", lastName='" + lastName + '\'' +
-//                ", email='" + email + '\'' +
-//                ", membershipDate=" + membershipDate +
-//                ", membershipType='" + membershipType + '\'' +
-//                ", status='" + status + '\'' +
-//                '}';
-//    }
 }

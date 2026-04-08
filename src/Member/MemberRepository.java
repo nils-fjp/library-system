@@ -1,11 +1,13 @@
 package Member;
 
 import Base.BaseRepository;
+import Book.Book;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +31,39 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
                             resultSet.getString("email"),
                             resultSet.getDate("membership_date").toLocalDate(),
                             resultSet.getString("membership_type"),
-                            resultSet.getString("status")
+                            resultSet.getString("status"),
+                            resultSet.getString("password"),
+                            resultSet.getString("role")
+                    );
+
+                    return Optional.of(member);
+                }
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<Member> getByEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM library.members WHERE email = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, email);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Member member = new Member(
+                            resultSet.getInt("id"),
+                            resultSet.getString("first_name"),
+                            resultSet.getString("last_name"),
+                            resultSet.getString("email"),
+                            resultSet.getDate("membership_date").toLocalDate(),
+                            resultSet.getString("membership_type"),
+                            resultSet.getString("status"),
+                            resultSet.getString("password"),
+                            resultSet.getString("role")
                     );
 
                     return Optional.of(member);
@@ -42,7 +76,31 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
 
     @Override
     public List<Member> getAll() throws SQLException {
-        return List.of();
+        ArrayList<Member> members = new ArrayList<>();
+        String sql = "SELECT * FROM library.members";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                members.add(new Member(
+                        resultSet.getInt("id"),
+                        resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("email"),
+                        resultSet.getDate("membership_date").toLocalDate(),
+                        resultSet.getString("membership_type"),
+                        resultSet.getString("status"),
+                        resultSet.getString("password"),
+                        resultSet.getString("role")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        return members;
     }
 
     @Override
@@ -52,7 +110,45 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
 
     @Override
     public void update(Member entity) throws SQLException {
+        String sql = """
+                UPDATE library.members
+                SET first_name = ?, 
+                    last_name = ?, 
+                    email = ?, 
+                    membership_date = ?
+                WHERE id = ?""";
+        try (Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setString(1, entity.getFirstName());
+            statement.setString(2, entity.getLastName());
+            statement.setString(3, entity.getEmail());
+            statement.setDate(4, java.sql.Date.valueOf(entity.getMembershipDate()));
+            statement.setInt(5, entity.getId());
 
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Member was not updated. ");
+            }
+        }
+    }
+
+    public void updatePassword(Integer memberId, String newPassword) throws SQLException {
+        String sql = """
+            UPDATE library.members
+            SET password = ?
+            WHERE id = ?""";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, newPassword);
+            statement.setInt(2, memberId);
+
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Password was not updated.");
+            }
+        }
     }
 
     @Override
