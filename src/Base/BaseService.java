@@ -1,5 +1,7 @@
 package Base;
 
+import Book.Book;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -43,4 +45,6 @@ public abstract class BaseService<T, ID> {
             throw new IllegalArgumentException("id must not be null");
         }
     }
+
+    public abstract List<Book> search(String keyword) throws SQLException;
 }

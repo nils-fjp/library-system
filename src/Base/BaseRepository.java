@@ -57,4 +57,6 @@ public abstract class BaseRepository<T, ID> {
     public abstract void update(T entity) throws SQLException;
 
     public abstract void deleteById(ID id) throws SQLException;
+
+    public abstract List<T> search(String keyword) throws SQLException;
 }

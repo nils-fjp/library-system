@@ -20,11 +20,11 @@ public class BookController extends BaseController {
         bookMenu.setTopTitle("Book Menu");
         // bookMenu.setMidTitle("Subtitle");
         // bookMenu.setMenuInfo("Menu Info");
-        bookMenu.setExitOption("Back to Menu");
-        bookMenu.addMenuOption("Show available books");
-        // bookMenu.addMenuOption("Add new books");
-        bookMenu.addMenuOption("Search Books");
-        bookMenu.addMenuOption("Search by ID");
+        bookMenu.setExitOption("Back to Menu"); // case 0
+        bookMenu.addMenuOption("Show available books"); // case 1
+        bookMenu.addMenuOption("Add new books"); // case 2
+        bookMenu.addMenuOption("Search Books"); // case 3
+        bookMenu.addMenuOption("Search by ID"); // case 4
 
         bookMenu.setPrePrompt("Type a number and press enter...");
         bookMenu.setPromptLine("Enter: ");
@@ -35,12 +35,15 @@ public class BookController extends BaseController {
                     break;
                 }
                 case 1: {
+                    // Shows all available books:
                     try {
                         List<Book> books = bookService.getAll();
                         for (Book book : books) {
-                            System.out.println("Title " + book.getTitle());
-                            System.out.println("Author " + book.getAuthor());
-                            System.out.println("Available copies " + book.getAvailableCopies());
+                            System.out.println("Title: " + book.getTitle());
+                            System.out.println("Author: " + book.getAuthor());
+                            System.out.println("Published: " + book.getYearPublished());
+                            System.out.println("Available copies: " + book.getAvailableCopies());
+                            System.out.println("Language: " + book.getLang());
                             System.out.println("-----");
                         }
                     } catch (SQLException e) {
@@ -53,11 +56,28 @@ public class BookController extends BaseController {
                     break;
                 }
                 case 3: {
-                    System.out.println("wip");
+                    // Search and filter books - Funkar!
+                    System.out.print("Enter keyword here: ");
+                    String keyword = scanner.nextLine();
+
+                    try {
+                        List<Book> books = bookService.search(keyword);
+                        for (Book book : books) {
+                            System.out.println("Title: " + book.getTitle());
+                            System.out.println("Author: " + book.getAuthor());
+                            System.out.println("Published: " + book.getYearPublished());
+                            System.out.println("Available copies: " + book.getAvailableCopies());
+                            //System.out.println("Language: " + book.getLang());
+                            System.out.println("-----");
+                        }
+                    } catch (SQLException e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
+
                     break;
                 }
                 case 4: {
-                    // 2026-04-01 Fungerar!
+                    // Funkar!
                     System.out.print("Enter book ID: ");
                     try {
                         int id = Integer.parseInt(scanner.nextLine());

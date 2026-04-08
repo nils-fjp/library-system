@@ -2,21 +2,24 @@ package Book;
 
 public class Book {
     private String title;
+    private String isbn;
     private int yearPublished;
     private int availableCopies;
+    private int totalCopies;
     private String summary;
     private String lang;
     private int pageCount;
     private String author;
 
     public Book() {
-
     }
 
-    public Book(String title, int yearPublished, int availableCopies, String summary, String lang, int pageCount, String author) {
+    public Book(String title, String isbn, int yearPublished, int availableCopies, int totalCopies, String summary, String lang, int pageCount, String author) {
         this.title = title;
+        this.isbn = isbn;
         this.yearPublished = yearPublished;
         this.availableCopies = availableCopies;
+        this.totalCopies = totalCopies;
         this.summary = summary;
         this.lang = lang;
         this.pageCount = pageCount;
@@ -30,6 +33,14 @@ public class Book {
     public void setTitle(String title) {
         this.title = title;
     }
+
+//    public String getIsbn() {
+//        return isbn;
+//    }
+
+//    public void setIsbn(String isbn) {
+//        this.isbn = isbn;
+//    }
 
     public int getYearPublished() {
         return yearPublished;
@@ -45,6 +56,14 @@ public class Book {
 
     public void setAvailableCopies(int availableCopies) {
         this.availableCopies = availableCopies;
+    }
+
+    public int getTotalCopies() {
+        return totalCopies;
+    }
+
+    public void setTotalCopies(int totalCopies) {
+        this.totalCopies = totalCopies;
     }
 
     public String getSummary() {
