@@ -15,10 +15,8 @@ public class MemberAdminDto {
     public MemberAdminDto() {
     }
 
-    public MemberAdminDto(
-            Integer id, String firstName, String lastName, String email,
-            LocalDate membershipDate, String membershipType, String status, String role
-    ) {
+    public MemberAdminDto(Integer id, String firstName, String lastName, String email,
+                  LocalDate membershipDate, String membershipType, String status, String role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

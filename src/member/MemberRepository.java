@@ -16,10 +16,8 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
     public Optional<Member> getById(Integer id) throws SQLException {
         String sql = "SELECT * FROM library.members WHERE id = ?";
 
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, id);
 
@@ -48,10 +46,8 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
     public Optional<Member> getByEmail(String email) throws SQLException {
         String sql = "SELECT * FROM library.members WHERE email = ?";
 
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, email);
 
@@ -82,11 +78,9 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
         ArrayList<Member> members = new ArrayList<>();
         String sql = "SELECT * FROM library.members";
 
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet resultSet = statement.executeQuery()
-        ) {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
                 members.add(new Member(
@@ -122,10 +116,8 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
                     email = ?, 
                     membership_date = ?
                 WHERE id = ?""";
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
+        try (Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, entity.getFirstName());
             statement.setString(2, entity.getLastName());
             statement.setString(3, entity.getEmail());
@@ -141,14 +133,12 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
 
     public void updatePassword(Integer memberId, String newPassword) throws SQLException {
         String sql = """
-                UPDATE library.members
-                SET password = ?
-                WHERE id = ?""";
+            UPDATE library.members
+            SET password = ?
+            WHERE id = ?""";
 
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-        ) {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, newPassword);
             statement.setInt(2, memberId);

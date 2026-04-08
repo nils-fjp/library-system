@@ -16,10 +16,8 @@ public class Member {
     public Member() {
     }
 
-    public Member(
-            Integer id, String firstName, String lastName, String email,
-            LocalDate membershipDate, String membershipType, String status, String password, String role
-    ) {
+    public Member(Integer id, String firstName, String lastName, String email,
+                  LocalDate membershipDate, String membershipType, String status, String password, String role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -95,16 +93,16 @@ public class Member {
         return password;
     }
 
-    //    @Override
-    //    public String toString() {
+//    @Override
+//    public String toString() {
     //        return "Member.Member{" +
-    //                "id=" + id +
-    //                ", firstName='" + firstName + '\'' +
-    //                ", lastName='" + lastName + '\'' +
-    //                ", email='" + email + '\'' +
-    //                ", membershipDate=" + membershipDate +
-    //                ", membershipType='" + membershipType + '\'' +
-    //                ", status='" + status + '\'' +
-    //                '}';
-    //    }
+//                "id=" + id +
+//                ", firstName='" + firstName + '\'' +
+//                ", lastName='" + lastName + '\'' +
+//                ", email='" + email + '\'' +
+//                ", membershipDate=" + membershipDate +
+//                ", membershipType='" + membershipType + '\'' +
+//                ", status='" + status + '\'' +
+//                '}';
+//    }
 }

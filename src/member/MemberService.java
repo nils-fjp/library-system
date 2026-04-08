@@ -37,7 +37,7 @@ public class MemberService extends BaseService<Member, Integer> {
     // =========================================================
 
     //Maps Member to MemberProfileDto for reader view
-    private MemberProfileDto toProfileDto(Member member) {
+    private MemberProfileDto toProfileDto (Member member) {
         return new MemberProfileDto(
                 member.getFirstName(),
                 member.getLastName(),
@@ -49,7 +49,7 @@ public class MemberService extends BaseService<Member, Integer> {
     }
 
     //Maps Member to MemberAdminDto for Librarian view
-    private MemberAdminDto toAdminDto(Member member) {
+    private MemberAdminDto toAdminDto (Member member) {
         return new MemberAdminDto(
                 member.getId(),
                 member.getFirstName(),
@@ -77,28 +77,28 @@ public class MemberService extends BaseService<Member, Integer> {
     // Reader/profile view methods DTO
     // =========================================================
 
-    public Optional<MemberProfileDto> getProfileById(Integer id) throws SQLException {
-        validateId(id);
-        return memberRepository.getById(id).map(this::toProfileDto);
+    public Optional<MemberProfileDto> getProfileById(Integer id) throws SQLException{
+            validateId(id);
+            return memberRepository.getById(id).map(this::toProfileDto);
     }
 
     // =========================================================
     // Librarian/admin view methods DTO
     // =========================================================
 
-    public Optional<MemberAdminDto> getByEmailForViewForAdmin(String email) throws SQLException {
+    public Optional<MemberAdminDto> getByEmailForViewForAdmin(String email) throws SQLException{
         validateEmail(email);
         Optional<Member> optionalMember = memberRepository.getByEmail(email);
         if (optionalMember.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(toAdminDto(optionalMember.get()));
+        return Optional.of (toAdminDto(optionalMember.get()));
     }
-    // Этот вместо того что выше
-    //    public Optional<MemberAdminDto> getByEmailForViewForAdmin(String email) throws SQLException {
-    //        validateEmail(email);
-    //        return memberRepository.getByEmail(email).map(this::toAdminDto);
-    //    }
+// Этот вместо того что выше
+//    public Optional<MemberAdminDto> getByEmailForViewForAdmin(String email) throws SQLException {
+//        validateEmail(email);
+//        return memberRepository.getByEmail(email).map(this::toAdminDto);
+//    }
 
     public List<MemberAdminDto> getAllForAdminView() throws SQLException {
         List<Member> members = memberRepository.getAll();
@@ -110,7 +110,7 @@ public class MemberService extends BaseService<Member, Integer> {
         return result;
     }
 
-    public Optional<MemberAdminDto> updateMemberByAdmin(Member member) throws SQLException {
+    public Optional<MemberAdminDto> updateMemberByAdmin(Member member) throws SQLException{
         validateMemberForUpdate(member);
         validateEmailUniqueness(member);
         memberRepository.update(member);
@@ -162,7 +162,7 @@ public class MemberService extends BaseService<Member, Integer> {
     }
 
     private void validatePassword(String password) {
-        if (password == null || password.isBlank()) {
+        if (password == null || password.isBlank()){
             throw new IllegalArgumentException("Password cannot be empty.");
         }
     }
@@ -216,5 +216,6 @@ public class MemberService extends BaseService<Member, Integer> {
         validateMembershipType(member.getMembershipType());
         validateStatus(member.getStatus());
     }
+
 
 }
