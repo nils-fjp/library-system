@@ -1,4 +1,4 @@
-package Loan;
+package loan;
 
 import java.time.LocalDate;
 

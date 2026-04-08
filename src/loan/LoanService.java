@@ -1,7 +1,7 @@
-package Loan;
+package loan;
 
-import Base.BaseRepository;
-import Base.BaseService;
+import base.BaseRepository;
+import base.BaseService;
 
 import java.sql.SQLException;
 import java.util.List;
