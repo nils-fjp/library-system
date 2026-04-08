@@ -152,9 +152,126 @@ CREATE TABLE members (
     email           VARCHAR(255) NOT NULL UNIQUE,
     membership_date DATE         NOT NULL,
     membership_type VARCHAR(50)  NOT NULL DEFAULT 'standard',
-    status          VARCHAR(50)  NOT NULL DEFAULT 'active'
+    status VARCHAR(50) NOT NULL DEFAULT 'active',
+    password VARCHAR(50) NOT NULL DEFAULT 'password',
+    role VARCHAR(50) NOT NULL DEFAULT 'READER'
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+-- MEMBERS
+LOCK TABLES `members` WRITE;
+/*!40000 ALTER TABLE `members` DISABLE KEYS */;
+INSERT INTO members (id, first_name, last_name, email, membership_date, membership_type, status)
+VALUES (1, 'Emma', 'Hill', 'emma.hill88@email.com', '2022-10-14', 'standard', 'active'),
+       (2, 'Harper', 'Thomas', 'harper.thomas36@email.com', '2021-02-20', 'premium', 'active'),
+       (3, 'Oliver', 'Turner', 'oliver.turner80@email.com', '2020-10-03', 'standard', 'active'),
+       (4, 'Jackson', 'Roberts', 'jackson.roberts62@email.com', '2018-09-07', 'standard', 'active'),
+       (5, 'Logan', 'Wilson', 'logan.wilson54@email.com', '2020-03-27', 'standard', 'expired'),
+       (6, 'Jack', 'Johnson', 'jack.johnson49@email.com', '2022-01-10', 'premium', 'suspended'),
+       (7, 'Scarlett', 'Torres', 'scarlett.torres73@email.com', '2023-08-20', 'standard', 'active'),
+       (8, 'Abigail', 'Thomas', 'abigail.thomas4@email.com', '2021-07-30', 'standard', 'active'),
+       (9, 'Abigail', 'Brown', 'abigail.brown61@email.com', '2023-12-09', 'standard', 'suspended'),
+       (10, 'Mason', 'Anderson', 'mason.anderson13@email.com', '2020-10-12', 'standard', 'active'),
+       (11, 'Jack', 'Brown', 'jack.brown98@email.com', '2020-06-17', 'premium', 'active'),
+       (12, 'Amelia', 'Thomas', 'amelia.thomas31@email.com', '2021-07-26', 'standard', 'suspended'),
+       (13, 'Emma', 'Torres', 'emma.torres73@email.com', '2019-08-06', 'standard', 'active'),
+       (14, 'Jack', 'King', 'jack.king23@email.com', '2023-07-02', 'standard', 'active'),
+       (15, 'Sophia', 'Harris', 'sophia.harris78@email.com', '2020-06-15', 'standard', 'suspended'),
+       (16, 'Aiden', 'Smith', 'aiden.smith43@email.com', '2020-04-05', 'standard', 'active'),
+       (17, 'Amelia', 'Wright', 'amelia.wright8@email.com', '2018-03-31', 'standard', 'suspended'),
+       (18, 'Charlotte', 'Davis', 'charlotte.davis68@email.com', '2022-02-03', 'standard', 'active'),
+       (19, 'Sofia', 'Phillips', 'sofia.phillips13@email.com', '2021-10-10', 'standard', 'active'),
+       (20, 'Lucas', 'Anderson', 'lucas.anderson94@email.com', '2022-11-25', 'premium', 'expired'),
+       (21, 'Liam', 'Thomas', 'liam.thomas91@email.com', '2022-01-01', 'standard', 'expired'),
+       (22, 'Grace', 'Thomas', 'grace.thomas49@email.com', '2021-06-10', 'standard', 'active'),
+       (23, 'Amelia', 'Smith', 'amelia.smith90@email.com', '2022-05-23', 'standard', 'active'),
+       (24, 'Theodore', 'Wright', 'theodore.wright79@email.com', '2020-06-23', 'standard', 'active'),
+       (25, 'Charlotte', 'Scott', 'charlotte.scott96@email.com', '2018-11-15', 'standard', 'active'),
+       (26, 'Liam', 'Anderson', 'liam.anderson82@email.com', '2018-12-30', 'standard', 'active'),
+       (27, 'James', 'Thompson', 'james.thompson27@email.com', '2020-10-19', 'standard', 'active'),
+       (28, 'Ethan', 'Miller', 'ethan.miller93@email.com', '2018-01-06', 'standard', 'active'),
+       (29, 'Sebastian', 'Green', 'sebastian.green22@email.com', '2022-08-23', 'premium', 'active'),
+       (30, 'Noah', 'Carter', 'noah.carter49@email.com', '2019-02-20', 'premium', 'suspended'),
+       (31, 'Mason', 'Anderson', 'mason.anderson58@email.com', '2018-10-29', 'standard', 'active'),
+       (32, 'Emma', 'Wright', 'emma.wright34@email.com', '2019-03-05', 'standard', 'active'),
+       (33, 'Henry', 'Hill', 'henry.hill21@email.com', '2018-11-04', 'standard', 'active'),
+       (34, 'Theodore', 'Turner', 'theodore.turner62@email.com', '2018-05-07', 'premium', 'expired'),
+       (35, 'Henry', 'Evans', 'henry.evans56@email.com', '2019-10-06', 'standard', 'active'),
+       (36, 'Ava', 'White', 'ava.white25@email.com', '2022-08-04', 'standard', 'expired'),
+       (37, 'Daniel', 'King', 'daniel.king31@email.com', '2019-01-28', 'standard', 'active'),
+       (38, 'Owen', 'Roberts', 'owen.roberts63@email.com', '2019-09-22', 'standard', 'active'),
+       (39, 'James', 'Adams', 'james.adams12@email.com', '2021-04-21', 'premium', 'active'),
+       (40, 'Benjamin', 'Johnson', 'benjamin.johnson27@email.com', '2019-12-01', 'standard', 'active'),
+       (41, 'Aiden', 'Davis', 'aiden.davis40@email.com', '2022-06-17', 'premium', 'active'),
+       (42, 'Ethan', 'Garcia', 'ethan.garcia83@email.com', '2022-05-07', 'standard', 'active'),
+       (43, 'Logan', 'Nguyen', 'logan.nguyen24@email.com', '2022-12-31', 'standard', 'active'),
+       (44, 'Sebastian', 'Baker', 'sebastian.baker34@email.com', '2020-07-15', 'standard', 'suspended'),
+       (45, 'Sophia', 'Taylor', 'sophia.taylor97@email.com', '2019-02-01', 'standard', 'expired'),
+       (46, 'Noah', 'Carter', 'noah.carter53@email.com', '2020-07-20', 'standard', 'active'),
+       (47, 'Victoria', 'Green', 'victoria.green69@email.com', '2023-04-29', 'standard', 'active'),
+       (48, 'Emily', 'Garcia', 'emily.garcia51@email.com', '2018-05-23', 'standard', 'active'),
+       (49, 'Sebastian', 'Thomas', 'sebastian.thomas22@email.com', '2020-05-17', 'standard', 'active'),
+       (50, 'Oliver', 'Adams', 'oliver.adams11@email.com', '2022-11-19', 'standard', 'expired');
+UPDATE members
+   SET password = CASE id WHEN 1 THEN 'QaMzTpLs'
+                          WHEN 2 THEN 'RkVnYeHu'
+                          WHEN 3 THEN 'BxDfJmPo'
+                          WHEN 4 THEN 'NtGaReWi'
+                          WHEN 5 THEN 'YuKpLsAd'
+                          WHEN 6 THEN 'CmZoXvNe'
+                          WHEN 7 THEN 'HjTaQwEr'
+                          WHEN 8 THEN 'PlMnBcXa'
+                          WHEN 9 THEN 'WqErTyUi'
+                          WHEN 10 THEN 'ZvCxBnMa'
+                          WHEN 11 THEN 'AfGtHyJu'
+                          WHEN 12 THEN 'KiLoPmNa'
+                          WHEN 13 THEN 'QsWeRtYu'
+                          WHEN 14 THEN 'EdCvFrTg'
+                          WHEN 15 THEN 'BhNjMkLp'
+                          WHEN 16 THEN 'ZaQsXwEd'
+                          WHEN 17 THEN 'CrFvTgBy'
+                          WHEN 18 THEN 'UnImOkJl'
+                          WHEN 19 THEN 'PaSdFgHj'
+                          WHEN 20 THEN 'LkJhGfDs'
+                          WHEN 21 THEN 'MwQeRtYu'
+                          WHEN 22 THEN 'NxZaSwEd'
+                          WHEN 23 THEN 'VoPlKmJn'
+                          WHEN 24 THEN 'BiHuYtRe'
+                          WHEN 25 THEN 'CtRxEvWq'
+                          WHEN 26 THEN 'DfGhJkLo'
+                          WHEN 27 THEN 'EgTrYuIo'
+                          WHEN 28 THEN 'FvBnMhJk'
+                          WHEN 29 THEN 'GqWeAsZd'
+                          WHEN 30 THEN 'HpLoKiJu'
+                          WHEN 31 THEN 'IrTyUiOp'
+                          WHEN 32 THEN 'JsDfGhJk'
+                          WHEN 33 THEN 'KxCvBnMq'
+                          WHEN 34 THEN 'LwErTyUi'
+                          WHEN 35 THEN 'MzXaScDv'
+                          WHEN 36 THEN 'NyUiOpAs'
+                          WHEN 37 THEN 'ObNmLkJh'
+                          WHEN 38 THEN 'PcVbNmAs'
+                          WHEN 39 THEN 'QlKoMnJi'
+                          WHEN 40 THEN 'RtYuIoPa'
+                          WHEN 41 THEN 'SfGhJkLz'
+                          WHEN 42 THEN 'TdRfTgYh'
+                          WHEN 43 THEN 'UjKiOlPm'
+                          WHEN 44 THEN 'VaQsWeRt'
+                          WHEN 45 THEN 'WmNbVcXz'
+                          WHEN 46 THEN 'XpLoKmJi'
+                          WHEN 47 THEN 'YhGtFrDe'
+                          WHEN 48 THEN 'ZiUxCvBn'
+                          WHEN 49 THEN 'AkSjDhFg'
+                          WHEN 50 THEN 'BrTyGhNu' END
+ WHERE id BETWEEN 1 AND 50;
+
+UPDATE library.members
+   SET role = 'LIBRARIAN'
+ WHERE id = 1;
+
+/*!40000 ALTER TABLE `members` ENABLE KEYS */;
+UNLOCK TABLES;
 
 -- ------------------------------------------------------------
 -- LOANS
@@ -1849,62 +1966,6 @@ INSERT INTO book_categories (book_id, category_id) VALUES
 /*!40000 ALTER TABLE `book_categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
--- MEMBERS
-LOCK TABLES `members` WRITE;
-/*!40000 ALTER TABLE `members` DISABLE KEYS */;
-INSERT INTO members (id, first_name, last_name, email, membership_date, membership_type, status) VALUES
-(1, 'Emma', 'Hill', 'emma.hill88@email.com', '2022-10-14', 'standard', 'active'),
-(2, 'Harper', 'Thomas', 'harper.thomas36@email.com', '2021-02-20', 'premium', 'active'),
-(3, 'Oliver', 'Turner', 'oliver.turner80@email.com', '2020-10-03', 'standard', 'active'),
-(4, 'Jackson', 'Roberts', 'jackson.roberts62@email.com', '2018-09-07', 'standard', 'active'),
-(5, 'Logan', 'Wilson', 'logan.wilson54@email.com', '2020-03-27', 'standard', 'expired'),
-(6, 'Jack', 'Johnson', 'jack.johnson49@email.com', '2022-01-10', 'premium', 'suspended'),
-(7, 'Scarlett', 'Torres', 'scarlett.torres73@email.com', '2023-08-20', 'standard', 'active'),
-(8, 'Abigail', 'Thomas', 'abigail.thomas4@email.com', '2021-07-30', 'standard', 'active'),
-(9, 'Abigail', 'Brown', 'abigail.brown61@email.com', '2023-12-09', 'standard', 'suspended'),
-(10, 'Mason', 'Anderson', 'mason.anderson13@email.com', '2020-10-12', 'standard', 'active'),
-(11, 'Jack', 'Brown', 'jack.brown98@email.com', '2020-06-17', 'premium', 'active'),
-(12, 'Amelia', 'Thomas', 'amelia.thomas31@email.com', '2021-07-26', 'standard', 'suspended'),
-(13, 'Emma', 'Torres', 'emma.torres73@email.com', '2019-08-06', 'standard', 'active'),
-(14, 'Jack', 'King', 'jack.king23@email.com', '2023-07-02', 'standard', 'active'),
-(15, 'Sophia', 'Harris', 'sophia.harris78@email.com', '2020-06-15', 'standard', 'suspended'),
-(16, 'Aiden', 'Smith', 'aiden.smith43@email.com', '2020-04-05', 'standard', 'active'),
-(17, 'Amelia', 'Wright', 'amelia.wright8@email.com', '2018-03-31', 'standard', 'suspended'),
-(18, 'Charlotte', 'Davis', 'charlotte.davis68@email.com', '2022-02-03', 'standard', 'active'),
-(19, 'Sofia', 'Phillips', 'sofia.phillips13@email.com', '2021-10-10', 'standard', 'active'),
-(20, 'Lucas', 'Anderson', 'lucas.anderson94@email.com', '2022-11-25', 'premium', 'expired'),
-(21, 'Liam', 'Thomas', 'liam.thomas91@email.com', '2022-01-01', 'standard', 'expired'),
-(22, 'Grace', 'Thomas', 'grace.thomas49@email.com', '2021-06-10', 'standard', 'active'),
-(23, 'Amelia', 'Smith', 'amelia.smith90@email.com', '2022-05-23', 'standard', 'active'),
-(24, 'Theodore', 'Wright', 'theodore.wright79@email.com', '2020-06-23', 'standard', 'active'),
-(25, 'Charlotte', 'Scott', 'charlotte.scott96@email.com', '2018-11-15', 'standard', 'active'),
-(26, 'Liam', 'Anderson', 'liam.anderson82@email.com', '2018-12-30', 'standard', 'active'),
-(27, 'James', 'Thompson', 'james.thompson27@email.com', '2020-10-19', 'standard', 'active'),
-(28, 'Ethan', 'Miller', 'ethan.miller93@email.com', '2018-01-06', 'standard', 'active'),
-(29, 'Sebastian', 'Green', 'sebastian.green22@email.com', '2022-08-23', 'premium', 'active'),
-(30, 'Noah', 'Carter', 'noah.carter49@email.com', '2019-02-20', 'premium', 'suspended'),
-(31, 'Mason', 'Anderson', 'mason.anderson58@email.com', '2018-10-29', 'standard', 'active'),
-(32, 'Emma', 'Wright', 'emma.wright34@email.com', '2019-03-05', 'standard', 'active'),
-(33, 'Henry', 'Hill', 'henry.hill21@email.com', '2018-11-04', 'standard', 'active'),
-(34, 'Theodore', 'Turner', 'theodore.turner62@email.com', '2018-05-07', 'premium', 'expired'),
-(35, 'Henry', 'Evans', 'henry.evans56@email.com', '2019-10-06', 'standard', 'active'),
-(36, 'Ava', 'White', 'ava.white25@email.com', '2022-08-04', 'standard', 'expired'),
-(37, 'Daniel', 'King', 'daniel.king31@email.com', '2019-01-28', 'standard', 'active'),
-(38, 'Owen', 'Roberts', 'owen.roberts63@email.com', '2019-09-22', 'standard', 'active'),
-(39, 'James', 'Adams', 'james.adams12@email.com', '2021-04-21', 'premium', 'active'),
-(40, 'Benjamin', 'Johnson', 'benjamin.johnson27@email.com', '2019-12-01', 'standard', 'active'),
-(41, 'Aiden', 'Davis', 'aiden.davis40@email.com', '2022-06-17', 'premium', 'active'),
-(42, 'Ethan', 'Garcia', 'ethan.garcia83@email.com', '2022-05-07', 'standard', 'active'),
-(43, 'Logan', 'Nguyen', 'logan.nguyen24@email.com', '2022-12-31', 'standard', 'active'),
-(44, 'Sebastian', 'Baker', 'sebastian.baker34@email.com', '2020-07-15', 'standard', 'suspended'),
-(45, 'Sophia', 'Taylor', 'sophia.taylor97@email.com', '2019-02-01', 'standard', 'expired'),
-(46, 'Noah', 'Carter', 'noah.carter53@email.com', '2020-07-20', 'standard', 'active'),
-(47, 'Victoria', 'Green', 'victoria.green69@email.com', '2023-04-29', 'standard', 'active'),
-(48, 'Emily', 'Garcia', 'emily.garcia51@email.com', '2018-05-23', 'standard', 'active'),
-(49, 'Sebastian', 'Thomas', 'sebastian.thomas22@email.com', '2020-05-17', 'standard', 'active'),
-(50, 'Oliver', 'Adams', 'oliver.adams11@email.com', '2022-11-19', 'standard', 'expired');
-/*!40000 ALTER TABLE `members` ENABLE KEYS */;
-UNLOCK TABLES;
 
 -- LOANS
 LOCK TABLES `loans` WRITE;
