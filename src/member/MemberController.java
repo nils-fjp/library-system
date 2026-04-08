@@ -28,16 +28,20 @@ public class MemberController extends BaseController<Member, Integer> {
         menu.addMenuOption("showManageMembersMenu(testMember)");
         menu.addMenuOption("Print Nils");
 
-        Member testMember = new Member(); // för att kunna testa menyer utan att logga in
+        Member testLibrarian = new Member(); // hämta member 1 genom MemberRepository.getById()
+        // för att kunna testa menyer utan att logga in.
+        // passera testLibratian direkt till metoden för att testa menyerna
+
+        Member testReader = new Member();   // hämta member 2 genom MemberRepository.getById()
 
         while (menu.showMenu()) {
 
             switch (menu.getChoice()) {
 
-                case 1 -> showReaderMenu(testMember);
-                case 2 -> showLibrarianMenu(testMember);
-                case 3 -> showCurrentMemberProfile(testMember);
-                case 4 -> showManageMembersMenu(testMember);
+                case 1 -> showReaderMenu(testReader);
+                case 2 -> showLibrarianMenu(testLibrarian);
+                case 3 -> showCurrentMemberProfile(testReader);
+                case 4 -> showManageMembersMenu(testReader);
                 // print out my name
                 case 5 -> printCommonMemberInfo(
                         "Nils",
