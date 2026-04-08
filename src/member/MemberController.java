@@ -18,55 +18,55 @@ public class MemberController extends BaseController<Member, Integer> {
     private static final Scanner scanner = new Scanner(System.in);
     private static final ConsolePrinter printer = new ConsolePrinter();
 
-    //    public static void showMenu() throws SQLException {
-    //        Menu menu = new Menu();
-    //        menu.setTopTitle("Your Profile");
-    //        menu.addMenuOption("Change your data");
-    //        menu.addMenuOption("Manage Loans");
-    //
-    //        while (menu.showMenu()) {
-    //
-    //            switch (menu.getChoice()) {
-    //
-    //                //case 1 -> BookController.showManageBooksMenu();
-    //                case 1 -> System.out.println("BookController.showManageBooksMenu()");
-    //                case 2 -> LoanController.showManageLoansMenu();
-    //                //case 3 -> MemberController.showManageMembersMenu();
-    //                case 3 -> System.out.println("MemberController.showManageMembersMenu()");
-    //                //case 4 -> AuthorController.showManageAuthorMenu();
-    //                case 4 -> System.out.println("AuthorController.showManageAuthorMenu()");
-    //                //case 5 -> CategoryController.showManageCategoriesMenu();
-    //                case 5 -> System.out.println("ategoryController.showManageCategoriesMenu()");
-    //                case 0 -> { return; }
-    //            }
-    //        }
-    //    }
-    public static void showReaderMenu(Member currentMember) throws SQLException {
-        Menu menu = new Menu();
+//    public static void showMenu() throws SQLException {
+//        Menu menu = new Menu();
+//        menu.setTopTitle("Your Profile");
+//        menu.addMenuOption("Change your data");
+//        menu.addMenuOption("Manage Loans");
+//
+//        while (menu.showMenu()) {
+//
+//            switch (menu.getChoice()) {
+//
+//                //case 1 -> BookController.showManageBooksMenu();
+//                case 1 -> System.out.println("BookController.showManageBooksMenu()");
+//                case 2 -> LoanController.showManageLoansMenu();
+//                //case 3 -> MemberController.showManageMembersMenu();
+//                case 3 -> System.out.println("MemberController.showManageMembersMenu()");
+//                //case 4 -> AuthorController.showManageAuthorMenu();
+//                case 4 -> System.out.println("AuthorController.showManageAuthorMenu()");
+//                //case 5 -> CategoryController.showManageCategoriesMenu();
+//                case 5 -> System.out.println("ategoryController.showManageCategoriesMenu()");
+//                case 0 -> { return; }
+//            }
+//        }
+//    }
+public static void showReaderMenu(Member currentMember) throws SQLException {
+    Menu menu = new Menu();
 
-        menu.setTopTitle("Reader Menu");
-        menu.setMidTitle("Reader");
-        menu.setMenuInfo("Choose section");
-        menu.setExitOption("Back");
-        menu.addMenuOption("Books");
-        menu.addMenuOption("My Loans");
-        menu.addMenuOption("My Profile");
-        menu.setPrePrompt("Type a number and press enter...");
-        menu.setPromptLine("Enter: ");
+    menu.setTopTitle("Reader Menu");
+    menu.setMidTitle("Reader");
+    menu.setMenuInfo("Choose section");
+    menu.setExitOption("Back");
+    menu.addMenuOption("Books");
+    menu.addMenuOption("My Loans");
+    menu.addMenuOption("My Profile");
+    menu.setPrePrompt("Type a number and press enter...");
+    menu.setPromptLine("Enter: ");
 
-        while (menu.showMenu()) {
+    while (menu.showMenu()) {
 
-            switch (menu.getChoice()) {
-                case 1 -> BookController.showMenu();
-                case 2 -> LoanController.showMenu();
-                case 3 -> MemberController.showCurrentMemberProfile(currentMember);
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid input");
+        switch (menu.getChoice()) {
+            case 1 -> BookController.showMenu();
+            case 2 -> LoanController.showMenu();
+            case 3 -> MemberController.showCurrentMemberProfile(currentMember);
+            case 0 -> {
+                return;
             }
+            default -> System.out.println("Invalid input");
         }
     }
+}
 
     public static void showLibrarianMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
@@ -95,7 +95,6 @@ public class MemberController extends BaseController<Member, Integer> {
             }
         }
     }
-
     public static void showCurrentMemberProfile(Member currentMember) {
         MemberService service = new MemberService();
 
@@ -119,7 +118,7 @@ public class MemberController extends BaseController<Member, Integer> {
 
     public static void showManageMembersMenu(Member currentMember) {
         MemberService service = new MemberService();
-        try {
+        try{
             service.validateLibrarianAccess(currentMember);
             Menu menu = new Menu();
 
@@ -149,6 +148,9 @@ public class MemberController extends BaseController<Member, Integer> {
         } catch (IllegalArgumentException e) {
             printer.printError(e.getMessage());
         }
+
+
+
 
     }
 
@@ -188,29 +190,29 @@ public class MemberController extends BaseController<Member, Integer> {
         }
     }
 
-    //    public static void showMemberById() {
-    //        MemberService service = new MemberService();
-    //
-    //        try {
-    //            System.out.print("\tEnter member id: ");
-    //            int id = Integer.parseInt(scanner.nextLine());
-    //
-    //            Optional<Member> optionalMember = service.getById(id);
-    //
-    //            if (optionalMember.isPresent()) {
-    //                printAdminMember(optionalMember.get());
-    //            } else {
-    //                printer.printError("Member not found.");
-    //            }
-    //
-    //        } catch (NumberFormatException e) {
-    //            printer.printError("Invalid input. Enter a number.");
-    //        } catch (IllegalArgumentException e) {
-    //            printer.printError(e.getMessage());
-    //        } catch (SQLException e) {
-    //            printer.printError("Database error: " + e.getMessage());
-    //        }
-    //    }
+//    public static void showMemberById() {
+//        MemberService service = new MemberService();
+//
+//        try {
+//            System.out.print("\tEnter member id: ");
+//            int id = Integer.parseInt(scanner.nextLine());
+//
+//            Optional<Member> optionalMember = service.getById(id);
+//
+//            if (optionalMember.isPresent()) {
+//                printAdminMember(optionalMember.get());
+//            } else {
+//                printer.printError("Member not found.");
+//            }
+//
+//        } catch (NumberFormatException e) {
+//            printer.printError("Invalid input. Enter a number.");
+//        } catch (IllegalArgumentException e) {
+//            printer.printError(e.getMessage());
+//        } catch (SQLException e) {
+//            printer.printError("Database error: " + e.getMessage());
+//        }
+//    }
 
     public static void updateMemberByAdmin() {
         MemberService service = new MemberService();
@@ -250,24 +252,24 @@ public class MemberController extends BaseController<Member, Integer> {
             String membershipDate = scanner.nextLine();
             member.setMembershipDate(
                     membershipDate.isBlank()
-                    ? currentDto.getMembershipDate()
-                    : LocalDate.parse(membershipDate)
+                            ? currentDto.getMembershipDate()
+                            : LocalDate.parse(membershipDate)
             );
 
             System.out.print("\tEnter new membership type [" + currentDto.getMembershipType() + "]: ");
             String membershipType = scanner.nextLine();
             member.setMembershipType(
                     membershipType.isBlank()
-                    ? currentDto.getMembershipType()
-                    : membershipType
+                            ? currentDto.getMembershipType()
+                            : membershipType
             );
 
             System.out.print("\tEnter new status [" + currentDto.getStatus() + "]: ");
             String status = scanner.nextLine();
             member.setStatus(
                     status.isBlank()
-                    ? currentDto.getStatus()
-                    : status
+                            ? currentDto.getStatus()
+                            : status
             );
 
             Optional<MemberAdminDto> updatedMember = service.updateMemberByAdmin(member);
@@ -288,29 +290,29 @@ public class MemberController extends BaseController<Member, Integer> {
         }
     }
 
-    //    private static void printProfileMember(MemberProfileDto member) {
-    //        printer.printHeader("Member Info");
-    //        printer.printField("First name", member.getFirstName());
-    //        printer.printField("Last name", member.getLastName());
-    //        printer.printField("Email", member.getEmail());
-    //        printer.printField("Membership date", member.getMembershipDate());
-    //        printer.printField("Membership type", member.getMembershipType());
-    //        printer.printField("Status", formatStatus(member.getStatus()));
-    //        printer.printFooter();
-    //    }
-    //
-    //    private static void printAdminMember(MemberAdminDto member) {
-    //        printer.printHeader("Member Info");
-    //        printer.printField("Member Id", member.getId());
-    //        printer.printField("First name", member.getFirstName());
-    //        printer.printField("Last name", member.getLastName());
-    //        printer.printField("Email", member.getEmail());
-    //        printer.printField("Membership date", member.getMembershipDate());
-    //        printer.printField("Membership type", member.getMembershipType());
-    //        printer.printField("Status", formatStatus(member.getStatus()));
-    //        printer.printField("Member Role", member.getRole());
-    //        printer.printFooter();
-    //    }
+//    private static void printProfileMember(MemberProfileDto member) {
+//        printer.printHeader("Member Info");
+//        printer.printField("First name", member.getFirstName());
+//        printer.printField("Last name", member.getLastName());
+//        printer.printField("Email", member.getEmail());
+//        printer.printField("Membership date", member.getMembershipDate());
+//        printer.printField("Membership type", member.getMembershipType());
+//        printer.printField("Status", formatStatus(member.getStatus()));
+//        printer.printFooter();
+//    }
+//
+//    private static void printAdminMember(MemberAdminDto member) {
+//        printer.printHeader("Member Info");
+//        printer.printField("Member Id", member.getId());
+//        printer.printField("First name", member.getFirstName());
+//        printer.printField("Last name", member.getLastName());
+//        printer.printField("Email", member.getEmail());
+//        printer.printField("Membership date", member.getMembershipDate());
+//        printer.printField("Membership type", member.getMembershipType());
+//        printer.printField("Status", formatStatus(member.getStatus()));
+//        printer.printField("Member Role", member.getRole());
+//        printer.printFooter();
+//    }
 
     private static void printCommonMemberInfo(
             String firstName,

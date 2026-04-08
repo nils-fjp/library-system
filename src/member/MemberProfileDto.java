@@ -15,10 +15,8 @@ public class MemberProfileDto {
     public MemberProfileDto() {
     }
 
-    public MemberProfileDto(
-            String firstName, String lastName, String email,
-            LocalDate membershipDate, String membershipType, String status
-    ) {
+    public MemberProfileDto(String firstName, String lastName, String email,
+                            LocalDate membershipDate, String membershipType, String status) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -27,9 +25,9 @@ public class MemberProfileDto {
         this.status = status;
     }
 
-    //    public Integer getId() {
-    //        return id;
-    //    }
+//    public Integer getId() {
+//        return id;
+//    }
 
     public String getFirstName() {
         return firstName;
@@ -55,8 +53,8 @@ public class MemberProfileDto {
         return status;
     }
 
-    //    public String getRole() {
-    //        return role;
-    //    }
+//    public String getRole() {
+//        return role;
+//    }
 
 }
