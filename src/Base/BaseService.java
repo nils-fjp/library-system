@@ -38,6 +38,18 @@ public abstract class BaseService<T, ID> {
         }
     }
 
+    // =========================================================
+    // Reader actions - 3. View my profile
+    //                        --> 1. View my profile
+    // =========================================================
+    // 1 showCurrentMemberProfile (MemberController)
+    //    -> 2 getProfileById (MemberService)
+    //       -> 3 validateId (MemberService)
+    //          -> 4 validateId (BaseService) +
+    //       -> 5 getById (MemberRepository)
+    //       -> 6 toProfileDto (MemberMapper)
+    //    -> 7 printProfileMember (MemberController)
+    //    -> 8 printError (ConsolePrinter)
     protected void validateId(ID id) {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null");
