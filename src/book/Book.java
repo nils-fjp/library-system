@@ -8,12 +8,13 @@ public class Book {
     private String lang;
     private int pageCount;
     private String author;
+    private int isbn;
 
     public Book() {
 
     }
 
-    public Book(String title, int yearPublished, int availableCopies, String summary, String lang, int pageCount, String author) {
+    public Book(String title, int yearPublished, int availableCopies, String summary, String lang, int pageCount, String author, int isbn) {
         this.title = title;
         this.yearPublished = yearPublished;
         this.availableCopies = availableCopies;
@@ -21,6 +22,7 @@ public class Book {
         this.lang = lang;
         this.pageCount = pageCount;
         this.author = author;
+        this.isbn = isbn;
     }
 
     public String getTitle() {
@@ -77,5 +79,13 @@ public class Book {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public int getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(int isbn) {
+        this.isbn = isbn;
     }
 }
