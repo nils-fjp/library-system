@@ -1,10 +1,4 @@
 package member;
-
-import book.AuthorController;
-import book.BookController;
-import book.BookRepository;
-import book.CategoryController;
-import loan.LoanController;
 import ui.Menu;
 
 import java.sql.SQLException;
@@ -39,13 +33,6 @@ import java.sql.SQLException;
 
 
 
-import book.AuthorController;
-import book.BookController;
-import book.CategoryController;
-import loan.LoanController;
-import ui.Menu;
-
-import java.sql.SQLException;
 
 public class LibrarianMenuController {
 

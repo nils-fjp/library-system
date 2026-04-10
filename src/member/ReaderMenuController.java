@@ -36,11 +36,11 @@
 //    }
 //}
 
-package Member;
+package member;
 
-import Book.BookController;
-import Loan.LoanController;
-import UI.Menu;
+import book.BookController;
+import loan.LoanController;
+import ui.Menu;
 
 import java.sql.SQLException;
 import java.util.Scanner;

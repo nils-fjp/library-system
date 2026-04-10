@@ -1,4 +1,4 @@
-package Member;
+package member;
 
 public class MembershipExpiredException extends RuntimeException {
     public MembershipExpiredException() {

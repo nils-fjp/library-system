@@ -1,20 +1,8 @@
-
-//import book.BookController;
-//import Member.LibrarianMenuController;
-//import Member.Member;
-//import Member.MemberService;
-//import Member.ReaderMenuController;
-//import UI.ANSI;
-//import UI.AuthController;
-//import UI.Menu;
-import member.Member;
-import member.MemberController;
-import member.MemberService;
 import ui.ANSI;
+import ui.AuthController;
 import ui.Menu;
 
 import java.sql.SQLException;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
@@ -28,10 +16,7 @@ public class Main {
         mainMenu.setMidTitle("Test Menu");
         mainMenu.setMenuInfo("Select which menu to open");
         mainMenu.setExitOption("Exit program");
-        //mainMenu.addMenuOption("ReaderMenuController.showMenu()");
-        // mainMenu.addMenuOption("LibrarianMenuController.showMenu()");
         mainMenu.addMenuOption("BookController.showMenu()");
-        // mainMenu.addMenuOption("MemberController.showMenu()");
         mainMenu.addMenuOption("LoanController.showMenu()");
         mainMenu.addMenuOption("Search Books");
         mainMenu.addMenuOption("Log in");
@@ -45,11 +30,8 @@ public class Main {
                     System.out.println("Exiting application...");
                     return;
                 }
-                //case 1 -> ReaderMenuController.showMenu();
-                // case 2 -> LibrarianMenuController.showMenu(currentMember);
-                case 1 -> Book.BookController.showMenu();
-                //case 4 -> MemberController.showMenu();
-                case 2 -> Loan.LoanController.showMenu();
+                case 1 -> book.BookController.showMenu();
+                case 2 -> loan.LoanController.showMenu();
                 case 3 -> System.out.println(("Book Menu\n" +
                         "1. View Books -> BookController.showAllBooks()\n" +
                         "2. Search Books -> BookController.searchBooks()\n" +

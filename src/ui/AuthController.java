@@ -1,9 +1,9 @@
-package UI;
+package ui;
 
-import Member.Member;
-import Member.MemberService;
-import Member.LibrarianMenuController;
-import Member.ReaderMenuController;
+import member.Member;
+import member.MemberService;
+import member.LibrarianMenuController;
+import member.ReaderMenuController;
 
 import java.sql.SQLException;
 import java.util.Optional;
