@@ -1,11 +1,11 @@
-package Member;
+package member;
 
-import Book.AuthorController;
-import Book.BookController;
-import Book.BookRepository;
-import Book.CategoryController;
-import Loan.LoanController;
-import UI.Menu;
+import book.AuthorController;
+import book.BookController;
+import book.BookRepository;
+import book.CategoryController;
+import loan.LoanController;
+import ui.Menu;
 
 import java.sql.SQLException;
 //
@@ -39,11 +39,11 @@ import java.sql.SQLException;
 
 
 
-import Book.AuthorController;
-import Book.BookController;
-import Book.CategoryController;
-import Loan.LoanController;
-import UI.Menu;
+import book.AuthorController;
+import book.BookController;
+import book.CategoryController;
+import loan.LoanController;
+import ui.Menu;
 
 import java.sql.SQLException;
 

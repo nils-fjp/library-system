@@ -23,12 +23,12 @@ public class MemberController extends BaseController<Member, Integer> {
     private static final ConsolePrinter printer = new ConsolePrinter();
 
 
-
     // =========================================================
     // Reader actions - 3. My profile
     //                   --> 1. View my profile
     //                       2. Change password
     // =========================================================
+
     /**
      * Shows profile information for the currently authorized member.
      * Uses MemberService to load profile data by member id.
@@ -65,16 +65,14 @@ public class MemberController extends BaseController<Member, Integer> {
     }
 
 
-
     // =========================================================
     // Reader actions - 3. My profile
     //                       1. View my profile
     //                   --> 2. Change password
     // =========================================================
-    public static void changePass(Member currentMember){
+    public static void changePass(Member currentMember) {
 
     }
-
 
 
     // =========================================================
@@ -122,65 +120,65 @@ public class MemberController extends BaseController<Member, Integer> {
         }
 
 
-    // =========================================================
-    // Librarian/admin member actions
-    // =========================================================
+        // =========================================================
+        // Librarian/admin member actions
+        // =========================================================
 
-    /**
-     * Loads and displays all members in admin view.
-     * Uses MemberService.getAllForAdminView().
-     * Prints every member through printAdminMember().
-     */
-    public static void showAllMembersForAdmin() {
-        MemberService service = new MemberService();
+        /**
+         * Loads and displays all members in admin view.
+         * Uses MemberService.getAllForAdminView().
+         * Prints every member through printAdminMember().
+         */
+        public static void showAllMembersForAdmin () {
+            MemberService service = new MemberService();
 
-        try {
-            List<MemberAdminDto> members = service.getAllForAdminView();
+            try {
+                List<MemberAdminDto> members = service.getAllForAdminView();
 
-            if (members.isEmpty()) {
-                printer.printError("No readers found.");
-                return;
+                if (members.isEmpty()) {
+                    printer.printError("No readers found.");
+                    return;
+                }
+
+                for (MemberAdminDto member : members) {
+                    printAdminMember(member);
+                }
+
+            } catch (SQLException e) {
+                printer.printError("Database error: " + e.getMessage());
             }
-
-            for (MemberAdminDto member : members) {
-                printAdminMember(member);
-            }
-
-        } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
         }
-    }
 
-    /**
-     * Finds one member by email and displays it in admin view.
-     * Uses findMemberByEmail() to read input and MemberService to search member data.
-     * Prints result through printAdminMember().
-     */
-    public static void showMemberByEmail() {
-        MemberService service = new MemberService();
+        /**
+         * Finds one member by email and displays it in admin view.
+         * Uses findMemberByEmail() to read input and MemberService to search member data.
+         * Prints result through printAdminMember().
+         */
+        public static void showMemberByEmail () {
+            MemberService service = new MemberService();
 
-        try {
-            Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+            try {
+                Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
 
-            if (optionalMember.isEmpty()) {
-                printer.printError("Member not found.");
-                return;
+                if (optionalMember.isEmpty()) {
+                    printer.printError("Member not found.");
+                    return;
+                }
+
+                printAdminMember(optionalMember.get());
+
+            } catch (IllegalArgumentException e) {
+                printer.printError(e.getMessage());
+            } catch (SQLException e) {
+                printer.printError("Database error: " + e.getMessage());
             }
-
-            printAdminMember(optionalMember.get());
-
-        } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
-        } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
         }
-    }
 
-    /**
-     * Updates member data in librarian/admin flow.
-     * Uses findMemberByEmail() to locate member, buildUpdatedMemberFromInput() to collect changes,
-     * and MemberService.updateMemberByAdmin() to save updated data.
-     */
+        /**
+         * Updates member data in librarian/admin flow.
+         * Uses findMemberByEmail() to locate member, buildUpdatedMemberFromInput() to collect changes,
+         * and MemberService.updateMemberByAdmin() to save updated data.
+         */
 //1. найти участника
 //2. показать текущие данные
 //3. собрать новые данные
@@ -188,204 +186,205 @@ public class MemberController extends BaseController<Member, Integer> {
 //5. показать результат
 //Это и есть controller flow.
 
-    public static void updateMemberByAdmin() {
-        MemberService service = new MemberService();
-
-        try {
-            Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
-
-            if (optionalMember.isEmpty()) {
-                printer.printError("Member not found.");
-                return;
-            }
-
-            MemberAdminDto currentDto = optionalMember.get();
-
-            printer.printSuccess("Current member data:");
-            printAdminMember(currentDto);
-
-            UpdateMemberDto updateDto = buildUpdatedMemberFromInput(currentDto);
-            Optional<MemberAdminDto> updatedDto = service.updateMemberByAdmin(updateDto);
-
-            if (updatedDto.isEmpty()) {
-                printer.printError("Member was not updated.");
-                return;
-            }
-
-            printer.printSuccess("Member updated successfully.");
-            printAdminMember(updatedDto.get());
-
-        } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
-        } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
-        }
-    }
-
-    // =========================================================
-    // Input helper methods
-    // =========================================================
-
-    /**
-     * Reads member email from console and requests member data from MemberService.
-     * Returns admin DTO if member exists.
-     */
-    private static Optional<MemberAdminDto> findMemberByEmail(MemberService service) throws SQLException {
-        String email = readRequiredInput("Enter member email");
-        return service.getByEmailForViewForAdmin(email);
-    }
-
-    /**
-     * Builds UpdateMemberDto from console input.
-     * Keeps old values when user enters empty input.
-     * Used in admin member update flow.
-     */
-    private static UpdateMemberDto buildUpdatedMemberFromInput(MemberAdminDto currentDto) {
-        UpdateMemberDto dto = new UpdateMemberDto();
-        dto.setId(currentDto.getId());
-
-        dto.setFirstName(readUpdatedString("Enter new first name", currentDto.getFirstName()));
-        dto.setLastName(readUpdatedString("Enter new last name", currentDto.getLastName()));
-        dto.setEmail(readUpdatedString("Enter new email", currentDto.getEmail()));
-        dto.setMembershipDate(readUpdatedDate("Enter new membership date", currentDto.getMembershipDate()));
-        dto.setMembershipType(readUpdatedString("Enter new membership type", currentDto.getMembershipType()));
-        dto.setStatus(readUpdatedString("Enter new status", currentDto.getStatus()));
-
-        return dto;
-    }
-
-    /**
-     * Reads required text input from console.
-     * Repeats until user enters non-empty value.
-     */
-    private static String readRequiredInput(String label) {
-        while (true) {
-            System.out.print("\t" + label + ": ");
-            String input = scanner.nextLine().trim();
-
-            if (!input.isBlank()) {
-                return input;
-            }
-
-            printer.printError("Input cannot be empty.");
-        }
-    }
-
-    /**
-     * Reads editable string value from console.
-     * Returns current value if input is empty.
-     */
-    private static String readUpdatedString(String label, String currentValue) {
-        System.out.print("\t" + label + " [" + currentValue + "]: ");
-        String input = scanner.nextLine().trim();
-        return input.isBlank() ? currentValue : input;
-    }
-
-    /**
-     * Reads editable LocalDate value from console.
-     * Returns current value if input is empty.
-     * Repeats until user enters date in yyyy-mm-dd format.
-     */
-    private static LocalDate readUpdatedDate(String label, LocalDate currentValue) {
-        while (true) {
-            System.out.print("\t" + label + " [" + currentValue + "] (yyyy-mm-dd): ");
-            String input = scanner.nextLine().trim();
-
-            if (input.isBlank()) {
-                return currentValue;
-            }
+        public static void updateMemberByAdmin () {
+            MemberService service = new MemberService();
 
             try {
-                return LocalDate.parse(input);
-            } catch (java.time.format.DateTimeParseException e) {
-                printer.printError("Invalid date format. Use yyyy-mm-dd.");
+                Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+
+                if (optionalMember.isEmpty()) {
+                    printer.printError("Member not found.");
+                    return;
+                }
+
+                MemberAdminDto currentDto = optionalMember.get();
+
+                printer.printSuccess("Current member data:");
+                printAdminMember(currentDto);
+
+                UpdateMemberDto updateDto = buildUpdatedMemberFromInput(currentDto);
+                Optional<MemberAdminDto> updatedDto = service.updateMemberByAdmin(updateDto);
+
+                if (updatedDto.isEmpty()) {
+                    printer.printError("Member was not updated.");
+                    return;
+                }
+
+                printer.printSuccess("Member updated successfully.");
+                printAdminMember(updatedDto.get());
+
+            } catch (IllegalArgumentException e) {
+                printer.printError(e.getMessage());
+            } catch (SQLException e) {
+                printer.printError("Database error: " + e.getMessage());
             }
         }
-    }
 
-    // =========================================================
-    // Output helper methods
-    // =========================================================
+        // =========================================================
+        // Input helper methods
+        // =========================================================
 
-    /**
-     * Prints fields shared by profile and admin member views.
-     * Used by printProfileMember() and printAdminMember().
-     */
-    private static void printCommonMemberInfo(
-            String firstName,
-            String lastName,
-            String email,
-            LocalDate membershipDate,
-            String membershipType,
-            String status
-    ) {
-        printer.printField("First name", firstName);
-        printer.printField("Last name", lastName);
-        printer.printField("Email", email);
-        printer.printField("Membership date", membershipDate);
-        printer.printField("Membership type", membershipType);
-        printer.printField("Status", formatStatus(status));
-    }
-
-    /**
-     * Prints current member profile information.
-     * Uses printCommonMemberInfo() for shared fields.
-     */
-    private static void printProfileMember(MemberProfileDto member) {
-        printer.printHeader("My Profile");
-
-        printCommonMemberInfo(
-                member.getFirstName(),
-                member.getLastName(),
-                member.getEmail(),
-                member.getMembershipDate(),
-                member.getMembershipType(),
-                member.getStatus()
-        );
-
-        printer.printFooter();
-    }
-
-    /**
-     * Prints member information in admin view.
-     * Uses printCommonMemberInfo() and adds admin-only fields like id and role.
-     */
-    private static void printAdminMember(MemberAdminDto member) {
-        printer.printHeader("Member Info");
-        printer.printField("Member Id", member.getId());
-
-        printCommonMemberInfo(
-                member.getFirstName(),
-                member.getLastName(),
-                member.getEmail(),
-                member.getMembershipDate(),
-                member.getMembershipType(),
-                member.getStatus()
-        );
-
-        printer.printField("Member Role", member.getRole());
-        printer.printFooter();
-    }
-
-    // =========================================================
-    // Formatting helpers
-    // =========================================================
-
-    /**
-     * Formats member status with ANSI colors for console output.
-     * Used in profile and admin member printing.
-     */
-    private static String formatStatus(String status) {
-        if (status == null) {
-            return ANSI.BRIGHT_BLACK + "[UNKNOWN]" + ANSI.DEFAULT_FG;
+        /**
+         * Reads member email from console and requests member data from MemberService.
+         * Returns admin DTO if member exists.
+         */
+        private static Optional<MemberAdminDto> findMemberByEmail (MemberService service) throws SQLException {
+            String email = readRequiredInput("Enter member email");
+            return service.getByEmailForViewForAdmin(email);
         }
 
-        return switch (status.toLowerCase()) {
-            case "active" -> ANSI.BRIGHT_GREEN + ANSI.BOLD + "[ACTIVE]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
-            case "suspended" -> ANSI.BRIGHT_YELLOW + ANSI.BOLD + "[SUSPENDED]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
-            case "expired" -> ANSI.BRIGHT_RED + ANSI.BOLD + "[EXPIRED]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
-            default -> ANSI.BRIGHT_BLACK + "[" + status.toUpperCase() + "]" + ANSI.DEFAULT_FG;
-        };
+        /**
+         * Builds UpdateMemberDto from console input.
+         * Keeps old values when user enters empty input.
+         * Used in admin member update flow.
+         */
+        private static UpdateMemberDto buildUpdatedMemberFromInput (MemberAdminDto currentDto){
+            UpdateMemberDto dto = new UpdateMemberDto();
+            dto.setId(currentDto.getId());
+
+            dto.setFirstName(readUpdatedString("Enter new first name", currentDto.getFirstName()));
+            dto.setLastName(readUpdatedString("Enter new last name", currentDto.getLastName()));
+            dto.setEmail(readUpdatedString("Enter new email", currentDto.getEmail()));
+            dto.setMembershipDate(readUpdatedDate("Enter new membership date", currentDto.getMembershipDate()));
+            dto.setMembershipType(readUpdatedString("Enter new membership type", currentDto.getMembershipType()));
+            dto.setStatus(readUpdatedString("Enter new status", currentDto.getStatus()));
+
+            return dto;
+        }
+
+        /**
+         * Reads required text input from console.
+         * Repeats until user enters non-empty value.
+         */
+        private static String readRequiredInput (String label){
+            while (true) {
+                System.out.print("\t" + label + ": ");
+                String input = scanner.nextLine().trim();
+
+                if (!input.isBlank()) {
+                    return input;
+                }
+
+                printer.printError("Input cannot be empty.");
+            }
+        }
+
+        /**
+         * Reads editable string value from console.
+         * Returns current value if input is empty.
+         */
+        private static String readUpdatedString (String label, String currentValue){
+            System.out.print("\t" + label + " [" + currentValue + "]: ");
+            String input = scanner.nextLine().trim();
+            return input.isBlank() ? currentValue : input;
+        }
+
+        /**
+         * Reads editable LocalDate value from console.
+         * Returns current value if input is empty.
+         * Repeats until user enters date in yyyy-mm-dd format.
+         */
+        private static LocalDate readUpdatedDate (String label, LocalDate currentValue){
+            while (true) {
+                System.out.print("\t" + label + " [" + currentValue + "] (yyyy-mm-dd): ");
+                String input = scanner.nextLine().trim();
+
+                if (input.isBlank()) {
+                    return currentValue;
+                }
+
+                try {
+                    return LocalDate.parse(input);
+                } catch (java.time.format.DateTimeParseException e) {
+                    printer.printError("Invalid date format. Use yyyy-mm-dd.");
+                }
+            }
+        }
+
+        // =========================================================
+        // Output helper methods
+        // =========================================================
+
+        /**
+         * Prints fields shared by profile and admin member views.
+         * Used by printProfileMember() and printAdminMember().
+         */
+        private static void printCommonMemberInfo (
+                String firstName,
+                String lastName,
+                String email,
+                LocalDate membershipDate,
+                String membershipType,
+                String status
+    ){
+            printer.printField("First name", firstName);
+            printer.printField("Last name", lastName);
+            printer.printField("Email", email);
+            printer.printField("Membership date", membershipDate);
+            printer.printField("Membership type", membershipType);
+            printer.printField("Status", formatStatus(status));
+        }
+
+        /**
+         * Prints current member profile information.
+         * Uses printCommonMemberInfo() for shared fields.
+         */
+        private static void printProfileMember (MemberProfileDto member){
+            printer.printHeader("My Profile");
+
+            printCommonMemberInfo(
+                    member.getFirstName(),
+                    member.getLastName(),
+                    member.getEmail(),
+                    member.getMembershipDate(),
+                    member.getMembershipType(),
+                    member.getStatus()
+            );
+
+            printer.printFooter();
+        }
+
+        /**
+         * Prints member information in admin view.
+         * Uses printCommonMemberInfo() and adds admin-only fields like id and role.
+         */
+        private static void printAdminMember (MemberAdminDto member){
+            printer.printHeader("Member Info");
+            printer.printField("Member Id", member.getId());
+
+            printCommonMemberInfo(
+                    member.getFirstName(),
+                    member.getLastName(),
+                    member.getEmail(),
+                    member.getMembershipDate(),
+                    member.getMembershipType(),
+                    member.getStatus()
+            );
+
+            printer.printField("Member Role", member.getRole());
+            printer.printFooter();
+        }
+
+        // =========================================================
+        // Formatting helpers
+        // =========================================================
+
+        /**
+         * Formats member status with ANSI colors for console output.
+         * Used in profile and admin member printing.
+         */
+        private static String formatStatus (String status){
+            if (status == null) {
+                return ANSI.BRIGHT_BLACK + "[UNKNOWN]" + ANSI.DEFAULT_FG;
+            }
+
+            return switch (status.toLowerCase()) {
+                case "active" -> ANSI.BRIGHT_GREEN + ANSI.BOLD + "[ACTIVE]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
+                case "suspended" -> ANSI.BRIGHT_YELLOW + ANSI.BOLD + "[SUSPENDED]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
+                case "expired" -> ANSI.BRIGHT_RED + ANSI.BOLD + "[EXPIRED]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
+                default -> ANSI.BRIGHT_BLACK + "[" + status.toUpperCase() + "]" + ANSI.DEFAULT_FG;
+            };
+        }
     }
 }
 
