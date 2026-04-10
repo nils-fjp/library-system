@@ -75,7 +75,7 @@ public static void showReaderMenu(Member currentMember) throws SQLException {
 
         switch (menu.getChoice()) {
             case 1 -> BookController.showMenu();
-            case 2 -> LoanController.showMenu();
+            case 2 -> LoanController.showMenu(currentMember);
             case 3 -> showCurrentMemberProfile(currentMember);
             case 0 -> {
                 return;
@@ -100,7 +100,7 @@ public static void showReaderMenu(Member currentMember) throws SQLException {
 
                 //case 1 -> BookController.showManageBooksMenu();
                 case 1 -> System.out.println("BookController.showManageBooksMenu()");
-                case 2 -> LoanController.showManageLoansMenu();
+                case 2 -> LoanController.showManageLoansMenu(currentMember);
                 case 3 -> MemberController.showManageMembersMenu(currentMember);
                 //case 4 -> AuthorController.showManageAuthorMenu();
                 case 4 -> System.out.println("AuthorController.showManageAuthorMenu()");

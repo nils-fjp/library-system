@@ -1,6 +1,7 @@
 package loan;
 
 import base.BaseController;
+import member.Member;
 import ui.Menu;
 
 import java.util.ArrayList;
@@ -10,6 +11,10 @@ import java.util.Scanner;
 public class LoanController extends BaseController {
     // Main » LoanController.showMenu()
     public static void showMenu() {
+        showMenu(null);
+    }
+
+    public static void showMenu(Member currentMember) {
         Menu loanMenu = new Menu();
         loanMenu.setTopTitle("Main » Loan Menu");
         loanMenu.setMidTitle("Loan Menu");
@@ -27,16 +32,16 @@ public class LoanController extends BaseController {
                 case 0 -> {
                 }
                 case 1 -> {
-                    showMyLoansMenu();
+                    showMyLoansMenu(currentMember);
                 }
                 case 2 -> {
-                    showActiveLoansMenu();
+                    showActiveLoansMenu(currentMember);
                 }
                 case 3 -> {
-                    showLoanHistoryMenu();
+                    showLoanHistoryMenu(currentMember);
                 }
                 case 4 -> {
-                    showManageLoansMenu();
+                    showManageLoansMenu(currentMember);
                 }
                 default -> {
                     loanMenu.setMenuInfo("Invalid Input!");
@@ -46,7 +51,7 @@ public class LoanController extends BaseController {
     }
 
     // Reader Menu » My Loans
-    public static void showMyLoansMenu() {
+    public static void showMyLoansMenu(Member currentMember) {
         Menu myLoansMenu = new Menu(
                 "Main Menu » My Loans",
                 "My Loans",
@@ -67,12 +72,12 @@ public class LoanController extends BaseController {
                 case 1 -> {
                     // go forward to:
                     // Reader Menu » My Loans » Active Loans
-                    showActiveLoansMenu();
+                    showActiveLoansMenu(currentMember);
                 }
                 case 2 -> {
                     // go forward to:
                     // Reader Menu » My Loans » Loan History
-                    showLoanHistoryMenu();
+                    showLoanHistoryMenu(currentMember);
                 }
                 default -> {
                     myLoansMenu.setMenuInfo("Invalid Input!");
@@ -82,7 +87,7 @@ public class LoanController extends BaseController {
     }
 
     // Reader Menu » My Loans » Active Loans
-    public static void showActiveLoansMenu() {
+    public static void showActiveLoansMenu(Member currentMember) {
         Menu activeLoansMenu = new Menu(
                 "My Loans » Active Loans",
                 "My Active Loans",
@@ -115,7 +120,7 @@ public class LoanController extends BaseController {
     }
 
     // Reader Menu » My Loans » Loan History
-    public static void showLoanHistoryMenu() {
+    public static void showLoanHistoryMenu(Member currentMember) {
         Menu loanHistoryMenu = new Menu(
                 "My Loans » Loan History",
                 "My Loan History",
@@ -145,7 +150,7 @@ public class LoanController extends BaseController {
     }
 
     // Librarian Menu » Manage Loans
-    public static void showManageLoansMenu() {
+    public static void showManageLoansMenu(Member currentMember) {
         Menu manageLoansMenu = new Menu(
                 "Librarian Menu » Manage Loans",
                 "Manage Loans",
