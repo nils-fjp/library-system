@@ -4,6 +4,7 @@ src/database.properties
 ### IDE files ###
 # IntelliJ IDEA
 .idea/*
+src/.idea/*
 !.idea/libraries/
 .idea/libraries/*
 #!.idea/libraries/mysql_connector_j_9_6_0.xml
