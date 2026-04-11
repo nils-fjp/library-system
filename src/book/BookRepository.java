@@ -53,7 +53,6 @@ public class BookRepository extends BaseRepository<Book, Integer> {
     // Get all available books
     @Override
     public ArrayList<Book> getAll() throws SQLException {
-        //return List.of();
 
         ArrayList<Book> books = new ArrayList<>();
 
@@ -84,8 +83,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                 "JOIN authors a ON a.id = ba.author_id " +
                 "WHERE b.title LIKE ? " +
                 "OR CONCAT(a.first_name, ' ', a.last_name) LIKE ? " +
-                "OR CAST(b.year_published AS CHAR) LIKE ? " + // CAST konverterar till en annan datatyp
-                "AND b.available_copies != 0 ";
+                "OR CAST(b.year_published AS CHAR) LIKE ? "; // CAST konverterar till en annan datatyp
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -111,7 +109,6 @@ public class BookRepository extends BaseRepository<Book, Integer> {
             book.setTitle(resultSet.getString("title"));
             book.setYearPublished(resultSet.getInt("year_published"));
             book.setAvailableCopies(resultSet.getInt("available_copies"));
-            //book.setLang(resultSet.getString("language"));
             book.setAuthor(resultSet.getString("author"));
             books.add(book);
         }
