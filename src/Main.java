@@ -1,11 +1,8 @@
-import member.Member;
-import member.MemberController;
-import member.MemberService;
 import ui.ANSI;
+import ui.AuthController;
 import ui.Menu;
 
 import java.sql.SQLException;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
@@ -24,6 +21,7 @@ public class Main {
         mainMenu.addMenuOption("BookController.showMenu()");
         // mainMenu.addMenuOption("MemberController.showMenu()");
         mainMenu.addMenuOption("LoanController.showMenu()");
+        mainMenu.addMenuOption("Search Books");
         mainMenu.addMenuOption("Log in");
         mainMenu.setPrePrompt("Type a number and press enter...");
         mainMenu.setPromptLine("Enter: ");
@@ -35,49 +33,23 @@ public class Main {
                     System.out.println("Exiting application...");
                     return;
                 }
-                //case 1 -> ReaderMenuController.showMenu();
-                // case 2 -> LibrarianMenuController.showMenu(currentMember);
-                case 1 -> book.BookController.showReaderMenu();
-                case 2 -> book.BookController.showLibrarianMenu();
-                //case 4 -> MemberController.showMenu();
-                case 3 -> loan.LoanController.showMenu();
-                case 4 -> login();
+                case 1 -> book.BookController.showMenu();
+                case 2 -> loan.LoanController.showMenu();
+                case 3 -> System.out.println(("Book Menu\n" +
+                        "1. View Books -> BookController.showAllBooks()\n" +
+                        "2. Search Books -> BookController.searchBooks()\n" +
+                        "3. Search Authors -> BookController.searchAuthors()\n" +
+                        "0. Back"));
+                case 4 -> AuthController.login();
                 default -> System.out.println("Invalid input");
             }
         }
     }
+}
 
-    public static void login() {
-        MemberService memberService = new MemberService();
 
-        try {
-            System.out.print("Enter email: ");
-            String email = scanner.nextLine();
-
-            System.out.print("Enter password: ");
-            String password = scanner.nextLine();
-
-            Optional<Member> optionalMember = memberService.authenticate(email, password);
-
-            if (optionalMember.isEmpty()) {
-                System.out.println("Invalid email or password.");
-                return;
-            }
 
 //          LIBRARIAN emma.hill88@email.com
 //                    QaMzTpLs
 //            READER ava.white25@email.com
 //                   NyUiOpAs
-
-            Member currentMember = optionalMember.get();
-            System.out.println("Welcome, " + currentMember.getFirstName() + "!");
-            if ("LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
-                MemberController.showLibrarianMenu(currentMember);
-            } else {
-                MemberController.showReaderMenu(currentMember);
-            }
-        } catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
-        }
-    }
-}
