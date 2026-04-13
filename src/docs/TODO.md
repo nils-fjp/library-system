@@ -16,8 +16,8 @@
 - [x] `BookRepository.getAll()` can list available books.
 - [x] `BookRepository.getById()` exists, though the SQL still has a noted issue/comment.
 - [x] `BookController` can show available books and fetch a book by ID.
-- [ ] Search books is still not implemented.
-- [ ] Search by author is still not implemented.
+- [x] Search books is still not implemented.
+- [x] Search by author is still not implemented.
 - [ ] Librarian book management is still not implemented.
 - [ ] Create/update/delete book persistence is still not implemented.
 
