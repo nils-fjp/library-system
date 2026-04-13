@@ -43,6 +43,8 @@ public class Main {
                 case 4 -> AuthController.login();
                 default -> System.out.println("Invalid input");
             }
+        }catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
         }
     }
 }
