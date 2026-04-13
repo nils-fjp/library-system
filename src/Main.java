@@ -16,7 +16,10 @@ public class Main {
         mainMenu.setMidTitle("Test Menu");
         mainMenu.setMenuInfo("Select which menu to open");
         mainMenu.setExitOption("Exit program");
+        //mainMenu.addMenuOption("ReaderMenuController.showMenu()");
+        // mainMenu.addMenuOption("LibrarianMenuController.showMenu()");
         mainMenu.addMenuOption("BookController.showMenu()");
+        // mainMenu.addMenuOption("MemberController.showMenu()");
         mainMenu.addMenuOption("LoanController.showMenu()");
         mainMenu.addMenuOption("Search Books");
         mainMenu.addMenuOption("Log in");
