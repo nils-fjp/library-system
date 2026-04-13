@@ -1,9 +1,6 @@
 package ui;
 
-import member.Member;
-import member.MemberService;
-import member.LibrarianMenuController;
-import member.ReaderMenuController;
+import member.*;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -31,9 +28,11 @@ public class AuthController {
             Member currentMember = optionalMember.get();
             System.out.println("Welcome, " + currentMember.getFirstName() + "!");
             if ("LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
-                LibrarianMenuController.showMenu(currentMember);
+                //MemberController.showLibrarianMenu(currentMember);
+                LibrarianMenuController.showLibrarianMenu(currentMember);
             } else {
-                ReaderMenuController.showMenu(currentMember);
+                //MemberController.showReaderMenu(currentMember);
+                ReaderMenuController.showReaderMenu(currentMember);
             }
         }catch (SQLException e) {
             System.out.println("Database error: " + e.getMessage());
