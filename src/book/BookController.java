@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class BookController extends BaseController {
 
     // Barrower Menu
-    public static void showMenu() throws SQLException {
+    public static void showReaderMenu() throws SQLException {
 
         Menu bookMenu = new Menu();
         BookService bookService = new BookService();
@@ -88,7 +88,7 @@ public class BookController extends BaseController {
     }
 
     // Librarian Menu
-    public static void librarianMenu() throws SQLException {
+    public static void showLibrarianMenu() throws SQLException {
         Menu bookMenu = new Menu();
         BookService bookService = new BookService();
         Scanner scanner = new Scanner(System.in);

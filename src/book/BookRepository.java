@@ -1,5 +1,7 @@
 package book;
 
+import author.Author;
+import author.AuthorRepository;
 import base.BaseRepository;
 
 import java.sql.Connection;
@@ -15,38 +17,6 @@ public class BookRepository extends BaseRepository<Book, Integer> {
     //Search for book by ID
     @Override
     public Optional<Book> getById(Integer id) throws SQLException {
-        // TODO: Måste ändra - något fel med queren
-        String sql = "SELECT b.title, b.year_published, b.available_copies, bd.*, a.first_name, a.last_name \n" +
-                "FROM library.books b\n" +
-                "INNER JOIN library.book_descriptions bd ON b.id = bd.book_id \n" +
-                "INNER JOIN library.authors a ON b.id = a.id\n" +
-                "WHERE b.id = ?";
-
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, id);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    Book book = new Book(
-                            resultSet.getString("title"),
-                            resultSet.getInt("year_published"),
-                            resultSet.getInt("available_copies"),
-                            resultSet.getString("summary"),
-                            resultSet.getString("language"),
-                            resultSet.getInt("page_count"),
-                            resultSet.getString("author"),
-                            resultSet.getInt("isbn")
-                    );
-
-                    return Optional.of(book);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error : " + e.getMessage());
-        }
-
         return Optional.empty();
     }
 
@@ -115,10 +85,41 @@ public class BookRepository extends BaseRepository<Book, Integer> {
     }
 
 
+    private final AuthorRepository authorRepository = new AuthorRepository();
+
     @Override
     public void save(Book entity) throws SQLException {
 
+
+        String sql = "INSERT INTO books (title, isbn, year_published, available_copies)" +
+                "VALUES(?,?,?,?)";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            // RETRUN_GENERATED_KEYS - sparar den id:et databasen generenar
+
+            // Fyller i frågatecken
+            statement.setString(1, entity.getTitle());
+            statement.setString(2, entity.getAuthor().toString());
+            statement.setInt(3, entity.getYearPublished());
+            statement.setInt(4, entity.getAvailableCopies());
+            statement.executeUpdate();
+
+            // Hämtar det nya id:et
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int bookId = generatedKeys.getInt(1);
+
+                String insert = "INSERT INTO book_authors (book_id, author_id) " +
+                        "VALUES(?,?)";
+
+                try (PreparedStatement statement1 = connection.prepareStatement(insert)) {
+                    int authorID = authorRepository.authorSave((Author) entity.getAuthor());
+                }
+            }
+        }
     }
+
 
     @Override
     public void update(Book entity) throws SQLException {
