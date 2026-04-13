@@ -20,9 +20,9 @@ public class Main {
         mainMenu.setMenuInfo("Select which menu to open");
         mainMenu.setExitOption("Exit program");
         //mainMenu.addMenuOption("ReaderMenuController.showMenu()");
-       // mainMenu.addMenuOption("LibrarianMenuController.showMenu()");
+        // mainMenu.addMenuOption("LibrarianMenuController.showMenu()");
         mainMenu.addMenuOption("BookController.showMenu()");
-       // mainMenu.addMenuOption("MemberController.showMenu()");
+        // mainMenu.addMenuOption("MemberController.showMenu()");
         mainMenu.addMenuOption("LoanController.showMenu()");
         mainMenu.addMenuOption("Log in");
         mainMenu.setPrePrompt("Type a number and press enter...");
@@ -36,16 +36,18 @@ public class Main {
                     return;
                 }
                 //case 1 -> ReaderMenuController.showMenu();
-               // case 2 -> LibrarianMenuController.showMenu(currentMember);
-                case 1 -> book.BookController.showMenu();
+                // case 2 -> LibrarianMenuController.showMenu(currentMember);
+                case 1 -> book.BookController.showReaderMenu();
+                case 2 -> book.BookController.showLibrarianMenu();
                 //case 4 -> MemberController.showMenu();
-                case 2 -> loan.LoanController.showMenu();
-                case 3 -> login();
+                case 3 -> loan.LoanController.showMenu();
+                case 4 -> login();
                 default -> System.out.println("Invalid input");
             }
         }
     }
-    public static void login(){
+
+    public static void login() {
         MemberService memberService = new MemberService();
 
         try {
@@ -74,7 +76,7 @@ public class Main {
             } else {
                 MemberController.showReaderMenu(currentMember);
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Database error: " + e.getMessage());
         }
     }
