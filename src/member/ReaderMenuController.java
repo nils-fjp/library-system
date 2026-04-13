@@ -4,6 +4,7 @@ import book.BookController;
 import ui.Menu;
 
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ReaderMenuController {
@@ -60,27 +61,26 @@ public class ReaderMenuController {
 //    }
 
     //2. My Loans
-    private static void showMyLoansMenu(Member currentMember) throws SQLException {
-        Menu menu = new Menu();
-        menu.setTopTitle("My Loans");
-        menu.addMenuOption("View active loans");
-        menu.addMenuOption("View loan history");
-
-        while (menu.showMenu()) {
-            switch (menu.getChoice()) {
-                case 1 -> showActiveLoansSubMenu(currentMember);
-
-                case 2 -> System.out.println("LoanController.showLoanHistory(currentMember)");
-                // case 2 -> LoanController.showLoanHistory(currentMember);
-
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid option.");
-            }
-        }
-    }
-
+    //   private static void showMyLoansMenu(Member currentMember) throws SQLException {
+//        Menu menu = new Menu();
+//        menu.setTopTitle("My Loans");
+//        menu.addMenuOption("View active loans");
+//        menu.addMenuOption("View loan history");
+//
+//        while (menu.showMenu()) {
+//            switch (menu.getChoice()) {
+//                case 1 -> showActiveLoansSubMenu(currentMember);
+//
+//                case 2 -> System.out.println("LoanController.showLoanHistory(currentMember)");
+//                // case 2 -> LoanController.showLoanHistory(currentMember);
+//
+//                case 0 -> {
+//                    return;
+//                }
+//                default -> System.out.println("Invalid option.");
+//            }
+//        }
+//        }
     private static void showActiveLoansSubMenu(Member currentMember) throws SQLException {
         while (true) {
             System.out.println("LoanController.showActiveLoans(currentMember)");
@@ -122,7 +122,7 @@ public class ReaderMenuController {
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
                 //case 1 -> System.out.println("MemberController.showCurrentMemberProfile(currentMember)");
-                case 1 -> MemberController.showCurrentMemberProfile(currentMember);
+                 case 1 -> MemberController.showCurrentMemberProfile(currentMember);
 
 
                 case 2 -> System.out.println("MemberController.changePassword(currentMember)");

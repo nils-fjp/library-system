@@ -28,48 +28,48 @@ public class MemberController extends BaseController<Member, Integer> {
 
 
     // Login --> READER MENU // =========================================================
-    public static void showReaderMenu(Member currentMember) throws SQLException {
-        Menu menu = new Menu();
-        menu.setTopTitle("Reader Menu");
-        menu.addMenuOption("Books");
-        menu.addMenuOption("My Loans");
-        menu.addMenuOption("My Profile");
-
-        while (menu.showMenu()) {
-            switch (menu.getChoice()) {
-                //case 1 -> BookController.showBooksMenu();
-                case 1 -> System.out.println("WIP: BookController.showBooksMenu();");
-                //case 2 -> LoanController.showMyLoansMenu(currentMember);
-                case 2 -> System.out.println("WIP: LoanController.showMyLoansMenu(currentMember);");
-                case 3 -> showMyProfileMenu(currentMember);
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid option.");
-            }
-        }
-    }
+//    public static void showReaderMenu(Member currentMember) throws SQLException {
+//        Menu menu = new Menu();
+//        menu.setTopTitle("Reader Menu");
+//        menu.addMenuOption("Books");
+//        menu.addMenuOption("My Loans");
+//        menu.addMenuOption("My Profile");
+//
+//        while (menu.showMenu()) {
+//            switch (menu.getChoice()) {
+//                //case 1 -> BookController.showBooksMenu();
+//                case 1 -> System.out.println("WIP: BookController.showBooksMenu();");
+//                //case 2 -> LoanController.showMyLoansMenu(currentMember);
+//                case 2 -> System.out.println("WIP: LoanController.showMyLoansMenu(currentMember);");
+//                case 3 -> showMyProfileMenu(currentMember);
+//                case 0 -> {
+//                    return;
+//                }
+//                default -> System.out.println("Invalid option.");
+//            }
+//        }
+//    }
 
     //3. My profile
-    private static void showMyProfileMenu(Member currentMember) throws SQLException {
-        Menu menu = new Menu();
-        menu.setTopTitle("My Profile");
-        menu.addMenuOption("View my profile");
-        menu.addMenuOption("Change password");
-
-        while (menu.showMenu()) {
-            switch (menu.getChoice()) {
-
-                case 1 -> MemberController.showCurrentMemberProfile(currentMember);
-                case 2 -> MemberController.changePassword(currentMember);
-
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid option.");
-            }
-        }
-    }
+//    private static void showMyProfileMenu(Member currentMember) throws SQLException {
+//        Menu menu = new Menu();
+//        menu.setTopTitle("My Profile");
+//        menu.addMenuOption("View my profile");
+//        menu.addMenuOption("Change password");
+//
+//        while (menu.showMenu()) {
+//            switch (menu.getChoice()) {
+//
+//                case 1 -> MemberController.showCurrentMemberProfile(currentMember);
+//                case 2 -> MemberController.changePassword(currentMember);
+//
+//                case 0 -> {
+//                    return;
+//                }
+//                default -> System.out.println("Invalid option.");
+//            }
+//        }
+//    }
 
 
     //       1. View my profile
@@ -111,32 +111,32 @@ public class MemberController extends BaseController<Member, Integer> {
 
 
     // Login --> LIBRARIEN MENU // =========================================================
-    public static void showLibrarianMenu(Member currentMember) throws SQLException {
-        Menu menu = new Menu();
-        menu.setTopTitle("Librarian Menu");
-        menu.addMenuOption("Manage Books");
-        menu.addMenuOption("Manage Loans");
-        menu.addMenuOption("Manage Readers");
-        menu.addMenuOption("Manage Authors");
-        menu.addMenuOption("Manage Categories");
-
-        while (menu.showMenu()) {
-            switch (menu.getChoice()) {
-                //case 1 -> BookController.showManageBooksMenu();
-                case 1 -> System.out.println("WIP:BookController.showManageBooksMenu();");
-                case 2 -> LoanController.showManageLoansMenu(currentMember);
-                case 3 -> showManageReadersMenu(currentMember);
-                //case 4 -> AuthController.showManageAuthorsMenu();
-                case 4 -> System.out.println("WIP:AuthController.showManageAuthorsMenu();");
-                //case 5 -> CategoryController.showManageCategoriesMenu();
-                case 5 -> System.out.println("CategoryController.showManageCategoriesMenu();");
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid option.");
-            }
-        }
-    }
+//    public static void showLibrarianMenu(Member currentMember) throws SQLException {
+//        Menu menu = new Menu();
+//        menu.setTopTitle("Librarian Menu");
+//        menu.addMenuOption("Manage Books");
+//        menu.addMenuOption("Manage Loans");
+//        menu.addMenuOption("Manage Readers");
+//        menu.addMenuOption("Manage Authors");
+//        menu.addMenuOption("Manage Categories");
+//
+//        while (menu.showMenu()) {
+//            switch (menu.getChoice()) {
+//                //case 1 -> BookController.showManageBooksMenu();
+//                case 1 -> System.out.println("WIP:BookController.showManageBooksMenu();");
+//                case 2 -> LoanController.showManageLoansMenu(currentMember);
+//                case 3 -> showManageReadersMenu(currentMember);
+//                //case 4 -> AuthController.showManageAuthorsMenu();
+//                case 4 -> System.out.println("WIP:AuthController.showManageAuthorsMenu();");
+//                //case 5 -> CategoryController.showManageCategoriesMenu();
+//                case 5 -> System.out.println("CategoryController.showManageCategoriesMenu();");
+//                case 0 -> {
+//                    return;
+//                }
+//                default -> System.out.println("Invalid option.");
+//            }
+//        }
+//    }
 
 
 //    public static void showManageReadersMenu(Member currentMember) {
@@ -175,50 +175,50 @@ public class MemberController extends BaseController<Member, Integer> {
 //        }
 //    }
 
-    private static void showManageReadersMenu(Member currentMember) throws SQLException {
-        MemberService service = new MemberService();
-        service.validateLibrarianAccess(currentMember);
-
-        Menu menu = new Menu();
-        menu.setTopTitle("Manage Readers");
-        menu.addMenuOption("View readers");
-        menu.addMenuOption("Add reader");
-        menu.addMenuOption("Modify reader");
-        menu.addMenuOption("Delete reader");
-
-        while (menu.showMenu()) {
-            switch (menu.getChoice()) {
-                case 1 -> showViewReadersSubMenu();
-                case 2 -> System.out.println("MemberController.addMemberByAdmin()");
-                // case 2 -> MemberController.addMemberByAdmin();
-                case 3 -> MemberController.updateMemberByAdmin();
-                case 4 -> System.out.println("MemberController.deleteMemberByAdmin()");
-                // case 4 -> MemberController.deleteMemberByAdmin();
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid option.");
-            }
-        }
-    }
-
-    private static void showViewReadersSubMenu() throws SQLException {
-        Menu menu = new Menu();
-        menu.setTopTitle("View Readers");
-        menu.addMenuOption("View all readers");
-        menu.addMenuOption("Search reader by email");
-
-        while (menu.showMenu()) {
-            switch (menu.getChoice()) {
-                case 1 -> MemberController.showAllMembersForAdmin();
-                case 2 -> MemberController.showMemberByEmail();
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid option.");
-            }
-        }
-    }
+//    private static void showManageReadersMenu(Member currentMember) throws SQLException {
+//        MemberService service = new MemberService();
+//        service.validateLibrarianAccess(currentMember);
+//
+//        Menu menu = new Menu();
+//        menu.setTopTitle("Manage Readers");
+//        menu.addMenuOption("View readers");
+//        menu.addMenuOption("Add reader");
+//        menu.addMenuOption("Modify reader");
+//        menu.addMenuOption("Delete reader");
+//
+//        while (menu.showMenu()) {
+//            switch (menu.getChoice()) {
+//                case 1 -> showViewReadersSubMenu();
+//                case 2 -> System.out.println("MemberController.addMemberByAdmin()");
+//                // case 2 -> MemberController.addMemberByAdmin();
+//                case 3 -> MemberController.updateMemberByAdmin();
+//                case 4 -> System.out.println("MemberController.deleteMemberByAdmin()");
+//                // case 4 -> MemberController.deleteMemberByAdmin();
+//                case 0 -> {
+//                    return;
+//                }
+//                default -> System.out.println("Invalid option.");
+//            }
+//        }
+//    }
+//
+//    private static void showViewReadersSubMenu() throws SQLException {
+//        Menu menu = new Menu();
+//        menu.setTopTitle("View Readers");
+//        menu.addMenuOption("View all readers");
+//        menu.addMenuOption("Search reader by email");
+//
+//        while (menu.showMenu()) {
+//            switch (menu.getChoice()) {
+//                case 1 -> MemberController.showAllMembersForAdmin();
+//                case 2 -> MemberController.showMemberByEmail();
+//                case 0 -> {
+//                    return;
+//                }
+//                default -> System.out.println("Invalid option.");
+//            }
+//        }
+//    }
 
 
 
