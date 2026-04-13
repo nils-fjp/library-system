@@ -79,7 +79,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
             book.setTitle(resultSet.getString("title"));
             book.setYearPublished(resultSet.getInt("year_published"));
             book.setAvailableCopies(resultSet.getInt("available_copies"));
-            book.setAuthor(resultSet.getString("author"));
+            book.setAuthor((List<Author>) resultSet.getArray("author"));
             books.add(book);
         }
     }
