@@ -2,41 +2,10 @@ package member;
 import ui.Menu;
 
 import java.sql.SQLException;
-//
-//public class LibrarianMenuController {
-//        public static void showMenu(Member currentMember) throws SQLException {
-//            Menu menu = new Menu();
-//            menu.setTopTitle("Librarian Menu");
-//            menu.addMenuOption("Manage Books");//1
-//            menu.addMenuOption("Manage Loans");//2
-//            menu.addMenuOption("Manage Readers");//3
-//            menu.addMenuOption("Manage Authors");//4
-//            menu.addMenuOption("Manage Categories");//5
-//
-//            while (menu.showMenu()) {
-//
-//                switch (menu.getChoice()) {
-//
-//                    //case 1 -> BookController.showManageBooksMenu();
-//                    case 1 -> System.out.println("BookController.showManageBooksMenu()");
-//                    case 2 -> LoanController.showManageLoansMenu();
-//                    case 3 -> MemberController.showManageMembersMenu(currentMember);
-//                    //case 4 -> AuthorController.showManageAuthorMenu();
-//                    case 4 -> System.out.println("AuthorController.showManageAuthorMenu()");
-//                    //case 5 -> CategoryController.showManageCategoriesMenu();
-//                    case 5 -> System.out.println("ategoryController.showManageCategoriesMenu()");
-//                    case 0 -> { return; }
-//                }
-//            }
-//        }
-//    }
-
-
-
 
 public class LibrarianMenuController {
 
-    public static void showMenu(Member currentMember) throws SQLException {
+    public static void showLibrarianMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Librarian Menu");
         menu.addMenuOption("Manage Books");
@@ -60,6 +29,9 @@ public class LibrarianMenuController {
         }
     }
 
+
+
+    //1. Manage Books
     private static void showManageBooksMenu() throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Manage Books");
@@ -108,6 +80,7 @@ public class LibrarianMenuController {
         }
     }
 
+    //2. Manage Loans
     private static void showManageLoansMenu() throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Manage Loans");
@@ -134,6 +107,7 @@ public class LibrarianMenuController {
         }
     }
 
+    //3. Manage Readers
     private static void showManageReadersMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Manage Readers");
@@ -157,7 +131,6 @@ public class LibrarianMenuController {
             }
         }
     }
-
     private static void showViewReadersSubMenu() throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("View Readers");
@@ -176,6 +149,7 @@ public class LibrarianMenuController {
         }
     }
 
+    //4. Manage Authors
     private static void showManageAuthorsMenu() throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Manage Authors");
@@ -202,6 +176,7 @@ public class LibrarianMenuController {
         }
     }
 
+    //5. Manage Categories
     private static void showManageCategoriesMenu() throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Manage Categories");
