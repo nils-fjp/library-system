@@ -1,12 +1,8 @@
 package member;
 
 import base.BaseController;
-import book.BookController;
-import category.CategoryController;
-import loan.Loan;
 import loan.LoanController;
 import ui.ANSI;
-import ui.AuthController;
 import ui.ConsolePrinter;
 import ui.Menu;
 
@@ -128,7 +124,7 @@ public class MemberController extends BaseController<Member, Integer> {
             switch (menu.getChoice()) {
                 //case 1 -> BookController.showManageBooksMenu();
                 case 1 -> System.out.println("WIP:BookController.showManageBooksMenu();");
-                case 2 -> LoanController.showManageLoansMenu();
+                case 2 -> LoanController.showManageLoansMenu(currentMember);
                 case 3 -> showManageReadersMenu(currentMember);
                 //case 4 -> AuthController.showManageAuthorsMenu();
                 case 4 -> System.out.println("WIP:AuthController.showManageAuthorsMenu();");
