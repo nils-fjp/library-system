@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class BookController extends BaseController {
 
     // Barrower Menu
-    public static void showReaderMenu() throws SQLException {
+    public static void showBooksMenu() throws SQLException {
 
         Menu bookMenu = new Menu();
         BookService bookService = new BookService();
@@ -32,34 +32,24 @@ public class BookController extends BaseController {
                     break;
                 }
                 case 1: {
-                    try {
-                        List<Book> books = bookService.getAll();
-                        for (Book book : books) {
-                            System.out.println("Title " + book.getTitle());
-                            System.out.println("Author " + book.getAuthor());
-                            System.out.println("Available copies " + book.getAvailableCopies());
-                            System.out.println("-----");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Error: " + e.getMessage());
-                    }
+                    showAllBooks();
                     break;
                 }
                 case 2: {
-                    System.out.println("Enter keyword here: ");
-                    String keyword = scanner.nextLine();
-
-                    try {
-                        List<Book> books = bookService.search(keyword);
-                        for (Book book : books) {
-                            System.out.println("Title: " + book.getTitle());
-                            System.out.println("Author: " + book.getAuthor());
-                            System.out.println("Available Copies: " + book.getAvailableCopies());
-                            System.out.println("------------------");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Error: " + e.getMessage());
-                    }
+//                    System.out.println("Enter keyword here: ");
+//                    String keyword = scanner.nextLine();
+//
+//                    try {
+//                        List<Book> books = bookService.search(keyword);
+//                        for (Book book : books) {
+//                            System.out.println("Title: " + book.getTitle());
+//                            System.out.println("Author: " + book.getAuthor());
+//                            System.out.println("Available Copies: " + book.getAvailableCopies());
+//                            System.out.println("------------------");
+//                        }
+//                    } catch (SQLException e) {
+//                        System.out.println("Error: " + e.getMessage());
+//                    }
                     break;
                 }
 //                case 4: {
@@ -127,6 +117,24 @@ public class BookController extends BaseController {
                     System.out.println("wip");
                 }
             }
+        }
+    }
+
+    // Metoder
+
+    public static void showAllBooks() {
+        BookService bookService = new BookService();
+
+        try {
+            List<Book> books = bookService.getAllBooks();
+            for (Book book : books) {
+                System.out.println("Title " + book.getTitle());
+                System.out.println("Author " + book.getAuthor());
+                System.out.println("Available copies " + book.getAvailableCopies());
+                System.out.println("-----");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 }
