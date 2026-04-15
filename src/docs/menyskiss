@@ -30,25 +30,27 @@
                 1. Harry Potter
                 2. Lord Of the Rings
                 3. Catcher in the Rye
-                    1. Extend
+                    1. Extend (förlänga) +
                     2. Return
                     0. Back to My Loans --> (2. My Loans)
                 0. Back to My Loans     --> (2. My Loans)
             2. View loan history
             3. Loan a book
+            4. View fines ( + se mina böter) +
             0. Back to Main Menu --> (3. Reader Menu)
         3. My profile
             1. View my profile
             2. Update profile info
             3. Change password
+            4. View fines ( + se mina böter) +
         0. Log Out --> (0. Main Menu)
 
     4. Librarian Menu
         1. Manage Books
             1. View Available Books
             2. Search Books
-            3. Add Book
-            4. Update Book
+            3. Add Book (+lägga böcker i kategorier) +
+            4. Update Book (+lägga böcker i kategorier) +
             5. Delete Book
             0. Back to Main Menu --> (4. Librarian Menu)
 
@@ -60,17 +62,20 @@
             0. Back to Main Menu --> (4. Librarian Menu)
 
         3. Manage Readers
-            1. View All Readers
-            2. Search Readers
-            3. Add Reader
-            4. Update Reader
-            5. Delete Reader
+            1. View Readers
+                1. View All Readers
+                2. Search Readers
+                3. View members fines ( + se mina böter) +
+            2. Add Reader
+            3. Update Reader ( +ändra min medlemskapsstatus ) +
+            4. Delete Reader
+            5. Change Password
             0. Back to Main Menu --> (4. Librarian Menu)
 
         4. Manage Authors
             1. View authorName
-            2. Add author
-            3. Modify author
+            2. Add author +
+            3. Modify author +
             4. Delete author
             0. Back to Main Menu --> (4. Librarian Menu)
 
@@ -79,10 +84,6 @@
             2. Add category
             3. Modify category
             4. Delete category
-            1. View Authors
-            2. Add Author +
-            3. Update Author +
-            4. Delete Author
             0. Back to Main Menu --> (4. Librarian Menu)
 
         0. Log Out --> (0. Main Menu)
