@@ -21,21 +21,16 @@ public class BookService extends BaseService<Book, Integer> {
         return bookRepository.getById(id);
     }
 
-//    @Override
-//    public List<Book> getAll() throws SQLException {
-//        return bookRepository.getAll();
-//    }
-
     public List<Book> getAllBooks() throws SQLException {
         return bookRepository.getAll();
     }
 
+//    public List<BookReaderDTO>
 
     public List<Book> search(String keyword) throws SQLException {
         if (keyword == null || keyword.isBlank()) {
             return new ArrayList<>();
         }
-
         return bookRepository.search(keyword);
     }
 }
