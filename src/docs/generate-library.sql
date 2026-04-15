@@ -28,8 +28,8 @@ CREATE TABLE books (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     title           VARCHAR(255) NOT NULL,
     isbn            VARCHAR(20)  NOT NULL UNIQUE,
-    year_published  INT,
-    total_copies    INT          NOT NULL DEFAULT 1,
+    yearPublished  INT,
+    totalCopies    INT          NOT NULL DEFAULT 1,
     available_copies INT         NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -43,8 +43,8 @@ DROP TABLE IF EXISTS `book_descriptions`;
 CREATE TABLE book_descriptions (
     book_id     INT PRIMARY KEY,
     summary     TEXT,
-    language    VARCHAR(50),
-    page_count  INT,
+    lang    VARCHAR(50),
+    pageCount  INT,
     CONSTRAINT fk_bookdesc_book
         FOREIGN KEY (book_id) REFERENCES books(id)
         ON DELETE CASCADE
@@ -55,10 +55,10 @@ CREATE TABLE book_descriptions (
 -- ------------------------------------------------------------
 -- AUTHORS
 -- ------------------------------------------------------------
-DROP TABLE IF EXISTS `authors`;
+DROP TABLE IF EXISTS `authorName`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE authors (
+CREATE TABLE authorName (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     first_name  VARCHAR(100) NOT NULL,
     last_name   VARCHAR(100) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE authors (
 
 
 -- ------------------------------------------------------------
--- AUTHOR_DESCRIPTIONS (1:1 med authors)
+-- AUTHOR_DESCRIPTIONS (1:1 med authorName)
 -- ------------------------------------------------------------
 DROP TABLE IF EXISTS `author_descriptions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -79,14 +79,14 @@ CREATE TABLE author_descriptions (
     biography   TEXT,
     website     VARCHAR(255),
     CONSTRAINT fk_authordesc_author
-        FOREIGN KEY (author_id) REFERENCES authors(id)
+        FOREIGN KEY (author_id) REFERENCES authorName(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
 -- ------------------------------------------------------------
--- BOOK_AUTHORS (M:M books <-> authors)
+-- BOOK_AUTHORS (M:M books <-> authorName)
 -- ------------------------------------------------------------
 DROP TABLE IF EXISTS `book_authors`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -99,7 +99,7 @@ CREATE TABLE book_authors (
         FOREIGN KEY (book_id) REFERENCES books(id)
         ON DELETE CASCADE,
     CONSTRAINT fk_bookauthors_author
-        FOREIGN KEY (author_id) REFERENCES authors(id)
+        FOREIGN KEY (author_id) REFERENCES authorName(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -108,10 +108,10 @@ CREATE TABLE book_authors (
 -- ------------------------------------------------------------
 -- CATEGORIES
 -- ------------------------------------------------------------
-DROP TABLE IF EXISTS `categories`;
+DROP TABLE IF EXISTS `categoryNames`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE categories (
+CREATE TABLE categoryNames (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(100) NOT NULL,
     description VARCHAR(255)
@@ -120,7 +120,7 @@ CREATE TABLE categories (
 
 
 -- ------------------------------------------------------------
--- BOOK_CATEGORIES (M:M books <-> categories)
+-- BOOK_CATEGORIES (M:M books <-> categoryNames)
 -- ------------------------------------------------------------
 DROP TABLE IF EXISTS `book_categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -133,7 +133,7 @@ CREATE TABLE book_categories (
         FOREIGN KEY (book_id) REFERENCES books(id)
         ON DELETE CASCADE,
     CONSTRAINT fk_bookcats_category
-        FOREIGN KEY (category_id) REFERENCES categories(id)
+        FOREIGN KEY (category_id) REFERENCES categoryNames(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -365,9 +365,9 @@ CREATE TABLE reviews (
 -- ============================================================
 
 -- CATEGORIES
-LOCK TABLES `categories` WRITE;
-/*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO categories (id, name, description) VALUES
+LOCK TABLES `categoryNames` WRITE;
+/*!40000 ALTER TABLE `categoryNames` DISABLE KEYS */;
+INSERT INTO categoryNames (id, name, description) VALUES
 (1, 'Fiction', 'Narrative literature created from imagination'),
 (2, 'Non-Fiction', 'Prose based on real events and facts'),
 (3, 'Science Fiction', 'Speculative fiction involving science and technology'),
@@ -380,14 +380,14 @@ INSERT INTO categories (id, name, description) VALUES
 (10, 'Self-Help', 'Books intended to help readers improve themselves'),
 (11, 'Horror', 'Fiction intended to frighten or disturb'),
 (12, 'Adventure', 'Fiction involving exciting journeys or events');
-/*!40000 ALTER TABLE `categories` ENABLE KEYS */;
+/*!40000 ALTER TABLE `categoryNames` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
 -- AUTHORS
-LOCK TABLES `authors` WRITE;
-/*!40000 ALTER TABLE `authors` DISABLE KEYS */;
-INSERT INTO authors (id, first_name, last_name, nationality, birth_date) VALUES
+LOCK TABLES `authorName` WRITE;
+/*!40000 ALTER TABLE `authorName` DISABLE KEYS */;
+INSERT INTO authorName (id, first_name, last_name, nationality, birth_date) VALUES
 (1, 'Mia', 'Johnson', 'Brazilian', '1964-09-03'),
 (2, 'Evelyn', 'Harris', 'French', '1949-03-12'),
 (3, 'Jack', 'Garcia', 'Canadian', '1977-11-07'),
@@ -448,7 +448,7 @@ INSERT INTO authors (id, first_name, last_name, nationality, birth_date) VALUES
 (58, 'Evelyn', 'Hall', 'Russian', '1976-07-08'),
 (59, 'Alexander', 'Miller', 'British', '1978-09-02'),
 (60, 'Noah', 'Adams', 'Spanish', '1981-11-24');
-/*!40000 ALTER TABLE `authors` ENABLE KEYS */;
+/*!40000 ALTER TABLE `authorName` ENABLE KEYS */;
 UNLOCK TABLES;
 
 -- AUTHOR_DESCRIPTIONS
@@ -469,7 +469,7 @@ INSERT INTO author_descriptions (author_id, biography, website) VALUES
 (12, 'A former journalist whose eye for detail and love of truth infuses every page they write.', 'www.theodorethompson.com'),
 (13, 'A prolific writer who has published across fiction, non-fiction, and screenwriting.', 'www.madisoncarter.com'),
 (14, 'A former journalist whose eye for detail and love of truth infuses every page they write.', 'www.isabellaroberts.com'),
-(15, 'A self-taught writer who rose from obscurity to become one of the most read authors of their generation.', 'www.owenjackson.com'),
+(15, 'A self-taught writer who rose from obscurity to become one of the most read authorName of their generation.', 'www.owenjackson.com'),
 (16, 'Their debut novel became an overnight sensation, launching a career that has only grown since.', 'www.oliverharris.com'),
 (17, 'An academic turned novelist whose work bridges the gap between scholarship and popular fiction.', 'www.isabellaharris.com'),
 (18, 'Born into a family of storytellers, they began writing at an early age and never stopped.', 'www.loganyoung.com'),
@@ -492,15 +492,15 @@ INSERT INTO author_descriptions (author_id, biography, website) VALUES
 (35, 'A prolific writer who has published across fiction, non-fiction, and screenwriting.', 'www.miacarter.com'),
 (36, 'A celebrated author with over twenty years of experience writing across multiple genres.', 'www.avadavis.com'),
 (37, 'A prolific writer who has published across fiction, non-fiction, and screenwriting.', 'www.henrybaker.com'),
-(38, 'A self-taught writer who rose from obscurity to become one of the most read authors of their generation.', 'www.mateothomas.com'),
+(38, 'A self-taught writer who rose from obscurity to become one of the most read authorName of their generation.', 'www.mateothomas.com'),
 (39, 'Their debut novel became an overnight sensation, launching a career that has only grown since.', 'www.emilycampbell.com'),
-(40, 'A self-taught writer who rose from obscurity to become one of the most read authors of their generation.', 'www.charlottenguyen.com'),
+(40, 'A self-taught writer who rose from obscurity to become one of the most read authorName of their generation.', 'www.charlottenguyen.com'),
 (41, 'A prolific writer who has published across fiction, non-fiction, and screenwriting.', 'www.jackmitchell.com'),
 (42, 'A recipient of numerous literary awards, their work has been translated into over thirty languages.', 'www.theodorewright.com'),
 (43, 'Their debut novel became an overnight sensation, launching a career that has only grown since.', 'www.mianguyen.com'),
 (44, 'A former journalist whose eye for detail and love of truth infuses every page they write.', 'www.evelynbrown.com'),
 (45, 'An academic turned novelist whose work bridges the gap between scholarship and popular fiction.', 'www.isabellagarcia.com'),
-(46, 'A self-taught writer who rose from obscurity to become one of the most read authors of their generation.', 'www.williamcarter.com'),
+(46, 'A self-taught writer who rose from obscurity to become one of the most read authorName of their generation.', 'www.williamcarter.com'),
 (47, 'An academic turned novelist whose work bridges the gap between scholarship and popular fiction.', 'www.lucashall.com'),
 (48, 'A celebrated author with over twenty years of experience writing across multiple genres.', 'www.ethanmitchell.com'),
 (49, 'Inspired by their travels across six continents, their writing carries a distinctive global perspective.', 'www.harpercarter.com'),
@@ -523,7 +523,7 @@ LOCK TABLES books WRITE;
 /*!40000 ALTER TABLE books
     DISABLE KEYS */;
 INSERT INTO books (
-    id, title, isbn, year_published, total_copies, available_copies
+    id, title, isbn, yearPublished, totalCopies, available_copies
 )
 VALUES (
     1, 'Wild Throne of Secrets', '978-1-709-18907-3', 1995, 1, 0
@@ -1131,7 +1131,7 @@ VALUES (
 -- BOOK_DESCRIPTIONS
 LOCK TABLES `book_descriptions` WRITE;
 /*!40000 ALTER TABLE `book_descriptions` DISABLE KEYS */;
-INSERT INTO book_descriptions (book_id, summary, language, page_count) VALUES
+INSERT INTO book_descriptions (book_id, summary, lang, pageCount) VALUES
 (1, 'A quiet, devastating novel about ordinary people caught in extraordinary events.', 'German', 588),
 (2, 'A deeply personal story about loss, love, and finding one''s place in the world.', 'German', 707),
 (3, 'A beautifully written meditation on grief, hope, and the resilience of the human spirit.', 'English', 506),

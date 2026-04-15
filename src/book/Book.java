@@ -1,35 +1,40 @@
 package book;
 
 import author.Author;
+import category.Category;
 
 import java.util.List;
 
 public class Book {
     private int id;
     private String title;
+    private String isbn;
     private int yearPublished;
+    private int totalCopies;
     private int availableCopies;
     private String summary;
     private String lang;
     private int pageCount;
-    private List<Author> author;
-    private int isbn;
-    private int total_copies;
+    private List<Author> authors;
+    private List<Category> categories;
 
     public Book() {
-
     }
 
-    public Book(Integer id, String title, int yearPublished, int availableCopies, String summary, String lang, int pageCount, List<Author> author, int isbn, String total_copies) {
-        this.id = id;
+    public Book(String title, int id, String isbn, int yearPublished, int totalCopies,
+                int availableCopies, String summary, String lang, int pageCount,
+                List<Author> authors, List<Category> categories) {
         this.title = title;
+        this.id = id;
+        this.isbn = isbn;
         this.yearPublished = yearPublished;
+        this.totalCopies = totalCopies;
         this.availableCopies = availableCopies;
         this.summary = summary;
         this.lang = lang;
         this.pageCount = pageCount;
-        this.author = author;
-        this.isbn = isbn;
+        this.authors = authors;
+        this.categories = categories;
     }
 
     public int getId() {
@@ -40,14 +45,6 @@ public class Book {
         this.id = id;
     }
 
-    public int getTotal_copies() {
-        return total_copies;
-    }
-
-    public void setTotal_copies(int total_copies) {
-        this.total_copies = total_copies;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -56,12 +53,28 @@ public class Book {
         this.title = title;
     }
 
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
     public int getYearPublished() {
         return yearPublished;
     }
 
     public void setYearPublished(int yearPublished) {
         this.yearPublished = yearPublished;
+    }
+
+    public int getTotalCopies() {
+        return totalCopies;
+    }
+
+    public void setTotalCopies(int totalCopies) {
+        this.totalCopies = totalCopies;
     }
 
     public int getAvailableCopies() {
@@ -96,19 +109,20 @@ public class Book {
         this.pageCount = pageCount;
     }
 
-    public List<Author> getAuthor() {
-        return author;
+    public List<Author> getAuthors() {
+        return authors;
     }
 
-    public void setAuthor(List<Author> author) {
-        this.author = author;
+    public void setAuthors(List<Author> authors) {
+        this.authors = authors;
     }
 
-    public int getIsbn() {
-        return isbn;
+    public List<Category> getCategories() {
+        return categories;
     }
 
-    public void setIsbn(int isbn) {
-        this.isbn = isbn;
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
+
 }
