@@ -1,3 +1,4 @@
+// Data Access Layer
 package book;
 
 import author.Author;
@@ -79,7 +80,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
             book.setTitle(resultSet.getString("title"));
             book.setYearPublished(resultSet.getInt("year_published"));
             book.setAvailableCopies(resultSet.getInt("available_copies"));
-            book.setAuthor((List<Author>) resultSet.getArray("author"));
+            book.setAuthors((List<Author>) resultSet.getArray("author"));
             books.add(book);
         }
     }
@@ -89,8 +90,6 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
     @Override
     public void save(Book entity) throws SQLException {
-
-
         String sql = "INSERT INTO books (title, isbn, year_published, available_copies)" +
                 "VALUES(?,?,?,?)";
 
@@ -100,7 +99,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
             // Fyller i frågatecken
             statement.setString(1, entity.getTitle());
-            statement.setString(2, entity.getAuthor().toString());
+            statement.setString(2, entity.getAuthors().toString());
             statement.setInt(3, entity.getYearPublished());
             statement.setInt(4, entity.getAvailableCopies());
             statement.executeUpdate();
@@ -114,7 +113,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                         "VALUES(?,?)";
 
                 try (PreparedStatement statement1 = connection.prepareStatement(insert)) {
-                    int authorID = authorRepository.authorSave((Author) entity.getAuthor());
+                    int authorID = authorRepository.authorSave((Author) entity.getAuthors());
                 }
             }
         }

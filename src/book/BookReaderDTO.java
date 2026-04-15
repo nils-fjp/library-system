@@ -1,3 +1,4 @@
+// Data Transfer Object
 package book;
 
 import java.util.List;
@@ -7,6 +8,7 @@ public class BookReaderDTO {
     private String title;
     private String isbn;
     private int yearPublished;
+    private int availableCopies;
     private String summary;
     private String lang;
     private int pageCount;
@@ -14,12 +16,13 @@ public class BookReaderDTO {
     private List<String> categoryNames;
 
 
-    public BookReaderDTO(String isbn, int id, String title, int year_published, String summary,
+    public BookReaderDTO(int id, String title, String isbn, int year_published, int availableCopies, String summary,
                          String lang, int pageCount, List<String> authorNames, List<String> categoryNames) {
         this.isbn = isbn;
         this.id = id;
         this.title = title;
         this.yearPublished = year_published;
+        this.availableCopies = availableCopies;
         this.summary = summary;
         this.lang = lang;
         this.pageCount = pageCount;
@@ -60,6 +63,14 @@ public class BookReaderDTO {
         this.yearPublished = yearPublished;
     }
 
+    public int getAvailableCopies() {
+        return availableCopies;
+    }
+
+    public void setAvailableCopies(int availableCopies) {
+        this.availableCopies = availableCopies;
+    }
+
     public String getSummary() {
         return summary;
     }
@@ -84,11 +95,11 @@ public class BookReaderDTO {
         this.pageCount = pageCount;
     }
 
-    public List<String> getAuthorName() {
+    public List<String> getAuthorNames() {
         return authorNames;
     }
 
-    public void setAuthorName(List<String> authorName) {
+    public void setAuthorNames(List<String> authorName) {
         this.authorNames = authorName;
     }
 

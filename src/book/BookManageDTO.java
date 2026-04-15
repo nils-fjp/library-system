@@ -1,24 +1,18 @@
+// Data Transfer Object
 package book;
-
-import author.Author;
-import category.Category;
 
 import java.util.List;
 
 public class BookManageDTO extends BookReaderDTO {
     private int totalCopies;
 
-    public BookManageDTO(String isbn, int id, String title, int year_published, String summary,
-                         String lang, int page_count, List<Author> authors, List<Category> categories, int totalCopies) {
+    public BookManageDTO(int id, String isbn, String title, int year_published, int availableCopies, String summary,
+                         String lang, int page_count, List<String> authors, List<String> categories, int totalCopies) {
 
         // Anropar konstrukturen med alla parameterna
-        super(isbn, id, title, year_published, summary, lang, page_count,
-                // Konverterar direkt List klasser till List String
-                authors.stream()
-                        .map(author -> author.getFirst_name() + "" + author.getLast_name())
-                        .toList(),
-                categories.stream()
-                        .map(Category::getName).toList());
+        super(id, isbn, title, year_published, availableCopies, summary, lang, page_count,
+                authors,
+                categories);
         this.totalCopies = totalCopies;
     }
 
