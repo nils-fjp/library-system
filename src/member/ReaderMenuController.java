@@ -13,6 +13,7 @@ public class ReaderMenuController {
 
     private static final Scanner SCANNER = new Scanner(System.in);
 
+    // Min kod - ta bort senare - bara test kod meny
     // =========================================================
     //  NAVIGATION
     // =========================================================

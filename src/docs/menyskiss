@@ -68,6 +68,17 @@
             0. Back to Main Menu --> (4. Librarian Menu)
 
         4. Manage Authors
+            1. View authorName
+            2. Add author
+            3. Modify author
+            4. Delete author
+            0. Back to Main Menu --> (4. Librarian Menu)
+
+        5. Manage Categories
+            1. View categoryNames
+            2. Add category
+            3. Modify category
+            4. Delete category
             1. View Authors
             2. Add Author +
             3. Update Author +

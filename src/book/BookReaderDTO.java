@@ -1,42 +1,35 @@
-// Entity (Model layer)
+// Data Transfer Object
 package book;
-
-import author.Author;
-import category.Category;
 
 import java.util.List;
 
-public class Book {
+public class BookReaderDTO {
     private int id;
     private String title;
     private String isbn;
     private int yearPublished;
-    private int totalCopies;
     private int availableCopies;
     private String summary;
     private String lang;
     private int pageCount;
-    private List<Author> authors;
-    private List<Category> categories;
+    private List<String> authorNames;
+    private List<String> categoryNames;
 
-    public Book() {
-    }
 
-    public Book(String title, int id, String isbn, int yearPublished, int totalCopies,
-                int availableCopies, String summary, String lang, int pageCount,
-                List<Author> authors, List<Category> categories) {
-        this.title = title;
-        this.id = id;
+    public BookReaderDTO(int id, String title, String isbn, int year_published, int availableCopies, String summary,
+                         String lang, int pageCount, List<String> authorNames, List<String> categoryNames) {
         this.isbn = isbn;
-        this.yearPublished = yearPublished;
-        this.totalCopies = totalCopies;
+        this.id = id;
+        this.title = title;
+        this.yearPublished = year_published;
         this.availableCopies = availableCopies;
         this.summary = summary;
         this.lang = lang;
         this.pageCount = pageCount;
-        this.authors = authors;
-        this.categories = categories;
+        this.authorNames = authorNames;
+        this.categoryNames = categoryNames;
     }
+
 
     public int getId() {
         return id;
@@ -68,14 +61,6 @@ public class Book {
 
     public void setYearPublished(int yearPublished) {
         this.yearPublished = yearPublished;
-    }
-
-    public int getTotalCopies() {
-        return totalCopies;
-    }
-
-    public void setTotalCopies(int totalCopies) {
-        this.totalCopies = totalCopies;
     }
 
     public int getAvailableCopies() {
@@ -110,20 +95,19 @@ public class Book {
         this.pageCount = pageCount;
     }
 
-    public List<Author> getAuthors() {
-        return authors;
+    public List<String> getAuthorNames() {
+        return authorNames;
     }
 
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
+    public void setAuthorNames(List<String> authorName) {
+        this.authorNames = authorName;
     }
 
-    public List<Category> getCategories() {
-        return categories;
+    public List<String> getCategoryNames() {
+        return categoryNames;
     }
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
+    public void setCategoryNames(List<String> categoryNames) {
+        this.categoryNames = categoryNames;
     }
-
 }
