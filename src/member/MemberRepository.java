@@ -104,6 +104,26 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
 
     @Override
     public void save(Member entity) throws SQLException {
+        String sql = """
+                INSERT INTO library.members (
+                first_name,
+                last_name,
+                email,
+                password  
+              )VALUES (?, ?, ?, ?)
+                """;
+        try (Connection connection = getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setString(1, entity.getFirstName());
+            statement.setString(2, entity.getLastName());
+            statement.setString(3, entity.getEmail());
+            statement.setString(4, entity.getPassword());
+
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Member was not created. ");
+            }
+        }
 
     }
 

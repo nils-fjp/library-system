@@ -48,4 +48,21 @@ public class MemberMapper {
         member.setMembershipType(dto.getMembershipType());
         member.setStatus(dto.getStatus());
     }
+
+    public void updateMemberProfileFromDto(UpdateMyProfileDto dto, Member member) {
+        member.setFirstName(dto.getFirstName());
+        member.setLastName(dto.getLastName());
+        member.setEmail(dto.getEmail());
+    }
+
+    public Member fromCreateDto(CreateMemberDto dto) {
+        Member member = new Member();
+        member.setFirstName(dto.getFirstName());
+        member.setLastName(dto.getLastName());
+        member.setEmail(dto.getEmail());
+        member.setPassword(dto.getPassword());
+        return member;
+    }
+
+
 }

@@ -9,9 +9,13 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.Scanner;
 
+
 public class AuthController {
     private static final Scanner scanner = new Scanner(System.in);
-    public static void login(){
+    private static final ConsolePrinter printer = new ConsolePrinter();
+    private static Member currentMember;
+
+    public static void login() {
         MemberService memberService = new MemberService();
 
         try {
@@ -24,19 +28,26 @@ public class AuthController {
             Optional<Member> optionalMember = memberService.authenticate(email, password);
 
             if (optionalMember.isEmpty()) {
-                System.out.println("Invalid email or password.");
+                printer.printError("Invalid email or password.");
                 return;
             }
 
-            Member currentMember = optionalMember.get();
-            System.out.println("Welcome, " + currentMember.getFirstName() + "!");
+            currentMember = optionalMember.get();
+            printer.printSuccess("Welcome, " + currentMember.getFirstName() + "!");
             if ("LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
                 LibrarianMenuController.showLibrarianMenu(currentMember);
             } else {
                 ReaderMenuController.showReaderMenu(currentMember);
             }
-        }catch (SQLException e) {
+        } catch (IllegalArgumentException e) {
+            printer.printError(e.getMessage());
+        } catch (SQLException e) {
             System.out.println("Database error: " + e.getMessage());
         }
+
+    }
+
+    public static void logout() {
+        currentMember = null;
     }
 }
