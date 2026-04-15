@@ -6,6 +6,14 @@ public final class MemberValidator {
 
     private MemberValidator() {
     }
+    public static void validateId(Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Member id is required.");
+        }
+        if (id <= 0) {
+            throw new IllegalArgumentException("Member id must be greater than 0.");
+        }
+    }
 
     public static void validateMember(Member member) {
         if (member == null) {
@@ -16,6 +24,10 @@ public final class MemberValidator {
     public static void validateEmail(String email) {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email cannot be empty.");
+        }
+
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("Email format is invalid.");
         }
     }
 
@@ -59,13 +71,32 @@ public final class MemberValidator {
         validateStatus(member.getStatus());
     }
 
-    public static void validateUpdateMemberDto(UpdateMemberDto dto) {
+    public static void validateUpdateMemberAdminDto(UpdateMemberDto dto) {
         if (dto == null) {
             throw new IllegalArgumentException("Update data cannot be null.");
         }
+        validateId(dto.getId());
+        validateName(dto.getFirstName(), "First name");
+        validateName(dto.getLastName(), "Last name");
+        validateEmail(dto.getEmail());
+        validateMembershipDate(dto.getMembershipDate());
+        validateMembershipType(dto.getMembershipType());
+        validateStatus(dto.getStatus());
+    }
 
-        if (dto.getId() == null) {
-            throw new IllegalArgumentException("Member id is required.");
+    public static void validateUpdateMyProfileDto(UpdateMyProfileDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Update data cannot be null.");
+        }
+        validateId(dto.getId());
+        validateName(dto.getFirstName(), "First name");
+        validateName(dto.getLastName(), "Last name");
+        validateEmail(dto.getEmail());
+    }
+
+    public static void validateCreateMemberDto(CreateMemberDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Member data is required.");
         }
 
         if (dto.getFirstName() == null || dto.getFirstName().isBlank()) {
@@ -80,16 +111,43 @@ public final class MemberValidator {
             throw new IllegalArgumentException("Email cannot be empty.");
         }
 
-        if (dto.getMembershipDate() == null) {
-            throw new IllegalArgumentException("Membership date is required.");
-        }
-
-        if (dto.getMembershipType() == null || dto.getMembershipType().isBlank()) {
-            throw new IllegalArgumentException("Membership type cannot be empty.");
-        }
-
-        if (dto.getStatus() == null || dto.getStatus().isBlank()) {
-            throw new IllegalArgumentException("Status cannot be empty.");
+        if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password cannot be empty.");
         }
     }
+
+    public static void validateChangePasswordDto(ChangePasswordDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Password change data cannot be null.");
+        }
+
+        validateId(dto.getMemberId());
+        validatePassword(dto.getCurrentPassword());
+        validatePassword(dto.getNewPassword());
+        validatePassword(dto.getConfirmNewPassword());
+
+        if (dto.getNewPassword().equals(dto.getCurrentPassword())) {
+            throw new IllegalArgumentException("New password must be different from current password.");
+        }
+
+        if (!dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
+            throw new IllegalArgumentException("New password confirmation does not match.");
+        }
+    }
+
+    public static void validateAdminChangePasswordDto(AdminChangePasswordDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Password change data cannot be null.");
+        }
+
+        validateId(dto.getMemberId());
+        validatePassword(dto.getNewPassword());
+        validatePassword(dto.getConfirmNewPassword());
+
+        if (!dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
+            throw new IllegalArgumentException("Password confirmation does not match.");
+        }
+    }
+
+
 }

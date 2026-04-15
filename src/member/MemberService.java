@@ -22,24 +22,15 @@ public class MemberService extends BaseService<Member, Integer> {
         return memberRepository;
     }
 
-    //       -> 3 validateId (MemberService) +
     @Override
     protected void validateId(Integer id) {
         super.validateId(id);
-
-        if (id <= 0) {
-            throw new IllegalArgumentException("Member id must be greater than 0.");
-        }
+        MemberValidator.validateId(id);
     }
 
-    // =========================================================
-    // Basic member lookup
-    // =========================================================
 
     public Optional<Member> getByEmail(String email) throws SQLException {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email cannot be empty.");
-        }
+        MemberValidator.validateEmail(email);
         return memberRepository.getByEmail(email);
     }
 
@@ -57,6 +48,7 @@ public class MemberService extends BaseService<Member, Integer> {
     //       -> 6 toProfileDto (MemberMapper)
     //    -> 7 printProfileMember (MemberController)
     //    -> 8 printError (ConsolePrinter)
+
     public Optional<MemberProfileDto> getProfileById(Integer id) throws SQLException {
         validateId(id);
         return memberRepository.getById(id).map(memberMapper::toProfileDto);
@@ -83,7 +75,7 @@ public class MemberService extends BaseService<Member, Integer> {
 
     //update
     public Optional<MemberAdminDto> updateMemberByAdmin(UpdateMemberDto dto) throws SQLException {
-        MemberValidator.validateUpdateMemberDto(dto);
+        MemberValidator.validateUpdateMemberAdminDto(dto);
 
         Optional<Member> optionalMember = memberRepository.getById(dto.getId());
 
@@ -101,8 +93,76 @@ public class MemberService extends BaseService<Member, Integer> {
         return memberRepository.getById(member.getId())
                 .map(memberMapper::toAdminDto);
     }
+    public Optional<MemberProfileDto> updateOwnProfile(UpdateMyProfileDto dto) throws SQLException {
+        MemberValidator.validateUpdateMyProfileDto(dto);
 
+        Optional<Member> optionalMember = memberRepository.getById(dto.getId());
+
+        if (optionalMember.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Member member = optionalMember.get();
+
+        memberMapper.updateMemberProfileFromDto(dto, member);
+        validateEmailUniqueness(member);
+        memberRepository.update(member);
+
+        Optional<Member> updatedMember = memberRepository.getById(dto.getId());
+
+        if (updatedMember.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(memberMapper.toProfileDto(updatedMember.get()));
+    }
+    public boolean changeOwnPassword(ChangePasswordDto dto) throws SQLException {
+        MemberValidator.validateChangePasswordDto(dto);
+
+        Optional<Member> optionalMember = memberRepository.getById(dto.getMemberId());
+
+        if (optionalMember.isEmpty()) {
+            return false;
+        }
+
+        Member member = optionalMember.get();
+
+        if (!member.getPassword().equals(dto.getCurrentPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect.");
+        }
+
+        memberRepository.updatePassword(member.getId(), dto.getNewPassword());
+
+        return true;
+    }
+    public boolean changeMemberPasswordByAdmin(Member currentMember, AdminChangePasswordDto dto) throws SQLException {
+        validateLibrarianAccess(currentMember);
+        MemberValidator.validateAdminChangePasswordDto(dto);
+
+        Optional<Member> optionalMember = memberRepository.getById(dto.getMemberId());
+
+        if (optionalMember.isEmpty()) {
+            return false;
+        }
+
+        memberRepository.updatePassword(dto.getMemberId(), dto.getNewPassword());
+        return true;
+    }
     //create
+    public Optional<MemberAdminDto> createMemberByAdmin(CreateMemberDto dto) throws SQLException{
+        MemberValidator.validateCreateMemberDto(dto);
+        Optional<Member> optionalMember = memberRepository.getByEmail(dto.getEmail());
+        if (optionalMember.isPresent()){
+            throw new IllegalArgumentException("Email is already in use.");
+        }
+
+        Member member = memberMapper.fromCreateDto(dto);
+        memberRepository.save(member);
+
+        return memberRepository.getByEmail(dto.getEmail())
+                .map(memberMapper::toAdminDto);
+
+    }
 
     //delete
 
