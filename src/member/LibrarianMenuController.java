@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 public class LibrarianMenuController {
 
+    // endast test kod meny - ta bort senare
     public static void showLibrarianMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Librarian Menu");

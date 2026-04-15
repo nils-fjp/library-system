@@ -10,7 +10,7 @@ public class ReaderMenuController {
 
     private static final Scanner SCANNER = new Scanner(System.in);
 
-
+    // Min kod - ta bort senare - bara test kod meny
     public static void showReaderMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Reader Menu");
