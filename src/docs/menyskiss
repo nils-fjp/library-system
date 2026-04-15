@@ -35,6 +35,7 @@
                     0. Back to My Loans --> (2. My Loans)
                 0. Back to My Loans     --> (2. My Loans)
             2. View loan history
+            3. Loan a book
             0. Back to Main Menu --> (3. Reader Menu)
         3. My profile
             1. View my profile
@@ -44,33 +45,26 @@
 
     4. Librarian Menu
         1. Manage Books
-            1. View Books
-                1. View all books
-                2. Search Books
-                3. Search Authors
-                0. Back to Main Menu --> (4. Librarian Menu)
-
-            2. Add book
-            3. Modify book
-            4. Delete book
+            1. View Available Books
+            2. Search Books
+            3. Add Book
+            4. Update Book
+            5. Delete Book
             0. Back to Main Menu --> (4. Librarian Menu)
 
         2. Manage Loans
-            1. View loans
-            2. Add loan
-            3. Modify loan
-            4. Delete loan
+            1. View All Loans
+            2. Add Loan
+            3. Update Loan
+            4. Delete Loan
             0. Back to Main Menu --> (4. Librarian Menu)
 
         3. Manage Readers
-            1. View readers
-                1. View all readers
-                2. Search reader by email
-                0. Back to Manage Readers --> (3. Manage Readers)
-
-            2. Add reader
-            3. Modify reader
-            4. Delete reader
+            1. View All Readers
+            2. Search Readers
+            3. Add Reader
+            4. Update Reader
+            5. Delete Reader
             0. Back to Main Menu --> (4. Librarian Menu)
 
         4. Manage Authors
@@ -85,6 +79,10 @@
             2. Add category
             3. Modify category
             4. Delete category
+            1. View Authors
+            2. Add Author +
+            3. Update Author +
+            4. Delete Author
             0. Back to Main Menu --> (4. Librarian Menu)
 
         0. Log Out --> (0. Main Menu)

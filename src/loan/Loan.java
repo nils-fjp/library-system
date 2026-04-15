@@ -3,35 +3,43 @@ package loan;
 import java.time.LocalDate;
 
 public class Loan {
-    private int loanId;
+    private int id;
     private int bookId;
     private int memberId;
     private LocalDate loanDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
 
-    public Loan(int bookId, LocalDate dueDate, LocalDate loanDate, int loanId, int memberId, LocalDate returnDate) {
+    public Loan() {
+    }
+
+    public Loan(int id, int bookId, int memberId, LocalDate loanDate, LocalDate dueDate, LocalDate returnDate) {
+        this.id = id;
         this.bookId = bookId;
-        this.dueDate = dueDate;
-        this.loanDate = loanDate;
-        this.loanId = loanId;
         this.memberId = memberId;
+        this.loanDate = loanDate;
+        this.dueDate = dueDate;
         this.returnDate = returnDate;
     }
 
-    /*
-    public Loan.Loan(int bookId, int memberId) {
-        this.bookId = bookId;
-        this.memberId = memberId;
-        this.loanDate = LocalDate.now();
-        this.dueDate = LocalDate.now().plusWeeks(4);
+    public Loan(int bookId, int memberId, LocalDate loanDate, LocalDate dueDate) {
+        this(0, bookId, memberId, loanDate, dueDate, null);
     }
-    */
 
-    // ?
-    public Loan(int loanId, int bookId) {
-        this.loanId = loanId;
-        this.bookId = bookId;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getLoanId() {
+        return id;
+    }
+
+    public void setLoanId(int loanId) {
+        this.id = loanId;
     }
 
     public int getBookId() {
@@ -42,12 +50,12 @@ public class Loan {
         this.bookId = bookId;
     }
 
-    public LocalDate getDueDate() {
-        return dueDate;
+    public int getMemberId() {
+        return memberId;
     }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public void setMemberId(int memberId) {
+        this.memberId = memberId;
     }
 
     public LocalDate getLoanDate() {
@@ -58,27 +66,31 @@ public class Loan {
         this.loanDate = loanDate;
     }
 
-    public int getLoanId() {
-        return loanId;
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
-    public void setLoanId(int loanId) {
-        this.loanId = loanId;
-    }
-
-    public int getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(int memberId) {
-        this.memberId = memberId;
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
     public LocalDate getReturnDate() {
         return returnDate;
     }
 
-    public void setReturnDate() {
-        this.returnDate = LocalDate.now();
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public boolean isReturned() {
+        return returnDate != null;
+    }
+
+    public boolean isActive() {
+        return !isReturned();
+    }
+
+    public boolean isOverdue() {
+        return isActive() && dueDate != null && LocalDate.now().isAfter(dueDate);
     }
 }

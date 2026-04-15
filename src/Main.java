@@ -1,26 +1,17 @@
 import ui.ANSI;
-import ui.AuthController;
 import ui.Menu;
 
 import java.sql.SQLException;
-import java.util.Scanner;
 
 public class Main {
-
-    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) throws SQLException {
         Menu mainMenu = new Menu();
 
         mainMenu.setTopTitle("Main Menu");
-        mainMenu.setMidTitle("Test Menu");
+        mainMenu.setMidTitle("Library System");
         mainMenu.setMenuInfo("Select which menu to open");
-        mainMenu.setExitOption("Exit program");
-        //mainMenu.addMenuOption("ReaderMenuController.showMenu()");
-        // mainMenu.addMenuOption("LibrarianMenuController.showMenu()");
-        mainMenu.addMenuOption("BookController.showMenu()");
-        // mainMenu.addMenuOption("MemberController.showMenu()");
-        mainMenu.addMenuOption("LoanController.showMenu()");
+        mainMenu.setExitOption("Exit");
         mainMenu.addMenuOption("Search Books");
         mainMenu.addMenuOption("Log in");
         mainMenu.setPrePrompt("Type a number and press enter...");
@@ -28,22 +19,14 @@ public class Main {
 
         while (mainMenu.showMenu()) {
             switch (mainMenu.getChoice()) {
-                case 0 -> {
-                    System.out.println(ANSI.CLEAR_SCREEN);
-                    System.out.println("Exiting application...");
-                    return;
-                }
-                case 1 -> book.BookController.showMenu();
-                case 2 -> loan.LoanController.showMenu();
-                case 3 -> System.out.println(("Book Menu\n" +
-                        "1. View Books -> BookController.showAllBooks()\n" +
-                        "2. Search Books -> BookController.searchBooks()\n" +
-                        "3. Search Authors -> BookController.searchAuthors()\n" +
-                        "0. Back"));
-                case 4 -> AuthController.login();
+                case 1 -> book.BookController.search();
+                case 2 -> ui.AuthController.login();
                 default -> System.out.println("Invalid input");
             }
         }
+
+        System.out.println(ANSI.CLEAR_SCREEN);
+        System.out.println("Exiting application...");
     }
 }
 

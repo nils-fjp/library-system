@@ -120,6 +120,9 @@ public class BookController extends BaseController {
 //    }
 
     // Metoder
+    public static void search() {
+    }
+
     public static void showAllBooks() {
         BookService bookService = new BookService();
 

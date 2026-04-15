@@ -162,24 +162,23 @@ public class Menu {
 
     // Baseras på Nils Main och BookController-menyer
     public boolean showMenu() {
-        while (true) {
+        boolean active = true;
+        while (active) {
             drawMenuHeader();
             drawMenuInfo();
             drawMenuOptions();
             drawPrePrompt();
             drawPromptLine();
-
-            int input;
             try {
-                input = Integer.parseInt(scanner.nextLine().trim());
+                int input = Integer.parseInt(scanner.nextLine().trim());
+                if (input >= 0 && input < menuOptions.size()) {
+                    choice = input;
+                    return input != 0;
+                }
             } catch (NumberFormatException e) {
-                return false;
+                System.out.println();
             }
-            if (input > 0) {
-                choice = input;
-                return true;
-            }
-            return false;
         }
+        return active;
     }
 }

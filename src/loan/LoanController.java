@@ -9,54 +9,20 @@ import java.util.List;
 import java.util.Scanner;
 
 public class LoanController extends BaseController {
-    // Main » LoanController.showMenu()
-    public static void showMenu() {
-        showMenu(null);
-    }
-
-    public static void showMenu(Member currentMember) {
-        Menu loanMenu = new Menu();
-        loanMenu.setTopTitle("Main » Loan Menu");
-        loanMenu.setMidTitle("Loan Menu");
-        loanMenu.setMenuInfo("\n"); // add one extra line for visual balance
-        loanMenu.setExitOption("Back to Main");
-        loanMenu.addMenuOption("showMyLoansMenu()");
-        loanMenu.addMenuOption("showActiveLoansMenu()");
-        loanMenu.addMenuOption("showLoanHistoryMenu()");
-        loanMenu.addMenuOption("showManageLoansMenu()");
-        loanMenu.setPrePrompt("Type a number and press enter...");
-        loanMenu.setPromptLine("Enter: ");
-
-        while (loanMenu.showMenu()) {
-            switch (loanMenu.getChoice()) {
-                case 0 -> {
-                }
-                case 1 -> {
-                    showMyLoansMenu(currentMember);
-                }
-                case 2 -> {
-                    showActiveLoansMenu(currentMember);
-                }
-                case 3 -> {
-                    showLoanHistoryMenu(currentMember);
-                }
-                case 4 -> {
-                    showManageLoansMenu(currentMember);
-                }
-                default -> {
-                    loanMenu.setMenuInfo("Invalid Input!");
-                }
-            }
-        }
-    }
+    /*
+    Fossilized direct-entry loan menu kept out of the active flow during
+    router consolidation. Active entry points now come from:
+    - member.ReaderMenuController -> showMyLoansMenu(Member)
+    - member.LibrarianMenuController -> showManageLoansMenu(Member)
+     */
 
     // Reader Menu » My Loans
     public static void showMyLoansMenu(Member currentMember) {
         Menu myLoansMenu = new Menu(
-                "Main Menu » My Loans",
+                "Reader Menu » My Loans",
                 "My Loans",
                 "\n\n\n", // add three extra lines for visual balance
-                "Back to Main Menu",
+                "Back to Reader Menu",
                 new ArrayList<>(List.of(
                         "Active Loans",
                         "Loan History"
@@ -66,9 +32,6 @@ public class LoanController extends BaseController {
         );
         while (myLoansMenu.showMenu()) {
             switch (myLoansMenu.getChoice()) {
-                case 0 -> {
-                    // go back to Reader Menu
-                }
                 case 1 -> {
                     // go forward to:
                     // Reader Menu » My Loans » Active Loans
@@ -94,8 +57,8 @@ public class LoanController extends BaseController {
                 "\n\n\n", // add three extra lines for visual balance
                 "Back to My Loans",
                 new ArrayList<>(List.of(
-                        "Option 1",
-                        "Option 2"
+                        "Extend loan",
+                        "Return loan"
                 )),
                 "Type a number and press enter...",
                 "Enter: "
@@ -103,15 +66,8 @@ public class LoanController extends BaseController {
 
         while (activeLoansMenu.showMenu()) {
             switch (activeLoansMenu.getChoice()) {
-                case 0 -> {
-                    // go back to My Loans
-                }
-                case 1 -> {
-                    //
-                }
-                case 2 -> {
-                    //wip
-                }
+                case 1 -> System.out.println("WIP: extend selected loan");
+                case 2 -> System.out.println("WIP: return selected loan");
                 default -> {
                     activeLoansMenu.setMenuInfo("Invalid Input!");
                 }
@@ -127,23 +83,14 @@ public class LoanController extends BaseController {
                 "\n\n\n", // add three extra lines for visual balance
                 "Back to My Loans",
                 new ArrayList<>(List.of(
-                        "Option 1",
-                        "Option 2"
+                        "Refresh history"
                 )),
                 "Type a number and press enter...",
                 "Enter: "
         );
         while (loanHistoryMenu.showMenu()) {
             switch (loanHistoryMenu.getChoice()) {
-                case 0 -> {
-                    // go back to My Loans
-                }
-                case 1 -> {
-                    // wip
-                }
-                case 2 -> {
-                    // wip 2
-                }
+                case 1 -> System.out.println("WIP: show loan history");
                 default -> loanHistoryMenu.setMenuInfo("Invalid Input!");
             }
         }
@@ -155,10 +102,10 @@ public class LoanController extends BaseController {
                 "Librarian Menu » Manage Loans",
                 "Manage Loans",
                 "\n", // add one extra line for visual balance
-                "Back to Main Menu",
+                "Back to Librarian Menu",
                 new ArrayList<>(List.of(
                         "View Loans",
-                        "Create Loan",
+                        "Add Loan",
                         "Modify Loan",
                         "Delete Loan"
                 )),
@@ -168,21 +115,10 @@ public class LoanController extends BaseController {
 
         while (manageLoansMenu.showMenu()) {
             switch (manageLoansMenu.getChoice()) {
-                case 0 -> {
-                    // go back to Librarian Menu
-                }
-                case 1 -> {
-                    // view loans
-                }
-                case 2 -> {
-                    // create/add loan
-                }
-                case 3 -> {
-                    // modify loan
-                }
-                case 4 -> {
-                    // delete loan
-                }
+                case 1 -> System.out.println("WIP: view loans");
+                case 2 -> System.out.println("WIP: add loan");
+                case 3 -> System.out.println("WIP: modify loan");
+                case 4 -> System.out.println("WIP: delete loan");
                 default -> manageLoansMenu.setMenuInfo("Invalid Input!");
             }
         }
