@@ -2,26 +2,30 @@ package loan;
 
 import base.BaseController;
 import member.Member;
+import ui.ConsolePrinter;
 import ui.Menu;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class LoanController extends BaseController {
-    /*
-    Fossilized direct-entry loan menu kept out of the active flow during
-    router consolidation. Active entry points now come from:
-    - member.ReaderMenuController -> showMyLoansMenu(Member)
-    - member.LibrarianMenuController -> showManageLoansMenu(Member)
-     */
+public class LoanController extends BaseController<Loan, Integer> {
 
-    // Reader Menu » My Loans
+    private static final LoanService loanService = new LoanService();
+    private static final ConsolePrinter printer = new ConsolePrinter();
+    private static final Scanner scanner = new Scanner(System.in);
+
     public static void showMyLoansMenu(Member currentMember) {
+        if (currentMember == null) {
+            printer.printError("No authorized user.");
+            return;
+        }
+
         Menu myLoansMenu = new Menu(
                 "Reader Menu » My Loans",
                 "My Loans",
-                "\n\n\n", // add three extra lines for visual balance
+                "\n",
                 "Back to Reader Menu",
                 new ArrayList<>(List.of(
                         "Active Loans",
@@ -30,57 +34,61 @@ public class LoanController extends BaseController {
                 "Type a number and press enter...",
                 "Enter: "
         );
+
         while (myLoansMenu.showMenu()) {
             switch (myLoansMenu.getChoice()) {
-                case 1 -> {
-                    // go forward to:
-                    // Reader Menu » My Loans » Active Loans
-                    showActiveLoansMenu(currentMember);
-                }
-                case 2 -> {
-                    // go forward to:
-                    // Reader Menu » My Loans » Loan History
-                    showLoanHistoryMenu(currentMember);
-                }
-                default -> {
-                    myLoansMenu.setMenuInfo("Invalid Input!");
-                }
+                case 1 -> showActiveLoansMenu(currentMember);
+                case 2 -> showLoanHistoryMenu(currentMember);
+                default -> myLoansMenu.setMenuInfo("Invalid input!");
             }
         }
     }
 
-    // Reader Menu » My Loans » Active Loans
     public static void showActiveLoansMenu(Member currentMember) {
+        if (currentMember == null) {
+            printer.printError("No authorized user.");
+            return;
+        }
+
         Menu activeLoansMenu = new Menu(
                 "My Loans » Active Loans",
                 "My Active Loans",
-                "\n\n\n", // add three extra lines for visual balance
+                "\n",
                 "Back to My Loans",
                 new ArrayList<>(List.of(
-                        "Extend loan",
-                        "Return loan"
+                        "Return loan",
+                        "Refresh list"
                 )),
                 "Type a number and press enter...",
                 "Enter: "
         );
 
-        while (activeLoansMenu.showMenu()) {
+        while (true) {
+            printMemberActiveLoans(currentMember.getId());
+
+            if (!activeLoansMenu.showMenu()) {
+                return;
+            }
+
             switch (activeLoansMenu.getChoice()) {
-                case 1 -> System.out.println("WIP: extend selected loan");
-                case 2 -> System.out.println("WIP: return selected loan");
-                default -> {
-                    activeLoansMenu.setMenuInfo("Invalid Input!");
+                case 1 -> returnLoanForCurrentMember(currentMember);
+                case 2 -> {
                 }
+                default -> activeLoansMenu.setMenuInfo("Invalid input!");
             }
         }
     }
 
-    // Reader Menu » My Loans » Loan History
     public static void showLoanHistoryMenu(Member currentMember) {
+        if (currentMember == null) {
+            printer.printError("No authorized user.");
+            return;
+        }
+
         Menu loanHistoryMenu = new Menu(
                 "My Loans » Loan History",
                 "My Loan History",
-                "\n\n\n", // add three extra lines for visual balance
+                "\n",
                 "Back to My Loans",
                 new ArrayList<>(List.of(
                         "Refresh history"
@@ -88,26 +96,30 @@ public class LoanController extends BaseController {
                 "Type a number and press enter...",
                 "Enter: "
         );
-        while (loanHistoryMenu.showMenu()) {
-            switch (loanHistoryMenu.getChoice()) {
-                case 1 -> System.out.println("WIP: show loan history");
-                default -> loanHistoryMenu.setMenuInfo("Invalid Input!");
+
+        while (true) {
+            printMemberLoanHistory(currentMember.getId());
+
+            if (!loanHistoryMenu.showMenu()) {
+                return;
+            }
+
+            if (loanHistoryMenu.getChoice() != 1) {
+                loanHistoryMenu.setMenuInfo("Invalid input!");
             }
         }
     }
 
-    // Librarian Menu » Manage Loans
     public static void showManageLoansMenu(Member currentMember) {
         Menu manageLoansMenu = new Menu(
                 "Librarian Menu » Manage Loans",
                 "Manage Loans",
-                "\n", // add one extra line for visual balance
+                "\n",
                 "Back to Librarian Menu",
                 new ArrayList<>(List.of(
-                        "View Loans",
-                        "Add Loan",
-                        "Modify Loan",
-                        "Delete Loan"
+                        "View active loans",
+                        "Add loan",
+                        "Register return"
                 )),
                 "Type a number and press enter...",
                 "Enter: "
@@ -115,25 +127,133 @@ public class LoanController extends BaseController {
 
         while (manageLoansMenu.showMenu()) {
             switch (manageLoansMenu.getChoice()) {
-                case 1 -> System.out.println("WIP: view loans");
-                case 2 -> System.out.println("WIP: add loan");
-                case 3 -> System.out.println("WIP: modify loan");
-                case 4 -> System.out.println("WIP: delete loan");
-                default -> manageLoansMenu.setMenuInfo("Invalid Input!");
+                case 1 -> showAllActiveLoans();
+                case 2 -> createLoan();
+                case 3 -> registerReturnedLoan();
+                default -> manageLoansMenu.setMenuInfo("Invalid input!");
             }
         }
     }
 
-    private void returnLoan() {
-        Scanner scanner = new Scanner(System.in);
+    private static void createLoan() {
+        try {
+            int memberId = readPositiveInt("Enter member id: ");
+            int bookId = readPositiveInt("Enter book id: ");
+            loanService.createLoan(memberId, bookId);
+            printer.printSuccess("Loan created successfully.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            printer.printError(e.getMessage());
+        } catch (SQLException e) {
+            printer.printError("Database error: " + e.getMessage());
+        }
+    }
 
-        System.out.println("Enter loan ID");
-        int loanID = Integer.parseInt(scanner.nextLine().trim());
+    private static void registerReturnedLoan() {
+        try {
+            int loanId = readPositiveInt("Enter loan id to return: ");
+            loanService.returnLoan(loanId);
+            printer.printSuccess("Loan returned successfully.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            printer.printError(e.getMessage());
+        } catch (SQLException e) {
+            printer.printError("Database error: " + e.getMessage());
+        }
+    }
 
-        System.out.println("Enter book ID");
-        int bookID = Integer.parseInt(scanner.nextLine().trim());
+    private static void returnLoanForCurrentMember(Member currentMember) {
+        try {
+            int loanId = readPositiveInt("Enter loan id to return: ");
+            loanService.returnLoanForMember(currentMember.getId(), loanId);
+            printer.printSuccess("Loan returned successfully.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            printer.printError(e.getMessage());
+        } catch (SQLException e) {
+            printer.printError("Database error: " + e.getMessage());
+        }
+    }
 
-        // Loan.LoanService.returnLoan(Loan.Loan );
+    private static void showAllActiveLoans() {
+        try {
+            List<ActiveLoanDto> loans = loanService.getAllActiveLoans();
 
+            printer.printHeader("All Active Loans");
+            if (loans.isEmpty()) {
+                printer.printField("Status", "No active loans found");
+            } else {
+                for (ActiveLoanDto loan : loans) {
+                    System.out.println("\t" + loan.id() + ". " + loan.bookTitle()
+                            + " | " + loan.memberName()
+                            + " | loaned: " + loan.loanDate()
+                            + " | due: " + loan.dueDate()
+                            + (loan.overdue() ? " | OVERDUE" : ""));
+                }
+            }
+            printer.printFooter();
+        } catch (SQLException e) {
+            printer.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    private static void printMemberActiveLoans(Integer memberId) {
+        try {
+            List<LoanSummaryDto> loans = loanService.getActiveLoansByMember(memberId);
+
+            printer.printHeader("My Active Loans");
+            if (loans.isEmpty()) {
+                printer.printField("Status", "No active loans found");
+            } else {
+                for (LoanSummaryDto loan : loans) {
+                    System.out.println("\t" + loan.id() + ". " + loan.bookTitle()
+                            + " | loaned: " + loan.loanDate()
+                            + " | due: " + loan.dueDate()
+                            + (loan.overdue() ? " | OVERDUE" : ""));
+                }
+            }
+            printer.printFooter();
+        } catch (IllegalArgumentException e) {
+            printer.printError(e.getMessage());
+        } catch (SQLException e) {
+            printer.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    private static void printMemberLoanHistory(Integer memberId) {
+        try {
+            List<LoanHistoryDto> loans = loanService.getLoanHistoryByMember(memberId);
+
+            printer.printHeader("My Loan History");
+            if (loans.isEmpty()) {
+                printer.printField("Status", "No historical loans found");
+            } else {
+                for (LoanHistoryDto loan : loans) {
+                    System.out.println("\t" + loan.id() + ". " + loan.bookTitle()
+                            + " | loaned: " + loan.loanDate()
+                            + " | due: " + loan.dueDate()
+                            + " | returned: " + loan.returnDate());
+                }
+            }
+            printer.printFooter();
+        } catch (IllegalArgumentException e) {
+            printer.printError(e.getMessage());
+        } catch (SQLException e) {
+            printer.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    private static int readPositiveInt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+
+            try {
+                int value = Integer.parseInt(input);
+                if (value > 0) {
+                    return value;
+                }
+            } catch (NumberFormatException ignored) {
+            }
+
+            printer.printError("Please enter a positive number.");
+        }
     }
 }
