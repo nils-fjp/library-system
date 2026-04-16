@@ -28,6 +28,7 @@ public class LoanService extends BaseService<Loan, Integer> {
         }
     }
 
+    // skapa ett nytt lån för Member med memberId och bookId
     public void createLoan(Integer memberId, Integer bookId) throws SQLException {
         validateId(memberId);
         validateId(bookId);
@@ -93,6 +94,7 @@ public class LoanService extends BaseService<Loan, Integer> {
         validateMemberExists(memberId);
         validateId(loanId);
 
+        // använder lambda
         Loan loan = loanRepository.getById(loanId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found."));
 
@@ -107,9 +109,11 @@ public class LoanService extends BaseService<Loan, Integer> {
         loanRepository.returnLoan(loanId);
     }
 
+    // uppdatera status för ett lån så att lånet blir återlämnat
     public void returnLoan(Integer loanId) throws SQLException {
         validateId(loanId);
 
+        // använder lambda
         Loan loan = loanRepository.getById(loanId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found."));
 

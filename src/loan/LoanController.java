@@ -110,32 +110,7 @@ public class LoanController extends BaseController<Loan, Integer> {
         }
     }
 
-    public static void showManageLoansMenu(Member currentMember) {
-        Menu manageLoansMenu = new Menu(
-                "Librarian Menu » Manage Loans",
-                "Manage Loans",
-                "\n",
-                "Back to Librarian Menu",
-                new ArrayList<>(List.of(
-                        "View active loans",
-                        "Add loan",
-                        "Register return"
-                )),
-                "Type a number and press enter...",
-                "Enter: "
-        );
-
-        while (manageLoansMenu.showMenu()) {
-            switch (manageLoansMenu.getChoice()) {
-                case 1 -> showAllActiveLoans();
-                case 2 -> createLoan();
-                case 3 -> registerReturnedLoan();
-                default -> manageLoansMenu.setMenuInfo("Invalid input!");
-            }
-        }
-    }
-
-    private static void createLoan() {
+    public static void createLoan(Member currentMember) {
         try {
             int memberId = readPositiveInt("Enter member id: ");
             int bookId = readPositiveInt("Enter book id: ");
@@ -148,7 +123,8 @@ public class LoanController extends BaseController<Loan, Integer> {
         }
     }
 
-    private static void registerReturnedLoan() {
+    // uppdatera lånstatus för ett existerande lån.
+    public static void registerReturnedLoan(Member currentMember) {
         try {
             int loanId = readPositiveInt("Enter loan id to return: ");
             loanService.returnLoan(loanId);
@@ -172,7 +148,7 @@ public class LoanController extends BaseController<Loan, Integer> {
         }
     }
 
-    private static void showAllActiveLoans() {
+    public static void showAllActiveLoans(Member currentMember) {
         try {
             List<ActiveLoanDto> loans = loanService.getAllActiveLoans();
 
