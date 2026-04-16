@@ -1,8 +1,12 @@
 package member;
+
+import loan.LoanController;
 import ui.AuthController;
 import ui.Menu;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LibrarianMenuController {
 
@@ -19,7 +23,7 @@ public class LibrarianMenuController {
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
                 case 1 -> System.out.println("showManageBooksMenu()");
-                case 2 -> System.out.println("showManageLoansMenu();");
+                case 2 -> showManageLoansMenu(currentMember);
                 case 3 -> showManageReadersMenu(currentMember);
                 case 4 -> showManageAuthorsMenu();
                 case 5 -> showManageCategoriesMenu();
@@ -84,31 +88,30 @@ public class LibrarianMenuController {
 //    }
 
     //2. Manage Loans
-//    private static void showManageLoansMenu() throws SQLException {
-//        Menu menu = new Menu();
-//        menu.setTopTitle("Manage Loans");
-//        menu.addMenuOption("View loans");
-//        menu.addMenuOption("Add loan");
-//        menu.addMenuOption("Modify loan");
-//        menu.addMenuOption("Delete loan");
-//
-//        while (menu.showMenu()) {
-//            switch (menu.getChoice()) {
-//                case 1 -> System.out.println("LoanController.showAllLoans()");
-//                // case 1 -> LoanController.showAllLoans();
-//                case 2 -> System.out.println("LoanController.addLoan()");
-//                // case 2 -> LoanController.addLoan();
-//                case 3 -> System.out.println("LoanController.updateLoan()");
-//                // case 3 -> LoanController.updateLoan();
-//                case 4 -> System.out.println("LoanController.deleteLoan()");
-//                // case 4 -> LoanController.deleteLoan();
-//                case 0 -> {
-//                    return;
-//                }
-//                default -> System.out.println("Invalid option.");
-//            }
-//        }
-//    }
+    public static void showManageLoansMenu(Member currentMember) {
+        Menu manageLoansMenu = new Menu(
+                "Librarian Menu » Manage Loans",
+                "Manage Loans",
+                "\n",
+                "Back to Librarian Menu",
+                new ArrayList<>(List.of(
+                        "View active loans",
+                        "Add loan",
+                        "Register return"
+                )),
+                "Type a number and press enter...",
+                "Enter: "
+        );
+
+        while (manageLoansMenu.showMenu()) {
+            switch (manageLoansMenu.getChoice()) {
+                case 1 -> LoanController.showAllActiveLoans(currentMember);
+                case 2 -> LoanController.createLoan(currentMember);
+                case 3 -> LoanController.registerReturnedLoan(currentMember);
+                default -> manageLoansMenu.setMenuInfo("Invalid input!");
+            }
+        }
+    }
 
     //3. Manage Readers
     private static void showManageReadersMenu(Member currentMember) throws SQLException {
