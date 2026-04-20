@@ -34,6 +34,10 @@ public class ConsolePrinter {
         System.out.println();
     }
 
+    public static void printPrompt(String message) {
+        System.out.println("\t" + ANSI.YELLOW + message + ANSI.DEFAULT_FG);
+    }
+
     public static void printFields(String title, LinkedHashMap<String, Object> fields) {
         printHeader(title);
 

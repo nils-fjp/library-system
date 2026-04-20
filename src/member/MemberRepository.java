@@ -131,10 +131,12 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
     public void update(Member entity) throws SQLException {
         String sql = """
                 UPDATE library.members
-                SET first_name = ?, 
-                    last_name = ?, 
-                    email = ?, 
-                    membership_date = ?
+                SET first_name = ?,
+                    last_name = ?,
+                    email = ?,
+                    membership_date = ?,
+                    membership_type = ?,
+                    status = ?
                 WHERE id = ?""";
         try (Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)){
@@ -142,7 +144,9 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
             statement.setString(2, entity.getLastName());
             statement.setString(3, entity.getEmail());
             statement.setDate(4, java.sql.Date.valueOf(entity.getMembershipDate()));
-            statement.setInt(5, entity.getId());
+            statement.setString(5, entity.getMembershipType());
+            statement.setString(6, entity.getStatus());
+            statement.setInt(7, entity.getId());
 
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected == 0) {
@@ -172,6 +176,15 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
 
     @Override
     public void deleteById(Integer id) throws SQLException {
+        String sql = "DELETE FROM library.members WHERE id = ?";
 
+        try (Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setInt(1, id);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("No member found with id: " + id);
+            }
+        }
     }
 }
