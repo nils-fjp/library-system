@@ -97,6 +97,9 @@ public class Member {
         this.password = password;
     }
 
+    public void setRole(String reader) {
+    }
+
 
 //    @Override
 //    public String toString() {

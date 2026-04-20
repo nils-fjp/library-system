@@ -3,14 +3,14 @@ package member;
 import java.time.LocalDate;
 
 public class MemberProfileDto {
-    private int id;
+
     private String firstName;
     private String lastName;
     private String email;
     private LocalDate membershipDate;
     private String membershipType;
     private String status;
-    private String role;
+
 
     public MemberProfileDto() {
     }

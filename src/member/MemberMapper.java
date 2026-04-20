@@ -1,5 +1,7 @@
 package member;
 
+import java.time.LocalDate;
+
 public class MemberMapper {
 
     //Maps Member to MemberProfileDto for reader view
@@ -61,8 +63,11 @@ public class MemberMapper {
         member.setLastName(dto.getLastName());
         member.setEmail(dto.getEmail());
         member.setPassword(dto.getPassword());
+        member.setMembershipDate(LocalDate.now());
+        member.setMembershipType("standard");
+        member.setStatus("active");
+        member.setRole("READER");
         return member;
     }
-
 
 }
