@@ -1,9 +1,6 @@
 package ui;
 
-import member.LibrarianMenuController;
-import member.Member;
-import member.MemberService;
-import member.ReaderMenuController;
+import member.*;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -34,17 +31,24 @@ public class AuthController {
 
             currentMember = optionalMember.get();
             printer.printSuccess("Welcome, " + currentMember.getFirstName() + "!");
+
+            String status = MemberValidator.getNormalizedStatus(currentMember);
+            if ("suspended".equals(status)) {
+                printer.printError("Your account is suspended. You can view your account and search books, but you cannot borrow, reserve, or renew items.");
+            }
             if ("LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
                 LibrarianMenuController.showLibrarianMenu(currentMember);
             } else {
                 ReaderMenuController.showReaderMenu(currentMember);
             }
+
+        } catch (MembershipExpiredException e) {
+            printer.printError(e.getMessage());
         } catch (IllegalArgumentException e) {
             printer.printError(e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
+            printer.printError("Database error: " + e.getMessage());
         }
-
     }
 
     public static void logout() {

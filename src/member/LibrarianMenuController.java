@@ -1,6 +1,7 @@
 package member;
 
 import book.BookController;
+import author.AuthorController;
 import ui.AuthController;
 import ui.Menu;
 
@@ -23,7 +24,7 @@ public class LibrarianMenuController {
                 case 1 -> showManageBooksMenu(currentMember);
                 case 2 -> System.out.println("showManageLoansMenu();");
                 case 3 -> showManageReadersMenu(currentMember);
-                case 4 -> showManageAuthorsMenu();
+                case 4 -> showManageAuthorsMenu(currentMember);
                 case 5 -> showManageCategoriesMenu();
                 case 0 -> {
                     AuthController.logout();
@@ -118,8 +119,7 @@ public class LibrarianMenuController {
                 case 1 -> showViewReadersSubMenu(currentMember);
                 case 2 -> MemberController.addMemberByAdmin(currentMember);
                 case 3 -> MemberController.updateMemberByAdmin(currentMember);
-                case 4 -> System.out.println("MemberController.deleteMemberByAdmin()");
-                // case 4 -> MemberController.deleteMemberByAdmin();
+                case 4 -> MemberController.deleteMemberByAdmin(currentMember);
                 case 5 -> MemberController.changeMemberPasswordByAdmin(currentMember);
                 case 0 -> {
                     return;
@@ -148,24 +148,24 @@ public class LibrarianMenuController {
     }
 
     //4. Manage Authors
-    private static void showManageAuthorsMenu() throws SQLException {
+    private static void showManageAuthorsMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Manage Authors");
         menu.addMenuOption("View authors");
         menu.addMenuOption("Add author");
         menu.addMenuOption("Modify author");
         menu.addMenuOption("Delete author");
+        menu.addMenuOption("Find author");
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> System.out.println("AuthorController.showAllAuthors()");
-                // case 1 -> AuthorController.showAllAuthors();
-                case 2 -> System.out.println("AuthorController.addAuthor()");
-                // case 2 -> AuthorController.addAuthor();
-                case 3 -> System.out.println("AuthorController.updateAuthor()");
-                // case 3 -> AuthorController.updateAuthor();
-                case 4 -> System.out.println("AuthorController.deleteAuthor()");
-                // case 4 -> AuthorController.deleteAuthor();
+                //case 1 -> System.out.println("WIP: AuthorController.showAllAuthors()");
+                case 1 -> AuthorController.showAllAuthors();
+                case 2 -> AuthorController.addAuthor(currentMember);
+                case 3 -> AuthorController.updateAuthor(currentMember);
+                //case 4 -> System.out.println("AuthorController.deleteAuthor()");
+                case 4 -> AuthorController.deleteAuthor(currentMember);
+                case 5 -> AuthorController.findAuthor();
                 case 0 -> {
                     return;
                 }

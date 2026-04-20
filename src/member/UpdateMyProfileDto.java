@@ -1,9 +1,8 @@
 package member;
 
-import java.time.LocalDate;
 
 public class UpdateMyProfileDto {
-    public Integer id;
+
     private String firstName;
     private String lastName;
     private String email;
@@ -13,13 +12,6 @@ public class UpdateMyProfileDto {
     public UpdateMyProfileDto() {
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id){
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -44,5 +36,6 @@ public class UpdateMyProfileDto {
     public void setEmail(String email) {
         this.email = email;
     }
+
 
 }

@@ -49,18 +49,6 @@ public final class MemberValidator {
         }
     }
 
-    public static void validateMembershipType(String membershipType) {
-        if (membershipType == null || membershipType.isBlank()) {
-            throw new IllegalArgumentException("Membership type cannot be empty.");
-        }
-    }
-
-    public static void validateStatus(String status) {
-        if (status == null || status.isBlank()) {
-            throw new IllegalArgumentException("Status cannot be empty.");
-        }
-    }
-
     public static void validateMemberForUpdate(Member member) {
         validateMember(member);
         validateName(member.getFirstName(), "First name");
@@ -88,7 +76,7 @@ public final class MemberValidator {
         if (dto == null) {
             throw new IllegalArgumentException("Update data cannot be null.");
         }
-        validateId(dto.getId());
+
         validateName(dto.getFirstName(), "First name");
         validateName(dto.getLastName(), "Last name");
         validateEmail(dto.getEmail());
@@ -149,5 +137,56 @@ public final class MemberValidator {
         }
     }
 
+    public static void validateStatus(String status) {
+        if (status == null || status.isBlank()) {
+            throw new IllegalArgumentException("Status cannot be empty.");
+        }
 
+        String normalized = status.trim().toLowerCase();
+
+        if (!normalized.equals("active")
+                && !normalized.equals("suspended")
+                && !normalized.equals("expired")) {
+            throw new IllegalArgumentException("Invalid status. Allowed: active, suspended, expired.");
+        }
+    }
+
+    public static void validateMembershipType(String membershipType) {
+        if (membershipType == null || membershipType.isBlank()) {
+            throw new IllegalArgumentException("Membership type cannot be empty.");
+        }
+
+        String normalized = membershipType.trim().toLowerCase();
+
+        if (!normalized.equals("standard")
+                && !normalized.equals("premium")) {
+            throw new IllegalArgumentException("Invalid membership type. Allowed: standard, premium.");
+        }
+    }
+
+    public static void validateLoginAccess(Member member) {
+        validateMember(member);
+
+        String status = member.getStatus();
+
+        if (status == null || status.isBlank()) {
+            throw new IllegalArgumentException("Member status is missing.");
+        }
+
+        if ("expired".equalsIgnoreCase(status.trim())) {
+            throw new MembershipExpiredException("Your membership has expired. Login is not allowed.");
+        }
+    }
+
+    public static String getNormalizedStatus(Member member) {
+        validateMember(member);
+
+        String status = member.getStatus();
+
+        if (status == null || status.isBlank()) {
+            throw new IllegalArgumentException("Member status is missing.");
+        }
+
+        return status.trim().toLowerCase();
+    }
 }

@@ -75,10 +75,10 @@ public class MemberController extends BaseController<Member, Integer> {
             printer.printSuccess("Your current data:");
             printProfileMember(currentDto);
 
-            UpdateMyProfileDto updateDto = buildUpdatedMyProfileFromInput(currentMember, currentDto);
+            UpdateMyProfileDto updateDto = buildUpdatedMyProfileFromInput(currentDto);
             //MemberValidator.validateUpdateMyProfileDto(updateDto);
 
-            Optional<MemberProfileDto> updatedMember = service.updateOwnProfile(updateDto);
+            Optional<MemberProfileDto> updatedMember = service.updateOwnProfile(currentMember.getId(),updateDto);
             if (updatedMember.isEmpty()) {
                 printer.printError("Profile was not updated.");
                 return;
@@ -95,9 +95,8 @@ public class MemberController extends BaseController<Member, Integer> {
 
     }
 
-    private static UpdateMyProfileDto buildUpdatedMyProfileFromInput(Member currentMember, MemberProfileDto currentDto) {
+    private static UpdateMyProfileDto buildUpdatedMyProfileFromInput(MemberProfileDto currentDto) {
         UpdateMyProfileDto dto = new UpdateMyProfileDto();
-        dto.setId(currentMember.getId());
         dto.setFirstName(readUpdatedString("Enter new first name", currentDto.getFirstName()));
         dto.setLastName(readUpdatedString("Enter new last name", currentDto.getLastName()));
         dto.setEmail(readUpdatedString("Enter new email", currentDto.getEmail()));
@@ -150,7 +149,7 @@ public class MemberController extends BaseController<Member, Integer> {
      * Uses MemberService.getAllForAdminView().
      * Prints every member through printAdminMember().
      */
-    // 1. View All Readers
+    // SUB 1. View All Readers
     public static void showAllMembersForAdmin(Member currentMember) {
         MemberService service = new MemberService();
 
@@ -177,7 +176,7 @@ public class MemberController extends BaseController<Member, Integer> {
      * Uses findMemberByEmail() to read input and MemberService to search member data.
      * Prints result through printAdminMember().
      */
-    //2. Search Readers
+    // SUB 2. Search Readers
     public static void showMemberByEmail(Member currentMember) {
         MemberService service = new MemberService();
 
@@ -199,7 +198,7 @@ public class MemberController extends BaseController<Member, Integer> {
         }
     }
 
-    // 3. Add Reader
+    // 2. Add Reader
     public static void addMemberByAdmin(Member currentMember){
         MemberService service = new MemberService();
 
@@ -222,7 +221,6 @@ public class MemberController extends BaseController<Member, Integer> {
             printer.printError("Database error: " + e.getMessage());
         }
     }
-
     private static CreateMemberDto buildCreateMemberFromInput() {
         CreateMemberDto dto = new CreateMemberDto();
 
@@ -244,7 +242,7 @@ public class MemberController extends BaseController<Member, Integer> {
 //4. вызвать service.updateMemberByAdmin(dto)
 //5. показать результат
 //Это и есть controller flow.
-    //  4. Update Reader
+    //  3. Update Reader
     public static void updateMemberByAdmin(Member currentMember) {
         MemberService service = new MemberService();
 
@@ -273,6 +271,49 @@ public class MemberController extends BaseController<Member, Integer> {
 
             printer.printSuccess("Member updated successfully.");
             printAdminMember(updatedDto.get());
+
+        } catch (IllegalArgumentException e) {
+            printer.printError(e.getMessage());
+        } catch (SQLException e) {
+            printer.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    // 4. Delete Reader
+// 4. Delete Reader
+    public static void deleteMemberByAdmin(Member currentMember) {
+        MemberService service = new MemberService();
+
+        try {
+            service.validateLibrarianAccess(currentMember);
+
+            Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+
+            if (optionalMember.isEmpty()) {
+                printer.printError("Member not found.");
+                return;
+            }
+
+            MemberAdminDto targetMember = optionalMember.get();
+
+            printer.printSuccess("Selected member:");
+            printAdminMember(targetMember);
+
+            String confirm = readRequiredInput("Type DELETE to confirm member deletion");
+
+            if (!"DELETE".equals(confirm)) {
+                printer.printError("Deletion cancelled.");
+                return;
+            }
+
+            boolean deleted = service.deleteMemberByAdmin(targetMember.getId());
+
+            if (!deleted) {
+                printer.printError("Member was not deleted.");
+                return;
+            }
+
+            printer.printSuccess("Member deleted successfully.");
 
         } catch (IllegalArgumentException e) {
             printer.printError(e.getMessage());
@@ -352,8 +393,14 @@ public class MemberController extends BaseController<Member, Integer> {
         dto.setLastName(readUpdatedString("Enter new last name", currentDto.getLastName()));
         dto.setEmail(readUpdatedString("Enter new email", currentDto.getEmail()));
         dto.setMembershipDate(readUpdatedDate("Enter new membership date", currentDto.getMembershipDate()));
-        dto.setMembershipType(readUpdatedString("Enter new membership type", currentDto.getMembershipType()));
-        dto.setStatus(readUpdatedString("Enter new status", currentDto.getStatus()));
+        dto.setMembershipType(readUpdatedString(
+                "Enter new membership type (standard/premium)",
+                currentDto.getMembershipType()
+        ));
+        dto.setStatus(readUpdatedString(
+                "Enter new status (active/suspended/expired)",
+                currentDto.getStatus()
+        ));
 
         return dto;
     }

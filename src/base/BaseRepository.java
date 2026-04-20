@@ -42,7 +42,7 @@ public abstract class BaseRepository<T, ID> {
         }
     }
 
-    protected Connection getConnection() throws SQLException {
+    protected static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
