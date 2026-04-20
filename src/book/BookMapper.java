@@ -11,7 +11,7 @@ import java.util.List;
 public class BookMapper {
 
     // För låntagaren
-    public BookReaderDTO toReaderDTO(Book book) {
+    public BookDetailDTO toViewDTO(Book book) {
 
         // Konverterar direkt List klasser till List String
         List<String> authorNames = book.getAuthors().stream()
@@ -21,7 +21,7 @@ public class BookMapper {
         List<String> categoryNames = book.getCategories().stream()
                 .map(Category::getName).toList();
 
-        return new BookReaderDTO(
+        return new BookDetailDTO(
                 book.getId(),
                 book.getTitle(),
                 book.getIsbn(),
@@ -37,13 +37,13 @@ public class BookMapper {
 
     // För bibliotekarien
     public BookManageDTO toManageDTO(Book book) {
-        // Anropar toReaderDTO för att undvika dubplicerad kod
-        BookReaderDTO readerDTO = toReaderDTO(book);
+        // Anropar toViewDTO för att undvika dubplicerad kod
+        BookDetailDTO readerDTO = toViewDTO(book);
 
         return new BookManageDTO(
                 readerDTO.getId(),
-                readerDTO.getIsbn(),
                 readerDTO.getTitle(),
+                readerDTO.getIsbn(),
                 readerDTO.getYearPublished(),
                 readerDTO.getAvailableCopies(),
                 readerDTO.getSummary(),

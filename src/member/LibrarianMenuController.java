@@ -1,4 +1,6 @@
 package member;
+
+import book.BookController;
 import ui.AuthController;
 import ui.Menu;
 
@@ -18,7 +20,7 @@ public class LibrarianMenuController {
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> System.out.println("showManageBooksMenu()");
+                case 1 -> showManageBooksMenu(currentMember);
                 case 2 -> System.out.println("showManageLoansMenu();");
                 case 3 -> showManageReadersMenu(currentMember);
                 case 4 -> showManageAuthorsMenu();
@@ -32,33 +34,24 @@ public class LibrarianMenuController {
         }
     }
 
+    private static void showManageBooksMenu(Member currentMember) throws SQLException {
+        Menu menu = new Menu();
+        menu.setTopTitle("Manage Books");
+        menu.addMenuOption("View Books");
+        menu.addMenuOption("Search Books");
+        menu.addMenuOption("Add Book");
+        menu.addMenuOption("Update Book");
+        menu.addMenuOption("Delete Book");
+
+        while (menu.showMenu()) {
+            switch (menu.getChoice()) {
+                case 1 -> BookController.showAllBooksForAdmin(currentMember);
+                case 2 -> BookController.AdminSearchForBooks(currentMember);
+            }
+        }
+    }
 
 
-    //1. Manage Books
-//    private static void showManageBooksMenu() throws SQLException {
-//        Menu menu = new Menu();
-//        menu.setTopTitle("Manage Books");
-//        menu.addMenuOption("View Books");
-//        menu.addMenuOption("Add book");
-//        menu.addMenuOption("Modify book");
-//        menu.addMenuOption("Delete book");
-//
-//        while (menu.showMenu()) {
-//            switch (menu.getChoice()) {
-//                case 1 -> showViewBooksSubMenu();
-//                case 2 -> System.out.println("BookController.addBook()");
-//                // case 2 -> BookController.addBook();
-//                case 3 -> System.out.println("BookController.updateBook()");
-//                // case 3 -> BookController.updateBook();
-//                case 4 -> System.out.println("BookController.deleteBook()");
-//                // case 4 -> BookController.deleteBook();
-//                case 0 -> {
-//                    return;
-//                }
-//                default -> System.out.println("Invalid option.");
-//            }
-//        }
-//    }
 //
 //    private static void showViewBooksSubMenu() throws SQLException {
 //        Menu menu = new Menu();
@@ -135,6 +128,7 @@ public class LibrarianMenuController {
             }
         }
     }
+
     private static void showViewReadersSubMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("View Readers");

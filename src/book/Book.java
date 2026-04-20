@@ -4,6 +4,7 @@ package book;
 import author.Author;
 import category.Category;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Book {
@@ -16,8 +17,8 @@ public class Book {
     private String summary;
     private String lang;
     private int pageCount;
-    private List<Author> authors;
-    private List<Category> categories;
+    private List<Author> authors = new ArrayList<>();
+    private List<Category> categories = new ArrayList<>();
 
     public Book() {
     }
