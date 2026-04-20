@@ -6,7 +6,6 @@ import ui.AuthController;
 import ui.Menu;
 
 import java.sql.SQLException;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class ReaderMenuController {
@@ -26,7 +25,7 @@ public class ReaderMenuController {
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> BookController.showBooksMenu();
+                case 1 -> showBooksMenu(currentMember);
                 case 2 -> LoanController.showMyLoansMenu(currentMember);
                 case 3 -> showMyProfileMenu(currentMember);
                 case 0 -> {
@@ -39,31 +38,20 @@ public class ReaderMenuController {
 
 
     //1. Books
-//    private static void showBooksMenu() throws SQLException {
-//        Menu menu = new Menu();
-//        menu.setTopTitle("Books");
-//        menu.addMenuOption("View Books");
-//        menu.addMenuOption("Search Books");
-//        menu.addMenuOption("Search Authors");
-//
-//        while (menu.showMenu()) {
-//            switch (menu.getChoice()) {
-//                case 1 -> System.out.println("BookController.showAllBooks()");
-//                // case 1 -> BookController.showAllBooks();
-//
-//                case 2 -> System.out.println("BookController.searchBooks()");
-//                // case 2 -> BookController.searchBooks();
-//
-//                case 3 -> System.out.println("BookController.searchAuthors()");
-//                // case 3 -> BookController.searchAuthors();
-//
-//                case 0 -> {
-//                    return;
-//                }
-//                default -> System.out.println("Invalid option.");
-//            }
-//        }
-//    }
+    private static void showBooksMenu(Member currentMember) throws SQLException {
+        Menu menu = new Menu();
+        menu.setTopTitle("Book Menu");
+        menu.addMenuOption("View Books");
+        menu.addMenuOption("Search Books");
+
+        while (menu.showMenu()) {
+            switch (menu.getChoice()) {
+                case 1 -> BookController.showAllBooks(currentMember);
+                case 2 -> BookController.searchForBooks();
+
+            }
+        }
+    }
 
     //2. My Loans
     //   private static void showMyLoansMenu(Member currentMember) throws SQLException {
@@ -128,8 +116,8 @@ public class ReaderMenuController {
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
                 //case 1 -> System.out.println("MemberController.showCurrentMemberProfile(currentMember)");
-                 case 1 -> MemberController.showCurrentMemberProfile(currentMember);
-                 case 2 -> MemberController.updateOwnProfile(currentMember);
+                case 1 -> MemberController.showCurrentMemberProfile(currentMember);
+                case 2 -> MemberController.updateOwnProfile(currentMember);
                 //case 2 -> System.out.println("MemberController.changePassword(currentMember)");
                 case 3 -> MemberController.changePassword(currentMember);
 
@@ -141,7 +129,6 @@ public class ReaderMenuController {
             }
         }
     }
-
 
 
 }

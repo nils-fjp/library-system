@@ -3,7 +3,7 @@ package book;
 
 import java.util.List;
 
-public class BookManageDTO extends BookReaderDTO {
+public class BookManageDTO extends BookDetailDTO {
     private int totalCopies;
 
     public BookManageDTO(int id, String isbn, String title, int year_published, int availableCopies, String summary,

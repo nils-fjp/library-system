@@ -3,7 +3,7 @@ package book;
 
 import java.util.List;
 
-public class BookReaderDTO {
+public class BookDetailDTO {
     private int id;
     private String title;
     private String isbn;
@@ -16,7 +16,7 @@ public class BookReaderDTO {
     private List<String> categoryNames;
 
 
-    public BookReaderDTO(int id, String title, String isbn, int year_published, int availableCopies, String summary,
+    public BookDetailDTO(int id, String title, String isbn, int year_published, int availableCopies, String summary,
                          String lang, int pageCount, List<String> authorNames, List<String> categoryNames) {
         this.isbn = isbn;
         this.id = id;
