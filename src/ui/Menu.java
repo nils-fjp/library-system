@@ -20,10 +20,10 @@ public class Menu {
         this.topTitle = "";
         this.midTitle = "";
         this.menuInfo = "";
-        this.exitOption = "Exit";
+        this.exitOption = "Back";
         this.menuOptions = new ArrayList<>();
         this.menuOptions.addFirst(this.exitOption);
-       // this.menuOptions.add(0,this.exitOption);
+        // this.menuOptions.add(0,this.exitOption);
         this.prePrompt = "";
         this.promptLine = "Enter: ";
     }
@@ -106,17 +106,17 @@ public class Menu {
             headerTop = " " + ANSI.BOLD + topTitle + ANSI.NO_BOLD + " ";
         }
         System.out.println(
-            "\t╭─" + headerTop + topFlex + "╮");
+                "\t╭─" + headerTop + topFlex + "╮");
 
         if (!midTitle.isEmpty()) {
             String centerFlex = " ".repeat((PADDING - midTitle.length()) / 2);
             String flexRest = " ".repeat((PADDING - midTitle.length()) % 2);
             System.out.println(
-                "\t│ " + centerFlex + midTitle + centerFlex + flexRest + " │"
+                    "\t│ " + centerFlex + midTitle + centerFlex + flexRest + " │"
             );
         }
         System.out.println(
-            "\t╰──" + "─".repeat(PADDING) + "╯"
+                "\t╰──" + "─".repeat(PADDING) + "╯"
         );
     }
 
@@ -130,33 +130,33 @@ public class Menu {
     // Motsvarar raderna 19-25 i Nils BookController.showBookMenu()
     public void drawMenuOptions() {
         System.out.println(
-            "\t╭──" + "─".repeat(PADDING) + "╮"
+                "\t╭──" + "─".repeat(PADDING) + "╮"
         );
 
         for (int i = 1; i < menuOptions.size(); i++) {
             String menuOption = menuOptions.get(i);
             String optionFlex = " ".repeat(PADDING - (menuOption.length() + 3));
             System.out.println(
-                "\t│  " + ANSI.YELLOW + i + ". " + ANSI.DEFAULT_FG + menuOption + optionFlex + "│");
+                    "\t│  " + ANSI.YELLOW + i + ". " + ANSI.DEFAULT_FG + menuOption + optionFlex + "│");
         }
         System.out.println("\t├──" + "─".repeat(PADDING) + "┤");
 
         String exitOptionFlex = " ".repeat(PADDING - (exitOption.length() + 3));
         System.out.println(
-            "\t│  " + ANSI.BRIGHT_BLACK + 0 + ". " + ANSI.DEFAULT_FG + exitOption + exitOptionFlex + "│");
+                "\t│  " + ANSI.BRIGHT_BLACK + 0 + ". " + ANSI.DEFAULT_FG + exitOption + exitOptionFlex + "│");
         System.out.println("\t╰──" + "─".repeat(PADDING) + "╯");
     }
 
     // Visar tips strax ovanför raden där man skriver sitt val
     public void drawPrePrompt() {
         System.out.println(
-            ANSI.BRIGHT_BLACK + ANSI.ITALIC + "\t " + prePrompt + ANSI.NO_ITALIC + ANSI.DEFAULT_FG);
+                ANSI.BRIGHT_BLACK + ANSI.ITALIC + "\t " + prePrompt + ANSI.NO_ITALIC + ANSI.DEFAULT_FG);
     }
 
     // Visar den text som finns på samma rad man skriver på. Typ, "Enter:"
     public void drawPromptLine() {
         System.out.print(
-            "\t " + promptLine
+                "\t " + promptLine
         );
     }
 
