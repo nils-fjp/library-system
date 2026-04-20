@@ -144,9 +144,9 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
                 try (PreparedStatement statement1 = connection.prepareStatement(insert)) {
                     for (Author author : entity.getAuthors()) {
-                        int authorID = authorRepository.authorSave(author);
+//                        int authorID = authorRepository.authorSave(author);
                         statement1.setInt(1, bookId);
-                        statement1.setInt(2, authorID);
+//                        statement1.setInt(2, authorID);
                         statement1.executeUpdate();
                     }
                 }
