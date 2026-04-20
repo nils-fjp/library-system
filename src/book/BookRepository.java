@@ -4,6 +4,7 @@ package book;
 import author.Author;
 import author.AuthorRepository;
 import base.BaseRepository;
+import category.Category;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,82 +16,106 @@ import java.util.Optional;
 
 public class BookRepository extends BaseRepository<Book, Integer> {
 
+    private final AuthorRepository authorRepository = new AuthorRepository();
+
     //Search for book by ID
     @Override
     public Optional<Book> getById(Integer id) throws SQLException {
         return Optional.empty();
     }
 
-    // Get all available books
+    // Get all books
     @Override
     public ArrayList<Book> getAll() throws SQLException {
 
         ArrayList<Book> books = new ArrayList<>();
 
-        String sql = "SELECT b.title, b.year_published, b.available_copies, bd.language, CONCAT(a.first_name, ' ', a.last_name) AS author FROM books b\n" +
-                "JOIN book_descriptions bd ON b.id=bd.book_id\n" +
-                "JOIN book_authors ba ON b.id=ba.book_id\n" +
-                "JOIN authors a ON a.id=ba.author_id\n" +
-                "WHERE b.available_copies != 0";
-
+        String sql = "SELECT b.id, b.title, b.isbn, b.yearPublished, b.available_copies, b.totalCopies, bd.summary, bd.lang, " +
+                "bd.pageCount, a.first_name, a.last_name, c.name AS category_name " +
+                "FROM books b " +
+                "JOIN book_descriptions bd ON b.id = bd.book_id " +
+                "JOIN book_authors ba ON b.id = ba.book_id " +
+                "JOIN authors a ON a.id = ba.author_id " +
+                "JOIN book_categories bc ON b.id = bc.book_id " +
+                "JOIN categories c ON c.id = bc.category_id ";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
+             ResultSet rs = statement.executeQuery()) {
+            mapBooks(books, rs);
+//            while (rs.next()) {
+//                books.add(new Book(
+//                        rs.getString("title"),
+//                        rs.getInt("id"),
+//                        rs.getString("isbn"),
+//                        rs.getInt("year_published"),
+//                        rs.getInt("total_copies"),
+//                        rs.getInt("available_copies"),
+//                        rs.getString("summary"),
+//                        rs.getString("language"),
+//                        rs.getInt("page_count"),
+//                        new ArrayList<>(),
+//                        new ArrayList<>()
+//                ));
+//            }
 
-            mapBooks(books, resultSet);
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }
         return books;
     }
 
+    // 1. Search Books
     public List<Book> search(String keyword) throws SQLException {
         ArrayList<Book> books = new ArrayList<>();
 
-        String sql = "SELECT b.title, b.year_published, b.available_copies, CONCAT(a.first_name, ' ', a.last_name) AS author " +
+//        String sql = "SELECT b.title, b.yearPublished, b.available_copies,  a.first_name, a.last_name " +
+//                "FROM books b " +
+//                "JOIN book_authors ba ON b.id = ba.book_id " +
+//                "JOIN authors a ON a.id = ba.author_id " +
+//                "WHERE b.title LIKE ? " +
+//                "OR CONCAT(a.first_name, ' ', a.last_name) LIKE ? " +
+//                "OR CAST(b.yearPublished AS CHAR) LIKE ? "; // CAST konverterar till en annan datatyp
+        // Ha begränsning i server genom dto
+
+        String sql = "SELECT b.title, b.yearPublished, b.available_copies, a.first_name, a.last_name " +
                 "FROM books b " +
                 "JOIN book_authors ba ON b.id = ba.book_id " +
-                "JOIN authors a ON a.id = ba.author_id " +
-                "WHERE b.title LIKE ? " +
-                "OR CONCAT(a.first_name, ' ', a.last_name) LIKE ? " +
-                "OR CAST(b.year_published AS CHAR) LIKE ? "; // CAST konverterar till en annan datatyp
+                "JOIN authors a ON a.id = ba.author_id ";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, "%" + keyword + "%"); // 1 är första frågatecken ?
-            statement.setString(2, "%" + keyword + "%"); // t.ex %harry% hittar det som innehåller harry var som helst
-            statement.setString(3, "%" + keyword + "%");
+//            String searchTerm = "%" + keyword + "%";
+//            statement.setString(1, searchTerm); // 1 är första frågatecken ?
+//            statement.setString(2, searchTerm); // t.ex %harry% hittar det som innehåller harry var som helst
+//            statement.setString(3, searchTerm);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-                mapBooks(books, resultSet);
+            try (ResultSet rs = statement.executeQuery()) {
+                mapBooks(books, rs);
+//                while (rs.next()) {
+//                    books.add(new Book(
+//                            rs.getString("title"),
+//                            rs.getInt("id"),
+//                            rs.getString("isbn"),
+//                            rs.getInt("year_published"),
+//                            rs.getInt("total_copies"),
+//                            rs.getInt("available_copies"),
+//                            rs.getString("summary"),
+//                            rs.getString("language"),
+//                            rs.getInt("page_count"),
+//                            new ArrayList<>(),
+//                            new ArrayList<>()
+//                    ));
+//                }
             }
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
         }
         return books;
     }
 
-    // Hjälpmetod för getAll och searchBooks
-    // För att unvika duplicering & upprepad kod
-    private void mapBooks(ArrayList<Book> books, ResultSet resultSet) throws SQLException {
-        while (resultSet.next()) {
-            Book book = new Book();
-            book.setTitle(resultSet.getString("title"));
-            book.setYearPublished(resultSet.getInt("year_published"));
-            book.setAvailableCopies(resultSet.getInt("available_copies"));
-            book.setAuthors((List<Author>) resultSet.getArray("author"));
-            books.add(book);
-        }
-    }
-
-
-    private final AuthorRepository authorRepository = new AuthorRepository();
-
     @Override
     public void save(Book entity) throws SQLException {
-        String sql = "INSERT INTO books (title, isbn, year_published, available_copies)" +
+        String sql = "INSERT INTO books (title, isbn, yearPublished, available_copies)" +
                 "VALUES(?,?,?,?)";
 
         try (Connection connection = getConnection();
@@ -99,7 +124,6 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
             // Fyller i frågatecken
             statement.setString(1, entity.getTitle());
-            statement.setString(2, entity.getAuthors().toString());
             statement.setInt(3, entity.getYearPublished());
             statement.setInt(4, entity.getAvailableCopies());
             statement.executeUpdate();
@@ -113,7 +137,12 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                         "VALUES(?,?)";
 
                 try (PreparedStatement statement1 = connection.prepareStatement(insert)) {
-                    int authorID = authorRepository.authorSave((Author) entity.getAuthors());
+                    for (Author author : entity.getAuthors()) {
+                        int authorID = authorRepository.authorSave(author);
+                        statement1.setInt(1, bookId);
+                        statement1.setInt(2, authorID);
+                        statement1.executeUpdate();
+                    }
                 }
             }
         }
@@ -122,11 +151,79 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
     @Override
     public void update(Book entity) throws SQLException {
+        // TODO: update available copies?
+        // TODO: Koppla med loan när en bok lånas och tillgänglighet går ner
+        // TODO: Fråfa Nills om hans metod automatisk ändrar databasen varje gång en sker en lån
 
+        String sql = "UPDATE books SET ";
     }
 
     @Override
     public void deleteById(Integer id) throws SQLException {
+        String sql = "DELETE FROM book WHERE id = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+
+        }
 
     }
+
+
+    // Hjälpmetod för getAll och searchBooks
+    public Book mapBook(ResultSet resultSet) throws SQLException {
+//        while (resultSet.next()) {
+        Book book = new Book();
+        //book.setId(resultSet.getInt("id"));
+        book.setTitle(resultSet.getString("title"));
+        book.setIsbn(resultSet.getString("isbn"));
+        book.setYearPublished(resultSet.getInt("yearPublished"));
+        book.setTotalCopies(resultSet.getInt("totalCopies"));
+        book.setAvailableCopies(resultSet.getInt("available_copies"));
+        book.setLang(resultSet.getString("lang"));
+        book.setSummary(resultSet.getString("summary"));
+        book.setPageCount(resultSet.getInt("pageCount"));
+
+//            books.add(book);
+//            Author author = new Author();
+//            author.setFirst_name(resultSet.getString("first_name"));
+//            author.setLast_name(resultSet.getString("last_name"));
+//            book.getAuthors().add(author);
+        return book;
+//        }
+    }
+
+    public void mapBooks(List<Book> books, ResultSet resultSet) throws SQLException {
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+
+            Book book = findBookByID(books, id);
+
+            if (book == null) {
+                book = mapBook(resultSet);
+                books.add(book);
+            }
+
+            Author author = new Author();
+            author.setFirst_name(resultSet.getString("first_name"));
+            author.setLast_name(resultSet.getString("last_name"));
+            book.getAuthors().add(author);
+
+            Category category = new Category();
+            category.setName(resultSet.getString("category_name"));
+            book.getCategories().add(category);
+        }
+    }
+
+    public Book findBookByID(List<Book> books, int id) {
+        for (Book book : books) {
+            if (book.getId() == id) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+
 }

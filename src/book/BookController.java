@@ -1,7 +1,7 @@
 package book;
 
 import base.BaseController;
-import ui.Menu;
+import member.Member;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -9,100 +9,96 @@ import java.util.Scanner;
 
 public class BookController extends BaseController {
 
-    // Barrower Menu
-    public static void showBooksMenu() throws SQLException {
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final BookService bookService = new BookService();
 
-        Menu bookMenu = new Menu();
-        BookService bookService = new BookService();
-        Scanner scanner = new Scanner(System.in);
+    // Metoder
 
-        bookMenu.setTopTitle("Book Menu");
-        bookMenu.setMidTitle("Subtitle");
-        bookMenu.setMenuInfo("Menu Info");
-        bookMenu.setExitOption("Back to Menu");
-        bookMenu.addMenuOption("Show available books");
-        bookMenu.addMenuOption("Search Books");
+    // TODO: Fråga Olena om jag behöver currentMember i denna metoden
 
-        bookMenu.setPrePrompt("Type a number and press enter...");
-        bookMenu.setPromptLine("Enter: ");
+    // 1. Search Books - No param
+    public static void searchForBooks() {
+//        BookService bookService = new BookService();
 
-        while (bookMenu.showMenu()) {
-            switch (bookMenu.getChoice()) {
-                case 1: {
-                    showAllBooks();
-                    break;
-                }
-                case 2: {
-                    break;
-                }
-                case 4: {
-                }
-                default: {
-                    bookMenu.setMenuInfo("Invalid Input!");
-                }
+        System.out.print("Search for title, author or year: ");
+        String keyword = scanner.nextLine();
+
+        try {
+            List<BookDetailDTO> books = bookService.search(keyword);
+
+            if (books.isEmpty()) {
+                System.out.println("No books found.");
+                return;
             }
+
+            for (BookDetailDTO book : books) {
+                System.out.println(book.getTitle());
+                System.out.println(book.getAuthorNames() + " , " + book.getYearPublished());
+                System.out.println("Available: " + book.getAvailableCopies());
+                System.out.println("---------------");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
+    // 2. Search Books - Admin
+    public static void AdminSearchForBooks(Member currentMember) {
 
-    //Librarian Menu
-//    public static void showLibrarianMenu() throws SQLException {
-//        Menu bookMenu = new Menu();
-//        BookService bookService = new BookService();
-//        Scanner scanner = new Scanner(System.in);
-//
-//        bookMenu.setTopTitle("Librarians Menu");
-//        bookMenu.setExitOption("Exit Menu");
-//        bookMenu.addMenuOption("Add a new book");
-//        bookMenu.addMenuOption("Modify a book detail");
-//        bookMenu.addMenuOption("Delete a book");
-//        bookMenu.addMenuOption("Add a book to a category");
-//        bookMenu.addMenuOption("Modify an authors detail");
-//
-//        bookMenu.setPrePrompt("Type a number and press enter...");
-//        bookMenu.setPromptLine("Enter: ");
-//
-//        while (bookMenu.showMenu()) {
-//            switch (bookMenu.getChoice()) {
-//                case 0: {
-//                    break;
-//                }
-//                case 1: {
-//                    System.out.println("wip");
-//                    break;
-//                }
-//                case 2: {
-//                    System.out.println("wip");
-//                    break;
-//                }
-//                case 3: {
-//                    System.out.println("wip");
-//                }
-//                case 4: {
-//                    System.out.println("wip");
-//                }
-//                case 5: {
-//                    System.out.println("wip");
-//                }
-//            }
-//        }
-//    }
-
-    // Metoder
-    public static void search() {
-    }
-
-    public static void showAllBooks() {
-        BookService bookService = new BookService();
+        System.out.print("Search for title, author or year: ");
+        String keyword = scanner.nextLine();
 
         try {
-            List<Book> books = bookService.getAllBooks();
-            for (Book book : books) {
-                System.out.println("Title " + book.getTitle());
-                System.out.println("Author " + book.getAuthors());
-                System.out.println("Available copies " + book.getAvailableCopies());
-                System.out.println("-----");
+            List<BookManageDTO> books = bookService.AdminSearch(keyword);
+
+            if (books.isEmpty()) {
+                System.out.println("No books found.");
+                return;
             }
+
+            for (BookManageDTO book : books) {
+                System.out.println(book.getTitle());
+                System.out.println(book.getAuthorNames() + " , " + book.getYearPublished());
+                System.out.println("Available: " + book.getAvailableCopies());
+                System.out.println("---------------");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void printBooks(List<? extends BookDetailDTO> books) {
+        if (books.isEmpty()) {
+            System.out.println("No Books Found.");
+            return;
+        }
+        for (BookDetailDTO book : books) {
+            System.out.println(book.getTitle());
+            System.out.println(book.getAuthorNames() + " , " + book.getYearPublished());
+            System.out.println("Available: " + book.getAvailableCopies());
+
+            if (book instanceof BookManageDTO manageDTO) {
+                System.out.println("Total Copies: " + manageDTO.getTotalCopies());
+            }
+            System.out.println("---------------");
+        }
+
+    }
+
+    //  1. View Books (Reader)
+    public static void showAllBooks(Member currentMember) {
+        BookService bookService = new BookService();
+        try {
+            printBooks(bookService.getAllBooksForReader());
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    //   1. View Books - Admin
+    public static void showAllBooksForAdmin(Member currentMember) {
+        try {
+            printBooks(bookService.getAllBooksForAdmin());
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }

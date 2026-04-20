@@ -19,7 +19,7 @@ public class Main {
 
         while (mainMenu.showMenu()) {
             switch (mainMenu.getChoice()) {
-                case 1 -> book.BookController.search();
+                case 1 -> book.BookController.searchForBooks();
                 case 2 -> ui.AuthController.login();
                 default -> System.out.println("Invalid input");
             }
@@ -29,7 +29,6 @@ public class Main {
         System.out.println("Exiting application...");
     }
 }
-
 
 
 //          LIBRARIAN emma.hill88@email.com
