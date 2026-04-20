@@ -6,6 +6,7 @@ public final class MemberValidator {
 
     private MemberValidator() {
     }
+
     public static void validateId(Integer id) {
         if (id == null) {
             throw new IllegalArgumentException("Member id is required.");
@@ -98,6 +99,8 @@ public final class MemberValidator {
         if (dto.getEmail() == null || dto.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email cannot be empty.");
         }
+
+        validateEmail(dto.getEmail());
 
         if (dto.getPassword() == null || dto.getPassword().isBlank()) {
             throw new IllegalArgumentException("Password cannot be empty.");
