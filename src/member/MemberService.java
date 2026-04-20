@@ -93,10 +93,11 @@ public class MemberService extends BaseService<Member, Integer> {
         return memberRepository.getById(member.getId())
                 .map(memberMapper::toAdminDto);
     }
-    public Optional<MemberProfileDto> updateOwnProfile(UpdateMyProfileDto dto) throws SQLException {
+    public Optional<MemberProfileDto> updateOwnProfile(Integer memberId, UpdateMyProfileDto dto) throws SQLException {
         MemberValidator.validateUpdateMyProfileDto(dto);
+        MemberValidator.validateId(memberId);
 
-        Optional<Member> optionalMember = memberRepository.getById(dto.getId());
+        Optional<Member> optionalMember = memberRepository.getById(memberId);
 
         if (optionalMember.isEmpty()) {
             return Optional.empty();
@@ -108,7 +109,7 @@ public class MemberService extends BaseService<Member, Integer> {
         validateEmailUniqueness(member);
         memberRepository.update(member);
 
-        Optional<Member> updatedMember = memberRepository.getById(dto.getId());
+        Optional<Member> updatedMember = memberRepository.getById(memberId);
 
         if (updatedMember.isEmpty()) {
             return Optional.empty();
@@ -166,6 +167,18 @@ public class MemberService extends BaseService<Member, Integer> {
 
     //delete
 
+    public boolean deleteMemberByAdmin(Integer memberId) throws SQLException {
+        MemberValidator.validateId(memberId);
+
+        Optional<Member> optionalMember = memberRepository.getById(memberId);
+        if (optionalMember.isEmpty()) {
+            return false;
+        }
+
+        memberRepository.deleteById(memberId);
+        return true;
+    }
+
 
 
 
@@ -187,11 +200,12 @@ public class MemberService extends BaseService<Member, Integer> {
 
         Member member = optionalMember.get();
 
-        if (member.getPassword().equals(password)) {
-            return Optional.of(member);
+        if (!member.getPassword().equals(password)) {
+            return Optional.empty();
         }
+        MemberValidator.validateLoginAccess(member);
+        return Optional.of(member);
 
-        return Optional.empty();
     }
 
     public void validateLibrarianAccess(Member currentMember) {
