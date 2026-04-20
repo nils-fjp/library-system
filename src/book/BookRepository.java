@@ -30,8 +30,8 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
         ArrayList<Book> books = new ArrayList<>();
 
-        String sql = "SELECT b.id, b.title, b.isbn, b.yearPublished, b.available_copies, b.totalCopies, bd.summary, bd.lang, " +
-                "bd.pageCount, a.first_name, a.last_name, c.name AS category_name " +
+        String sql = "SELECT b.id, b.title, b.isbn, b.yearpublished, b.available_copies, b.totalcopies, bd.summary, bd.lang, " +
+                "bd.pagecount, a.first_name, a.last_name, c.name AS category_name " +
                 "FROM books b " +
                 "JOIN book_descriptions bd ON b.id = bd.book_id " +
                 "JOIN book_authors ba ON b.id = ba.book_id " +
@@ -39,9 +39,11 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                 "JOIN book_categories bc ON b.id = bc.book_id " +
                 "JOIN categories c ON c.id = bc.category_id ";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet rs = statement.executeQuery()) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet rs = statement.executeQuery()
+        ) {
             mapBooks(books, rs);
 //            while (rs.next()) {
 //                books.add(new Book(
@@ -78,13 +80,15 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 //                "OR CAST(b.yearPublished AS CHAR) LIKE ? "; // CAST konverterar till en annan datatyp
         // Ha begränsning i server genom dto
 
-        String sql = "SELECT b.title, b.yearPublished, b.available_copies, a.first_name, a.last_name " +
+        String sql = "SELECT b.title, b.yearpublished, b.available_copies, a.first_name, a.last_name " +
                 "FROM books b " +
                 "JOIN book_authors ba ON b.id = ba.book_id " +
                 "JOIN authors a ON a.id = ba.author_id ";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
 
 //            String searchTerm = "%" + keyword + "%";
 //            statement.setString(1, searchTerm); // 1 är första frågatecken ?
@@ -115,11 +119,13 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
     @Override
     public void save(Book entity) throws SQLException {
-        String sql = "INSERT INTO books (title, isbn, yearPublished, available_copies)" +
+        String sql = "INSERT INTO books (title, isbn, yearpublished, available_copies)" +
                 "VALUES(?,?,?,?)";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)
+        ) {
             // RETRUN_GENERATED_KEYS - sparar den id:et databasen generenar
 
             // Fyller i frågatecken
@@ -148,7 +154,6 @@ public class BookRepository extends BaseRepository<Book, Integer> {
         }
     }
 
-
     @Override
     public void update(Book entity) throws SQLException {
         // TODO: update available copies?
@@ -162,14 +167,14 @@ public class BookRepository extends BaseRepository<Book, Integer> {
     public void deleteById(Integer id) throws SQLException {
         String sql = "DELETE FROM book WHERE id = ?";
 
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ) {
 
         }
 
     }
-
 
     // Hjälpmetod för getAll och searchBooks
     public Book mapBook(ResultSet resultSet) throws SQLException {
@@ -224,6 +229,5 @@ public class BookRepository extends BaseRepository<Book, Integer> {
         }
         return null;
     }
-
 
 }
