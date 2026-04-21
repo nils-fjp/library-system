@@ -15,7 +15,7 @@ public class BookMapper {
 
         // Konverterar direkt List klasser till List String
         List<String> authorNames = book.getAuthors().stream()
-                .map(author -> author.getFirst_name() + " " + author.getLast_name())
+                .map(author -> author.getFirstName() + " " + author.getLastName())
                 .toList();
 
         List<String> categoryNames = book.getCategories().stream()
