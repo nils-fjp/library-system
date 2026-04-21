@@ -1,6 +1,7 @@
 package member;
 
 import author.AuthorController;
+import book.BookController;
 import loan.LoanController;
 import ui.AuthController;
 import ui.Menu;
@@ -23,7 +24,7 @@ public class LibrarianMenuController {
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> System.out.println("showManageBooksMenu()");
+                case 1 -> showManageBooksMenu(currentMember);
                 case 2 -> showManageLoansMenu(currentMember);
                 case 3 -> showManageReadersMenu(currentMember);
                 case 4 -> showManageAuthorsMenu(currentMember);
@@ -38,8 +39,24 @@ public class LibrarianMenuController {
     }
 
 
-
     //1. Manage Books
+    private static void showManageBooksMenu(Member currentMember) throws SQLException {
+        Menu menu = new Menu();
+        menu.setTopTitle("Manage Books");
+        menu.addMenuOption("View Books");
+        menu.addMenuOption("Search");
+        menu.addMenuOption("Add Book");
+        menu.addMenuOption("Update Book");
+        menu.addMenuOption("Delete Book");
+
+        while (menu.showMenu()) {
+            switch (menu.getChoice()) {
+                case 1 -> BookController.showAllBooksForAdmin(currentMember);
+                case 2 -> BookController.AdminSearchForBooks(currentMember);
+            }
+        }
+    }
+
 //    private static void showManageBooksMenu() throws SQLException {
 //        Menu menu = new Menu();
 //        menu.setTopTitle("Manage Books");
@@ -138,6 +155,7 @@ public class LibrarianMenuController {
             }
         }
     }
+
     private static void showViewReadersSubMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("View Readers");
