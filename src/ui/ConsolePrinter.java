@@ -22,13 +22,13 @@ public class ConsolePrinter {
         System.out.println("\t" + ANSI.YELLOW + label + ": " + ANSI.DEFAULT_FG + value);
     }
 
-    public void printError(String message) {
+    public static void printError(String message) {
         System.out.println();
         System.out.println("\t" + ANSI.RED + message + ANSI.DEFAULT_FG);
         System.out.println();
     }
 
-    public void printSuccess(String message) {
+    public static void printSuccess(String message) {
         System.out.println();
         System.out.println("\t" + ANSI.BRIGHT_GREEN + message + ANSI.DEFAULT_FG);
         System.out.println();
