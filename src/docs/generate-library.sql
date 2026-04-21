@@ -415,7 +415,7 @@ DROP TABLE IF EXISTS `book_descriptions`;
 CREATE TABLE book_descriptions (
     book_id     INT PRIMARY KEY,
     summary     TEXT,
-    lang        VARCHAR(50),
+    language        VARCHAR(50),
     page_count  INT,
     CONSTRAINT fk_bookdesc_book
         FOREIGN KEY (book_id) REFERENCES books(id)
@@ -426,7 +426,7 @@ CREATE TABLE book_descriptions (
 -- BOOK_DESCRIPTIONS
 LOCK TABLES `book_descriptions` WRITE;
 /*!40000 ALTER TABLE `book_descriptions` DISABLE KEYS */;
-INSERT INTO book_descriptions (book_id, summary, lang, page_count) VALUES
+INSERT INTO book_descriptions (book_id, summary, language, page_count) VALUES
 (1, 'A quiet, devastating novel about ordinary people caught in extraordinary events.', 'German', 588),
 (2, 'A deeply personal story about loss, love, and finding one''s place in the world.', 'German', 707),
 (3, 'A beautifully written meditation on grief, hope, and the resilience of the human spirit.', 'English', 506),
