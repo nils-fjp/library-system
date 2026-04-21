@@ -34,7 +34,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
         ArrayList<Book> books = new ArrayList<>();
 
-        String sql = "SELECT b.id, b.title, b.isbn, b.year_published, b.available_copies, b.total_copies, bd.summary, bd.lang, " +
+        String sql = "SELECT b.id, b.title, b.isbn, b.year_published, b.available_copies, b.total_copies, bd.summary, bd.language, " +
                 "bd.page_count, a.first_name, a.last_name, c.name AS category_name " +
                 "FROM books b " +
                 "JOIN book_descriptions bd ON b.id = bd.book_id " +
@@ -56,7 +56,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
         ArrayList<Book> books = new ArrayList<>();
 
         String sql = "SELECT b.id, b.title, b.isbn, b.year_published, b.available_copies, b.total_copies, " +
-                "bd.summary, bd.lang, bd.page_count, " +
+                "bd.summary, bd.language, bd.page_count, " +
                 "a.first_name, a.last_name, " +
                 "c.name AS category_name " +
                 "FROM books b " +
@@ -158,7 +158,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
         book.setYearPublished(resultSet.getInt("year_published"));
         book.setTotalCopies(resultSet.getInt("total_copies"));
         book.setAvailableCopies(resultSet.getInt("available_copies"));
-        book.setLang(resultSet.getString("lang"));
+        book.setLang(resultSet.getString("language"));
         book.setSummary(resultSet.getString("summary"));
         book.setPageCount(resultSet.getInt("page_count"));
         return book;
