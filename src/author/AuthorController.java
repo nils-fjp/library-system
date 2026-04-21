@@ -69,15 +69,15 @@ public class AuthorController {
         Author author = new Author();
 
         ConsolePrinter.printPrompt("Enter first name: ");
-        author.setFirst_name(scanner.nextLine().trim());
+        author.setFirstName(scanner.nextLine().trim());
 
         ConsolePrinter.printPrompt("Enter last name: ");
-        author.setLast_name(scanner.nextLine().trim());
+        author.setLastName(scanner.nextLine().trim());
 
         ConsolePrinter.printPrompt("Enter nationality: ");
         author.setNationality(scanner.nextLine().trim());
 
-        author.setBirth_date(readBirthDate());
+        author.setBirthDate(readBirthDate());
 
         return author;
     }
@@ -96,10 +96,10 @@ public class AuthorController {
     private static void printAuthor(Author author) {
         LinkedHashMap<String, Object> fields = new LinkedHashMap<>();
         fields.put("ID", author.getId());
-        fields.put("First name", author.getFirst_name());
-        fields.put("Last name", author.getLast_name());
+        fields.put("First name", author.getFirstName());
+        fields.put("Last name", author.getLastName());
         fields.put("Nationality", author.getNationality());
-        fields.put("Birth date", author.getBirth_date());
+        fields.put("Birth date", author.getBirthDate());
 
         ConsolePrinter.printFields("Author info", fields);
     }
@@ -107,25 +107,25 @@ public class AuthorController {
     private static Author buildUpdatedAuthorFromInput(Author currentAuthor) {
         Author author = new Author();
 
-        ConsolePrinter.printPrompt("Enter first name [" + currentAuthor.getFirst_name() + "]: ");
+        ConsolePrinter.printPrompt("Enter first name [" + currentAuthor.getFirstName() + "]: ");
         String firstName = scanner.nextLine().trim();
-        author.setFirst_name(firstName.isEmpty() ? currentAuthor.getFirst_name() : firstName);
+        author.setFirstName(firstName.isEmpty() ? currentAuthor.getFirstName() : firstName);
 
-        ConsolePrinter.printPrompt("Enter last name [" + currentAuthor.getLast_name() + "]: ");
+        ConsolePrinter.printPrompt("Enter last name [" + currentAuthor.getLastName() + "]: ");
         String lastName = scanner.nextLine().trim();
-        author.setLast_name(lastName.isEmpty() ? currentAuthor.getLast_name() : lastName);
+        author.setLastName(lastName.isEmpty() ? currentAuthor.getLastName() : lastName);
 
         ConsolePrinter.printPrompt("Enter nationality [" + currentAuthor.getNationality() + "]: ");
         String nationality = scanner.nextLine().trim();
         author.setNationality(nationality.isEmpty() ? currentAuthor.getNationality() : nationality);
 
-        ConsolePrinter.printPrompt("Enter birth date [" + currentAuthor.getBirth_date() + "] (yyyy-mm-dd): ");
+        ConsolePrinter.printPrompt("Enter birth date [" + currentAuthor.getBirthDate() + "] (yyyy-mm-dd): ");
         String birthDateInput = scanner.nextLine().trim();
 
         if (birthDateInput.isEmpty()) {
-            author.setBirth_date(currentAuthor.getBirth_date());
+            author.setBirthDate(currentAuthor.getBirthDate());
         } else {
-            author.setBirth_date(LocalDate.parse(birthDateInput));
+            author.setBirthDate(LocalDate.parse(birthDateInput));
         }
 
         return author;

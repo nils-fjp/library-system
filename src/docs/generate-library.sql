@@ -19,46 +19,12 @@ USE `library`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- ------------------------------------------------------------
--- BOOKS
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `books`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE books (
-    id              INT AUTO_INCREMENT PRIMARY KEY,
-    title           VARCHAR(255) NOT NULL,
-    isbn            VARCHAR(20)  NOT NULL UNIQUE,
-    yearPublished  INT,
-    totalCopies    INT          NOT NULL DEFAULT 1,
-    available_copies INT         NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
--- ------------------------------------------------------------
--- BOOK_DESCRIPTIONS (1:1 med books)
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `book_descriptions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE book_descriptions (
-    book_id     INT PRIMARY KEY,
-    summary     TEXT,
-    lang    VARCHAR(50),
-    pageCount  INT,
-    CONSTRAINT fk_bookdesc_book
-        FOREIGN KEY (book_id) REFERENCES books(id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
--- ------------------------------------------------------------
 -- AUTHORS
 -- ------------------------------------------------------------
-DROP TABLE IF EXISTS `authorName`;
+DROP TABLE IF EXISTS `authors`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE authorName (
+CREATE TABLE authors (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     first_name  VARCHAR(100) NOT NULL,
     last_name   VARCHAR(100) NOT NULL,
@@ -67,327 +33,10 @@ CREATE TABLE authorName (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-
--- ------------------------------------------------------------
--- AUTHOR_DESCRIPTIONS (1:1 med authorName)
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `author_descriptions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE author_descriptions (
-    author_id   INT PRIMARY KEY,
-    biography   TEXT,
-    website     VARCHAR(255),
-    CONSTRAINT fk_authordesc_author
-        FOREIGN KEY (author_id) REFERENCES authorName(id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
--- ------------------------------------------------------------
--- BOOK_AUTHORS (M:M books <-> authorName)
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `book_authors`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE book_authors (
-    book_id     INT NOT NULL,
-    author_id   INT NOT NULL,
-    PRIMARY KEY (book_id, author_id),
-    CONSTRAINT fk_bookauthors_book
-        FOREIGN KEY (book_id) REFERENCES books(id)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_bookauthors_author
-        FOREIGN KEY (author_id) REFERENCES authorName(id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
--- ------------------------------------------------------------
--- CATEGORIES
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `categoryNames`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE categoryNames (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    name        VARCHAR(100) NOT NULL,
-    description VARCHAR(255)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
--- ------------------------------------------------------------
--- BOOK_CATEGORIES (M:M books <-> categoryNames)
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `book_categories`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE book_categories (
-    book_id     INT NOT NULL,
-    category_id INT NOT NULL,
-    PRIMARY KEY (book_id, category_id),
-    CONSTRAINT fk_bookcats_book
-        FOREIGN KEY (book_id) REFERENCES books(id)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_bookcats_category
-        FOREIGN KEY (category_id) REFERENCES categoryNames(id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
--- ------------------------------------------------------------
--- MEMBERS
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `members`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE members (
-    id              INT AUTO_INCREMENT PRIMARY KEY,
-    first_name      VARCHAR(100) NOT NULL,
-    last_name       VARCHAR(100) NOT NULL,
-    email           VARCHAR(255) NOT NULL UNIQUE,
-    membership_date DATE         NOT NULL,
-    membership_type VARCHAR(50)  NOT NULL DEFAULT 'standard',
-    status VARCHAR(50) NOT NULL DEFAULT 'active',
-    password VARCHAR(50) NOT NULL DEFAULT 'password',
-    role VARCHAR(50) NOT NULL DEFAULT 'READER'
-
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
--- MEMBERS
-LOCK TABLES `members` WRITE;
-/*!40000 ALTER TABLE `members` DISABLE KEYS */;
-INSERT INTO members (id, first_name, last_name, email, membership_date, membership_type, status)
-VALUES (1, 'Emma', 'Hill', 'emma.hill88@email.com', '2022-10-14', 'standard', 'active'),
-       (2, 'Harper', 'Thomas', 'harper.thomas36@email.com', '2021-02-20', 'premium', 'active'),
-       (3, 'Oliver', 'Turner', 'oliver.turner80@email.com', '2020-10-03', 'standard', 'active'),
-       (4, 'Jackson', 'Roberts', 'jackson.roberts62@email.com', '2018-09-07', 'standard', 'active'),
-       (5, 'Logan', 'Wilson', 'logan.wilson54@email.com', '2020-03-27', 'standard', 'expired'),
-       (6, 'Jack', 'Johnson', 'jack.johnson49@email.com', '2022-01-10', 'premium', 'suspended'),
-       (7, 'Scarlett', 'Torres', 'scarlett.torres73@email.com', '2023-08-20', 'standard', 'active'),
-       (8, 'Abigail', 'Thomas', 'abigail.thomas4@email.com', '2021-07-30', 'standard', 'active'),
-       (9, 'Abigail', 'Brown', 'abigail.brown61@email.com', '2023-12-09', 'standard', 'suspended'),
-       (10, 'Mason', 'Anderson', 'mason.anderson13@email.com', '2020-10-12', 'standard', 'active'),
-       (11, 'Jack', 'Brown', 'jack.brown98@email.com', '2020-06-17', 'premium', 'active'),
-       (12, 'Amelia', 'Thomas', 'amelia.thomas31@email.com', '2021-07-26', 'standard', 'suspended'),
-       (13, 'Emma', 'Torres', 'emma.torres73@email.com', '2019-08-06', 'standard', 'active'),
-       (14, 'Jack', 'King', 'jack.king23@email.com', '2023-07-02', 'standard', 'active'),
-       (15, 'Sophia', 'Harris', 'sophia.harris78@email.com', '2020-06-15', 'standard', 'suspended'),
-       (16, 'Aiden', 'Smith', 'aiden.smith43@email.com', '2020-04-05', 'standard', 'active'),
-       (17, 'Amelia', 'Wright', 'amelia.wright8@email.com', '2018-03-31', 'standard', 'suspended'),
-       (18, 'Charlotte', 'Davis', 'charlotte.davis68@email.com', '2022-02-03', 'standard', 'active'),
-       (19, 'Sofia', 'Phillips', 'sofia.phillips13@email.com', '2021-10-10', 'standard', 'active'),
-       (20, 'Lucas', 'Anderson', 'lucas.anderson94@email.com', '2022-11-25', 'premium', 'expired'),
-       (21, 'Liam', 'Thomas', 'liam.thomas91@email.com', '2022-01-01', 'standard', 'expired'),
-       (22, 'Grace', 'Thomas', 'grace.thomas49@email.com', '2021-06-10', 'standard', 'active'),
-       (23, 'Amelia', 'Smith', 'amelia.smith90@email.com', '2022-05-23', 'standard', 'active'),
-       (24, 'Theodore', 'Wright', 'theodore.wright79@email.com', '2020-06-23', 'standard', 'active'),
-       (25, 'Charlotte', 'Scott', 'charlotte.scott96@email.com', '2018-11-15', 'standard', 'active'),
-       (26, 'Liam', 'Anderson', 'liam.anderson82@email.com', '2018-12-30', 'standard', 'active'),
-       (27, 'James', 'Thompson', 'james.thompson27@email.com', '2020-10-19', 'standard', 'active'),
-       (28, 'Ethan', 'Miller', 'ethan.miller93@email.com', '2018-01-06', 'standard', 'active'),
-       (29, 'Sebastian', 'Green', 'sebastian.green22@email.com', '2022-08-23', 'premium', 'active'),
-       (30, 'Noah', 'Carter', 'noah.carter49@email.com', '2019-02-20', 'premium', 'suspended'),
-       (31, 'Mason', 'Anderson', 'mason.anderson58@email.com', '2018-10-29', 'standard', 'active'),
-       (32, 'Emma', 'Wright', 'emma.wright34@email.com', '2019-03-05', 'standard', 'active'),
-       (33, 'Henry', 'Hill', 'henry.hill21@email.com', '2018-11-04', 'standard', 'active'),
-       (34, 'Theodore', 'Turner', 'theodore.turner62@email.com', '2018-05-07', 'premium', 'expired'),
-       (35, 'Henry', 'Evans', 'henry.evans56@email.com', '2019-10-06', 'standard', 'active'),
-       (36, 'Ava', 'White', 'ava.white25@email.com', '2022-08-04', 'standard', 'expired'),
-       (37, 'Daniel', 'King', 'daniel.king31@email.com', '2019-01-28', 'standard', 'active'),
-       (38, 'Owen', 'Roberts', 'owen.roberts63@email.com', '2019-09-22', 'standard', 'active'),
-       (39, 'James', 'Adams', 'james.adams12@email.com', '2021-04-21', 'premium', 'active'),
-       (40, 'Benjamin', 'Johnson', 'benjamin.johnson27@email.com', '2019-12-01', 'standard', 'active'),
-       (41, 'Aiden', 'Davis', 'aiden.davis40@email.com', '2022-06-17', 'premium', 'active'),
-       (42, 'Ethan', 'Garcia', 'ethan.garcia83@email.com', '2022-05-07', 'standard', 'active'),
-       (43, 'Logan', 'Nguyen', 'logan.nguyen24@email.com', '2022-12-31', 'standard', 'active'),
-       (44, 'Sebastian', 'Baker', 'sebastian.baker34@email.com', '2020-07-15', 'standard', 'suspended'),
-       (45, 'Sophia', 'Taylor', 'sophia.taylor97@email.com', '2019-02-01', 'standard', 'expired'),
-       (46, 'Noah', 'Carter', 'noah.carter53@email.com', '2020-07-20', 'standard', 'active'),
-       (47, 'Victoria', 'Green', 'victoria.green69@email.com', '2023-04-29', 'standard', 'active'),
-       (48, 'Emily', 'Garcia', 'emily.garcia51@email.com', '2018-05-23', 'standard', 'active'),
-       (49, 'Sebastian', 'Thomas', 'sebastian.thomas22@email.com', '2020-05-17', 'standard', 'active'),
-       (50, 'Oliver', 'Adams', 'oliver.adams11@email.com', '2022-11-19', 'standard', 'expired');
-UPDATE members
-   SET password = CASE id WHEN 1 THEN 'QaMzTpLs'
-                          WHEN 2 THEN 'RkVnYeHu'
-                          WHEN 3 THEN 'BxDfJmPo'
-                          WHEN 4 THEN 'NtGaReWi'
-                          WHEN 5 THEN 'YuKpLsAd'
-                          WHEN 6 THEN 'CmZoXvNe'
-                          WHEN 7 THEN 'HjTaQwEr'
-                          WHEN 8 THEN 'PlMnBcXa'
-                          WHEN 9 THEN 'WqErTyUi'
-                          WHEN 10 THEN 'ZvCxBnMa'
-                          WHEN 11 THEN 'AfGtHyJu'
-                          WHEN 12 THEN 'KiLoPmNa'
-                          WHEN 13 THEN 'QsWeRtYu'
-                          WHEN 14 THEN 'EdCvFrTg'
-                          WHEN 15 THEN 'BhNjMkLp'
-                          WHEN 16 THEN 'ZaQsXwEd'
-                          WHEN 17 THEN 'CrFvTgBy'
-                          WHEN 18 THEN 'UnImOkJl'
-                          WHEN 19 THEN 'PaSdFgHj'
-                          WHEN 20 THEN 'LkJhGfDs'
-                          WHEN 21 THEN 'MwQeRtYu'
-                          WHEN 22 THEN 'NxZaSwEd'
-                          WHEN 23 THEN 'VoPlKmJn'
-                          WHEN 24 THEN 'BiHuYtRe'
-                          WHEN 25 THEN 'CtRxEvWq'
-                          WHEN 26 THEN 'DfGhJkLo'
-                          WHEN 27 THEN 'EgTrYuIo'
-                          WHEN 28 THEN 'FvBnMhJk'
-                          WHEN 29 THEN 'GqWeAsZd'
-                          WHEN 30 THEN 'HpLoKiJu'
-                          WHEN 31 THEN 'IrTyUiOp'
-                          WHEN 32 THEN 'JsDfGhJk'
-                          WHEN 33 THEN 'KxCvBnMq'
-                          WHEN 34 THEN 'LwErTyUi'
-                          WHEN 35 THEN 'MzXaScDv'
-                          WHEN 36 THEN 'NyUiOpAs'
-                          WHEN 37 THEN 'ObNmLkJh'
-                          WHEN 38 THEN 'PcVbNmAs'
-                          WHEN 39 THEN 'QlKoMnJi'
-                          WHEN 40 THEN 'RtYuIoPa'
-                          WHEN 41 THEN 'SfGhJkLz'
-                          WHEN 42 THEN 'TdRfTgYh'
-                          WHEN 43 THEN 'UjKiOlPm'
-                          WHEN 44 THEN 'VaQsWeRt'
-                          WHEN 45 THEN 'WmNbVcXz'
-                          WHEN 46 THEN 'XpLoKmJi'
-                          WHEN 47 THEN 'YhGtFrDe'
-                          WHEN 48 THEN 'ZiUxCvBn'
-                          WHEN 49 THEN 'AkSjDhFg'
-                          WHEN 50 THEN 'BrTyGhNu' END
- WHERE id BETWEEN 1 AND 50;
-
-UPDATE library.members
-   SET role = 'LIBRARIAN'
- WHERE id = 1;
-
-/*!40000 ALTER TABLE `members` ENABLE KEYS */;
-UNLOCK TABLES;
-
--- ------------------------------------------------------------
--- LOANS
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `loans`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE loans (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    book_id     INT  NOT NULL,
-    member_id   INT,
-    loan_date   DATE NOT NULL,
-    due_date    DATE NOT NULL,
-    return_date DATE,
-    CONSTRAINT fk_loans_book
-        FOREIGN KEY (book_id) REFERENCES books(id)
-        ON DELETE RESTRICT,
-    CONSTRAINT fk_loans_member
-        FOREIGN KEY (member_id) REFERENCES members(id)
-        ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
--- ------------------------------------------------------------
--- FINES
--- RESTRICT on delete if fine is unpaid (enforced in application layer)
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `fines`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE fines (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    loan_id     INT            NOT NULL,
-    amount      DECIMAL(10,2)  NOT NULL,
-    issued_date DATE           NOT NULL,
-    paid_date   DATE,
-    status      VARCHAR(50)    NOT NULL DEFAULT 'pending',
-    CONSTRAINT fk_fines_loan
-        FOREIGN KEY (loan_id) REFERENCES loans(id)
-        ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
--- ------------------------------------------------------------
--- NOTIFICATIONS
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `notifications`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE notifications (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    member_id   INT,
-    loan_id     INT,
-    type        VARCHAR(100) NOT NULL,
-    message     TEXT         NOT NULL,
-    sent_date   DATE         NOT NULL,
-    is_read     BOOLEAN      NOT NULL DEFAULT FALSE,
-    CONSTRAINT fk_notif_member
-        FOREIGN KEY (member_id) REFERENCES members(id)
-        ON DELETE SET NULL,
-    CONSTRAINT fk_notif_loan
-        FOREIGN KEY (loan_id) REFERENCES loans(id)
-        ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
--- ------------------------------------------------------------
--- REVIEWS
--- ------------------------------------------------------------
-DROP TABLE IF EXISTS `reviews`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE reviews (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    book_id     INT NOT NULL,
-    member_id   INT,
-    rating      INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    comment     TEXT,
-    review_date DATE NOT NULL,
-    CONSTRAINT fk_reviews_book
-        FOREIGN KEY (book_id) REFERENCES books(id)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_reviews_member
-        FOREIGN KEY (member_id) REFERENCES members(id)
-        ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
--- ============================================================
--- DATA
--- ============================================================
-
--- CATEGORIES
-LOCK TABLES `categoryNames` WRITE;
-/*!40000 ALTER TABLE `categoryNames` DISABLE KEYS */;
-INSERT INTO categoryNames (id, name, description) VALUES
-(1, 'Fiction', 'Narrative literature created from imagination'),
-(2, 'Non-Fiction', 'Prose based on real events and facts'),
-(3, 'Science Fiction', 'Speculative fiction involving science and technology'),
-(4, 'Fantasy', 'Fiction involving magic and supernatural elements'),
-(5, 'Mystery', 'Fiction dealing with crime and investigation'),
-(6, 'Thriller', 'Fiction designed to hold interest through suspense'),
-(7, 'Romance', 'Fiction focused on love and relationships'),
-(8, 'Historical Fiction', 'Fiction set in a historical period'),
-(9, 'Biography', 'Non-fiction account of a person''s life'),
-(10, 'Self-Help', 'Books intended to help readers improve themselves'),
-(11, 'Horror', 'Fiction intended to frighten or disturb'),
-(12, 'Adventure', 'Fiction involving exciting journeys or events');
-/*!40000 ALTER TABLE `categoryNames` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
 -- AUTHORS
-LOCK TABLES `authorName` WRITE;
-/*!40000 ALTER TABLE `authorName` DISABLE KEYS */;
-INSERT INTO authorName (id, first_name, last_name, nationality, birth_date) VALUES
+LOCK TABLES `authors` WRITE;
+/*!40000 ALTER TABLE `authors` DISABLE KEYS */;
+INSERT INTO authors (id, first_name, last_name, nationality, birth_date) VALUES
 (1, 'Mia', 'Johnson', 'Brazilian', '1964-09-03'),
 (2, 'Evelyn', 'Harris', 'French', '1949-03-12'),
 (3, 'Jack', 'Garcia', 'Canadian', '1977-11-07'),
@@ -448,8 +97,24 @@ INSERT INTO authorName (id, first_name, last_name, nationality, birth_date) VALU
 (58, 'Evelyn', 'Hall', 'Russian', '1976-07-08'),
 (59, 'Alexander', 'Miller', 'British', '1978-09-02'),
 (60, 'Noah', 'Adams', 'Spanish', '1981-11-24');
-/*!40000 ALTER TABLE `authorName` ENABLE KEYS */;
+/*!40000 ALTER TABLE `authors` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- ------------------------------------------------------------
+-- AUTHOR_DESCRIPTIONS (1:1 med authors)
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `author_descriptions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE author_descriptions (
+    author_id   INT PRIMARY KEY,
+    biography   TEXT,
+    website     VARCHAR(255),
+    CONSTRAINT fk_authordesc_author
+        FOREIGN KEY (author_id) REFERENCES authors(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- AUTHOR_DESCRIPTIONS
 LOCK TABLES `author_descriptions` WRITE;
@@ -469,7 +134,7 @@ INSERT INTO author_descriptions (author_id, biography, website) VALUES
 (12, 'A former journalist whose eye for detail and love of truth infuses every page they write.', 'www.theodorethompson.com'),
 (13, 'A prolific writer who has published across fiction, non-fiction, and screenwriting.', 'www.madisoncarter.com'),
 (14, 'A former journalist whose eye for detail and love of truth infuses every page they write.', 'www.isabellaroberts.com'),
-(15, 'A self-taught writer who rose from obscurity to become one of the most read authorName of their generation.', 'www.owenjackson.com'),
+(15, 'A self-taught writer who rose from obscurity to become one of the most read authors of their generation.', 'www.owenjackson.com'),
 (16, 'Their debut novel became an overnight sensation, launching a career that has only grown since.', 'www.oliverharris.com'),
 (17, 'An academic turned novelist whose work bridges the gap between scholarship and popular fiction.', 'www.isabellaharris.com'),
 (18, 'Born into a family of storytellers, they began writing at an early age and never stopped.', 'www.loganyoung.com'),
@@ -492,15 +157,15 @@ INSERT INTO author_descriptions (author_id, biography, website) VALUES
 (35, 'A prolific writer who has published across fiction, non-fiction, and screenwriting.', 'www.miacarter.com'),
 (36, 'A celebrated author with over twenty years of experience writing across multiple genres.', 'www.avadavis.com'),
 (37, 'A prolific writer who has published across fiction, non-fiction, and screenwriting.', 'www.henrybaker.com'),
-(38, 'A self-taught writer who rose from obscurity to become one of the most read authorName of their generation.', 'www.mateothomas.com'),
+(38, 'A self-taught writer who rose from obscurity to become one of the most read authors of their generation.', 'www.mateothomas.com'),
 (39, 'Their debut novel became an overnight sensation, launching a career that has only grown since.', 'www.emilycampbell.com'),
-(40, 'A self-taught writer who rose from obscurity to become one of the most read authorName of their generation.', 'www.charlottenguyen.com'),
+(40, 'A self-taught writer who rose from obscurity to become one of the most read authors of their generation.', 'www.charlottenguyen.com'),
 (41, 'A prolific writer who has published across fiction, non-fiction, and screenwriting.', 'www.jackmitchell.com'),
 (42, 'A recipient of numerous literary awards, their work has been translated into over thirty languages.', 'www.theodorewright.com'),
 (43, 'Their debut novel became an overnight sensation, launching a career that has only grown since.', 'www.mianguyen.com'),
 (44, 'A former journalist whose eye for detail and love of truth infuses every page they write.', 'www.evelynbrown.com'),
 (45, 'An academic turned novelist whose work bridges the gap between scholarship and popular fiction.', 'www.isabellagarcia.com'),
-(46, 'A self-taught writer who rose from obscurity to become one of the most read authorName of their generation.', 'www.williamcarter.com'),
+(46, 'A self-taught writer who rose from obscurity to become one of the most read authors of their generation.', 'www.williamcarter.com'),
 (47, 'An academic turned novelist whose work bridges the gap between scholarship and popular fiction.', 'www.lucashall.com'),
 (48, 'A celebrated author with over twenty years of experience writing across multiple genres.', 'www.ethanmitchell.com'),
 (49, 'Inspired by their travels across six continents, their writing carries a distinctive global perspective.', 'www.harpercarter.com'),
@@ -518,620 +183,250 @@ INSERT INTO author_descriptions (author_id, biography, website) VALUES
 /*!40000 ALTER TABLE `author_descriptions` ENABLE KEYS */;
 UNLOCK TABLES;
 
+-- ------------------------------------------------------------
+-- BOOKS
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `books`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE books (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    title           VARCHAR(255) NOT NULL,
+    isbn            VARCHAR(20)  NOT NULL UNIQUE,
+    year_published  INT,
+    total_copies    INT          NOT NULL DEFAULT 1,
+    available_copies INT         NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 -- BOOKS
 LOCK TABLES books WRITE;
-/*!40000 ALTER TABLE books
-    DISABLE KEYS */;
-INSERT INTO books (
-    id, title, isbn, yearPublished, totalCopies, available_copies
-)
-VALUES (
-    1, 'Wild Throne of Secrets', '978-1-709-18907-3', 1995, 1, 0
-),
-    (
-        2, 'Shattered Wind of Kings', '978-9-183-64948-9', 2006, 5, 2
-    ),
-    (
-        3, 'Golden Night of Light', '978-5-344-44814-6', 1978, 3, 3
-    ),
-    (
-        4, 'Forgotten Key of the Lost', '978-0-569-91416-9', 1976, 1, 0
-    ),
-    (
-        5, 'Wild Night of Ice', '978-5-170-42018-5', 1988, 2, 1
-    ),
-    (
-        6, 'Glass Fire of Memory', '978-9-926-95717-8', 1970, 5, 2
-    ),
-    (
-        7, 'Golden Dark of Fire', '978-2-370-25129-1', 2017, 5, 1
-    ),
-    (
-        8, 'Last Dawn Forsaken', '978-3-834-54942-3', 2013, 3, 3
-    ),
-    (
-        9, 'Last Gate of Kings', '978-1-749-65518-4', 1972, 1, 1
-    ),
-    (
-        10, 'Crimson Forest Eternal', '978-4-265-67912-8', 2015, 4, 4
-    ),
-    (
-        11, 'The Ocean of the Lost', '978-2-658-14722-5', 2007, 5, 1
-    ),
-    (
-        12, 'Hollow Forest of Kings', '978-4-473-15229-5', 1983, 2, 2
-    ),
-    (
-        13, 'Dark River Undone', '978-6-735-30257-3', 1980, 2, 1
-    ),
-    (
-        14, 'The Mountain of Dreams', '978-6-921-97806-3', 1987, 2, 2
-    ),
-    (
-        15, 'Dark Road of Kings', '978-7-327-36158-7', 1992, 3, 1
-    ),
-    (
-        16, 'Final Garden Untold', '978-3-508-53025-4', 1974, 3, 2
-    ),
-    (
-        17, 'Falling Peace and Ash', '978-8-439-13617-1', 1986, 2, 2
-    ),
-    (
-        18, 'Last Kingdom of Fire', '978-9-544-55309-5', 1997, 5, 4
-    ),
-    (
-        19, 'Dark Road Awakened', '978-3-360-15817-6', 1970, 5, 4
-    ),
-    (
-        20, 'Stolen Voice Untold', '978-3-472-66531-1', 2012, 3, 2
-    ),
-    (
-        21, 'Stolen World of Fire', '978-4-619-50538-6', 1990, 4, 2
-    ),
-    (
-        22, 'Infinite Forest of Light', '978-6-780-59695-2', 2009, 5, 2
-    ),
-    (
-        23, 'Frozen Fire of Shadows', '978-4-393-37549-6', 2020, 5, 4
-    ),
-    (
-        24, 'Falling Storm and Bone', '978-7-552-98555-3', 2002, 4, 1
-    ),
-    (
-        25, 'Stolen Throne of Memory', '978-8-779-92960-9', 1991, 1, 0
-    ),
-    (
-        26, 'Stolen Dawn of Darkness', '978-3-250-13201-0', 1985, 4, 4
-    ),
-    (
-        27, 'Storm Heart of the Lost', '978-7-524-92544-9', 1982, 4, 3
-    ),
-    (
-        28, 'Frozen Dream of Ice', '978-0-868-23970-6', 1984, 2, 2
-    ),
-    (
-        29, 'Wild Journey of Kings', '978-8-355-25906-7', 1978, 4, 4
-    ),
-    (
-        30, 'Infinite Wind of Dreams', '978-7-727-76162-6', 2023, 5, 3
-    ),
-    (
-        31, 'Shadow Mountain and Steel', '978-7-365-42406-4', 2019, 5, 3
-    ),
-    (
-        32, 'Falling Dream of Time', '978-7-179-47450-3', 1987, 3, 2
-    ),
-    (
-        33, 'Shadow Fire of the Lost', '978-2-254-40311-6', 2014, 2, 2
-    ),
-    (
-        34, 'Hidden Throne and Blood', '978-6-438-81121-7', 1996, 1, 0
-    ),
-    (
-        35, 'Glass Path and Ash', '978-9-812-12560-9', 1994, 4, 0
-    ),
-    (
-        36, 'Burning Dawn and Ash', '978-6-651-81582-9', 1984, 4, 1
-    ),
-    (
-        37, 'Last Path and Steel', '978-0-498-54057-6', 2016, 2, 1
-    ),
-    (
-        38, 'Golden Forest Forsaken', '978-8-127-61645-9', 2006, 1, 0
-    ),
-    (
-        39, 'Falling Path of Ice', '978-7-286-16590-4', 1994, 3, 1
-    ),
-    (
-        40, 'Distant Storm of Dreams', '978-6-384-65255-4', 2023, 1, 1
-    ),
-    (
-        41, 'The Voice Undone', '978-0-458-39389-1', 2019, 1, 0
-    ),
-    (
-        42, 'Final City of Shadows', '978-9-256-41266-2', 2000, 1, 0
-    ),
-    (
-        43, 'Distant Song of Time', '978-5-271-89415-9', 2017, 1, 0
-    ),
-    (
-        44, 'Secret Ocean Awakened', '978-0-419-85470-6', 1995, 2, 0
-    ),
-    (
-        45, 'Shattered Song Eternal', '978-3-204-49529-9', 2021, 1, 0
-    ),
-    (
-        46, 'Burning Fire and Blood', '978-5-170-76317-5', 1970, 4, 3
-    ),
-    (
-        47, 'Dark Path and Dust', '978-7-824-30052-6', 1981, 5, 5
-    ),
-    (
-        48, 'Last Wind Undone', '978-7-576-67091-9', 1987, 3, 1
-    ),
-    (
-        49, 'Glass Key of the Lost', '978-4-561-41963-7', 2006, 5, 5
-    ),
-    (
-        50, 'Frozen Storm of Shadows', '978-7-971-52600-2', 2001, 2, 1
-    ),
-    (
-        51, 'Iron Night of Dreams', '978-4-710-46211-8', 1970, 5, 1
-    ),
-    (
-        52, 'Lost Dream and Blood', '978-7-668-41499-7', 2011, 4, 3
-    ),
-    (
-        53, 'Iron Garden of the Lost', '978-4-326-63005-3', 1989, 5, 2
-    ),
-    (
-        54, 'Ancient Fire Reborn', '978-5-535-82140-5', 1992, 4, 2
-    ),
-    (
-        55, 'Secret Night of Darkness', '978-1-838-35242-5', 1977, 5, 5
-    ),
-    (
-        56, 'Broken City of Light', '978-7-383-87278-8', 2008, 3, 0
-    ),
-    (
-        57, 'Glass City of Memory', '978-3-469-33519-4', 1970, 5, 1
-    ),
-    (
-        58, 'Last Kingdom of Kings', '978-8-399-26551-7', 1976, 1, 1
-    ),
-    (
-        59, 'Ancient War and Bone', '978-5-288-16734-4', 2000, 1, 0
-    ),
-    (
-        60, 'Frozen War of the Lost', '978-9-744-99974-0', 1979, 2, 2
-    ),
-    (
-        61, 'Secret Throne of Darkness', '978-1-671-64548-9', 2008, 5, 1
-    ),
-    (
-        62, 'Crimson Peace and Ash', '978-7-553-48974-9', 1997, 3, 0
-    ),
-    (
-        63, 'Rising Voice of Fire', '978-3-740-37659-4', 2012, 1, 0
-    ),
-    (
-        64, 'Final Mountain Undone', '978-1-260-10350-6', 1998, 5, 3
-    ),
-    (
-        65, 'Secret Kingdom of Darkness', '978-4-823-47056-7', 1974, 2, 1
-    ),
-    (
-        66, 'Iron Mind Eternal', '978-9-777-35928-6', 1977, 5, 1
-    ),
-    (
-        67, 'Falling Forest of Time', '978-2-173-17816-2', 2020, 3, 2
-    ),
-    (
-        68, 'Distant Ocean and Bone', '978-4-816-62757-4', 2002, 5, 3
-    ),
-    (
-        69, 'Distant Throne Forsaken', '978-0-542-52247-9', 1986, 1, 0
-    ),
-    (
-        70, 'Final Dark Awakened', '978-9-121-98117-4', 2006, 1, 0
-    ),
-    (
-        71, 'Ancient Peace Eternal', '978-7-384-33788-9', 1997, 4, 0
-    ),
-    (
-        72, 'Ancient River and Blood', '978-5-428-97835-1', 1980, 3, 3
-    ),
-    (
-        73, 'Cursed War of Memory', '978-6-933-82102-0', 1999, 1, 1
-    ),
-    (
-        74, 'Last Storm of Fire', '978-6-985-77449-0', 2012, 5, 3
-    ),
-    (
-        75, 'Hollow Kingdom of Light', '978-8-470-91609-7', 2010, 4, 0
-    ),
-    (
-        76, 'Hidden Night Undone', '978-2-394-67424-7', 1977, 1, 0
-    ),
-    (
-        77, 'Cursed Mountain of Memory', '978-8-114-82384-6', 1975, 2, 0
-    ),
-    (
-        78, 'Distant Ocean Eternal', '978-2-610-48254-8', 2015, 3, 3
-    ),
-    (
-        79, 'Glass War and Steel', '978-3-567-82255-2', 1994, 2, 2
-    ),
-    (
-        80, 'Wild Voice of Ice', '978-1-382-64387-5', 2020, 5, 2
-    ),
-    (
-        81, 'Glass Garden of Memory', '978-4-957-86931-9', 2012, 4, 1
-    ),
-    (
-        82, 'Distant Fire and Steel', '978-5-440-82340-8', 1994, 4, 2
-    ),
-    (
-        83, 'Storm City of Darkness', '978-9-492-40613-6', 1972, 3, 3
-    ),
-    (
-        84, 'Cursed Key and Ash', '978-6-779-95461-2', 2001, 1, 0
-    ),
-    (
-        85, 'Wild Ice of Dreams', '978-1-995-67711-1', 2003, 4, 0
-    ),
-    (
-        86, 'Fading Forest and Blood', '978-2-176-71537-4', 1991, 5, 5
-    ),
-    (
-        87, 'Frozen Light of the Lost', '978-5-972-98389-8', 1994, 3, 3
-    ),
-    (
-        88, 'Storm Fire of Kings', '978-9-170-40771-4', 1984, 1, 1
-    ),
-    (
-        89, 'Dark Heart Eternal', '978-1-554-31805-4', 1971, 1, 1
-    ),
-    (
-        90, 'Iron Kingdom of Memory', '978-5-483-66450-2', 1985, 5, 3
-    ),
-    (
-        91, 'Shattered Dark of Secrets', '978-2-279-20350-9', 1994, 5, 5
-    ),
-    (
-        92, 'Final War Awakened', '978-2-337-70443-4', 1999, 3, 0
-    ),
-    (
-        93, 'Shadow Mind and Bone', '978-4-793-81643-2', 1974, 4, 2
-    ),
-    (
-        94, 'Shattered Dawn Eternal', '978-6-806-42780-7', 1989, 2, 1
-    ),
-    (
-        95, 'Storm War of Fire', '978-3-490-84963-5', 2006, 3, 2
-    ),
-    (
-        96, 'The Soul Untold', '978-6-381-11061-9', 2013, 1, 1
-    ),
-    (
-        97, 'Glass Gate of Memory', '978-3-721-56179-3', 2010, 2, 2
-    ),
-    (
-        98, 'Last Dark Untold', '978-2-743-22735-0', 1989, 4, 0
-    ),
-    (
-        99, 'Shattered River of Ice', '978-1-402-52823-6', 1981, 2, 0
-    ),
-    (
-        100, 'Iron Fire and Dust', '978-8-613-45720-2', 1986, 4, 2
-    ),
-    (
-        101, 'Fading World of Dreams', '978-1-579-19869-2', 2018, 2, 2
-    ),
-    (
-        102, 'Fading Dark and Ash', '978-8-474-21836-6', 1970, 3, 0
-    ),
-    (
-        103, 'Distant River Untold', '978-4-698-59941-5', 1976, 2, 1
-    ),
-    (
-        104, 'The Wind Undone', '978-5-724-39015-1', 2010, 4, 2
-    ),
-    (
-        105, 'Falling Path of Fire', '978-2-146-14877-4', 2001, 1, 0
-    ),
-    (
-        106, 'Final Gate Undone', '978-2-497-69459-5', 2012, 5, 3
-    ),
-    (
-        107, 'Shattered Voice of Ice', '978-6-770-22978-7', 2009, 4, 2
-    ),
-    (
-        108, 'A Song and Dust', '978-3-554-68287-3', 1993, 1, 1
-    ),
-    (
-        109, 'Infinite Gate Eternal', '978-5-162-62184-4', 1982, 1, 1
-    ),
-    (
-        110, 'Lost Dark of Light', '978-9-121-16629-5', 1985, 2, 2
-    ),
-    (
-        111, 'Hidden Throne Undone', '978-3-700-38305-3', 1991, 2, 2
-    ),
-    (
-        112, 'The Night of Ice', '978-2-653-42853-2', 1977, 1, 0
-    ),
-    (
-        113, 'The River of Darkness', '978-9-431-12068-2', 1986, 1, 0
-    ),
-    (
-        114, 'Fading Path Reborn', '978-1-863-18330-7', 1998, 3, 0
-    ),
-    (
-        115, 'Distant Peace of Darkness', '978-9-144-96363-8', 1989, 4, 0
-    ),
-    (
-        116, 'A War and Ash', '978-6-802-24150-7', 2015, 4, 0
-    ),
-    (
-        117, 'Shadow Throne of Dreams', '978-9-251-18609-2', 1987, 5, 5
-    ),
-    (
-        118, 'Shattered Fire of Dreams', '978-6-711-79541-4', 1999, 5, 4
-    ),
-    (
-        119, 'Hollow Ocean of Fire', '978-8-838-38183-6', 1998, 2, 1
-    ),
-    (
-        120, 'Forgotten Soul and Bone', '978-6-525-22463-5', 1997, 3, 2
-    ),
-    (
-        121, 'Burning Forest Untold', '978-7-168-21957-1', 1975, 4, 0
-    ),
-    (
-        122, 'Fading Voice and Dust', '978-2-669-17861-9', 2005, 5, 2
-    ),
-    (
-        123, 'Stolen Ocean and Blood', '978-5-994-97207-6', 2016, 1, 1
-    ),
-    (
-        124, 'Rising Dawn and Dust', '978-1-691-76507-3', 1979, 4, 1
-    ),
-    (
-        125, 'Storm Ocean and Dust', '978-8-476-25058-4', 2006, 2, 1
-    ),
-    (
-        126, 'Storm Fire Forsaken', '978-9-791-94239-8', 1971, 5, 5
-    ),
-    (
-        127, 'Glass Song of Time', '978-0-284-45818-4', 1991, 3, 0
-    ),
-    (
-        128, 'Broken World of Ice', '978-9-773-62531-1', 1979, 1, 0
-    ),
-    (
-        129, 'Fading Peace of Light', '978-6-529-69460-5', 1980, 3, 2
-    ),
-    (
-        130, 'Fading Storm Awakened', '978-9-186-16895-2', 1980, 5, 0
-    ),
-    (
-        131, 'Stolen Throne of Time', '978-7-777-65576-7', 2008, 4, 3
-    ),
-    (
-        132, 'Last City Reborn', '978-1-453-66349-1', 1988, 5, 3
-    ),
-    (
-        133, 'Wild Dark of Memory', '978-0-325-61807-9', 1973, 1, 0
-    ),
-    (
-        134, 'Secret City of Ice', '978-4-396-53007-1', 1970, 4, 3
-    ),
-    (
-        135, 'Broken Forest and Ash', '978-8-820-40161-8', 2005, 3, 0
-    ),
-    (
-        136, 'Frozen World of Kings', '978-6-119-70260-1', 1990, 5, 3
-    ),
-    (
-        137, 'Shattered Road Eternal', '978-6-396-25096-6', 1971, 3, 1
-    ),
-    (
-        138, 'Iron Wind and Bone', '978-5-190-67240-1', 1985, 4, 4
-    ),
-    (
-        139, 'Frozen Peace of the Lost', '978-6-991-50668-5', 1984, 3, 1
-    ),
-    (
-        140, 'Lost Peace Eternal', '978-1-643-76840-3', 2019, 3, 2
-    ),
-    (
-        141, 'Fading Soul Eternal', '978-2-341-23474-2', 1986, 2, 0
-    ),
-    (
-        142, 'Rising Forest Eternal', '978-1-281-92306-7', 1999, 5, 4
-    ),
-    (
-        143, 'Distant Dark Awakened', '978-9-430-92210-5', 1979, 4, 0
-    ),
-    (
-        144, 'Ancient Journey Eternal', '978-4-915-46002-9', 1973, 3, 0
-    ),
-    (
-        145, 'Secret Journey and Bone', '978-0-158-58331-4', 1974, 1, 1
-    ),
-    (
-        146, 'Distant Ice Undone', '978-0-560-84928-3', 1990, 5, 3
-    ),
-    (
-        147, 'Wild Forest of Kings', '978-7-205-55015-1', 2002, 2, 0
-    ),
-    (
-        148, 'Final Song and Bone', '978-7-636-78517-9', 1980, 3, 2
-    ),
-    (
-        149, 'Golden Dawn and Ash', '978-6-893-54350-9', 1973, 3, 0
-    ),
-    (
-        150, 'Forgotten Ocean Undone', '978-6-390-43029-9', 1979, 3, 0
-    ),
-    (
-        151, 'Shattered Dark of Ice', '978-5-417-95990-6', 1978, 5, 5
-    ),
-    (
-        152, 'Lost Dawn Undone', '978-6-758-53054-2', 2012, 5, 0
-    ),
-    (
-        153, 'Falling Dark and Blood', '978-8-470-12389-5', 1989, 2, 0
-    ),
-    (
-        154, 'Forgotten Heart and Steel', '978-3-331-28030-2', 1974, 3, 0
-    ),
-    (
-        155, 'Wild Heart Undone', '978-8-138-96760-5', 2019, 5, 1
-    ),
-    (
-        156, 'Rising Road of Ice', '978-2-285-91885-2', 2016, 4, 0
-    ),
-    (
-        157, 'Hollow River Untold', '978-3-554-90031-4', 2018, 4, 1
-    ),
-    (
-        158, 'Infinite Dream of Memory', '978-7-955-35430-5', 2013, 5, 3
-    ),
-    (
-        159, 'Distant Heart of Memory', '978-6-614-79135-6', 1980, 2, 2
-    ),
-    (
-        160, 'Silent World of Time', '978-0-756-72991-5', 2005, 1, 0
-    ),
-    (
-        161, 'Secret Throne of Secrets', '978-4-560-77286-2', 2023, 4, 0
-    ),
-    (
-        162, 'Golden Dream and Bone', '978-5-127-64381-0', 1995, 5, 2
-    ),
-    (
-        163, 'Final Road of the Lost', '978-5-329-13694-5', 1976, 3, 1
-    ),
-    (
-        164, 'Silent Kingdom of Memory', '978-7-812-28191-7', 1998, 5, 0
-    ),
-    (
-        165, 'Shadow Throne of Shadows', '978-4-320-29597-8', 2016, 5, 4
-    ),
-    (
-        166, 'Hollow Ocean of Memory', '978-3-408-25970-0', 1985, 4, 4
-    ),
-    (
-        167, 'Distant Throne of Fire', '978-7-711-80261-0', 2010, 5, 4
-    ),
-    (
-        168, 'Final Song of Ice', '978-4-539-10205-9', 1992, 2, 2
-    ),
-    (
-        169, 'Hollow Mountain Untold', '978-1-636-57265-1', 2003, 5, 4
-    ),
-    (
-        170, 'Iron Peace Undone', '978-0-499-71621-0', 2010, 4, 2
-    ),
-    (
-        171, 'Last Voice of Shadows', '978-5-907-18855-5', 1985, 1, 1
-    ),
-    (
-        172, 'Silent Kingdom and Dust', '978-8-446-94252-2', 2023, 4, 3
-    ),
-    (
-        173, 'Falling Mountain of Ice', '978-1-833-69988-0', 1988, 2, 0
-    ),
-    (
-        174, 'Iron City of Kings', '978-5-417-77552-6', 2022, 5, 3
-    ),
-    (
-        175, 'Last Kingdom Eternal', '978-3-392-56789-0', 2011, 3, 2
-    ),
-    (
-        176, 'Dark Mind and Dust', '978-6-509-67637-6', 1991, 2, 1
-    ),
-    (
-        177, 'Cursed War and Dust', '978-8-373-20828-6', 1975, 4, 4
-    ),
-    (
-        178, 'Glass Mountain Undone', '978-4-428-23447-1', 1990, 3, 2
-    ),
-    (
-        179, 'Distant Wind and Blood', '978-2-806-68183-5', 1998, 1, 1
-    ),
-    (
-        180, 'Rising Path of Time', '978-0-176-97973-6', 1993, 5, 5
-    ),
-    (
-        181, 'Stolen Mountain of Shadows', '978-2-969-89635-7', 1972, 2, 0
-    ),
-    (
-        182, 'Final Heart Eternal', '978-5-470-60181-9', 1972, 5, 1
-    ),
-    (
-        183, 'Stolen Journey and Dust', '978-5-554-20077-9', 1978, 5, 2
-    ),
-    (
-        184, 'Frozen Storm Eternal', '978-4-355-24869-0', 2017, 2, 1
-    ),
-    (
-        185, 'Wild Road Undone', '978-1-368-44116-7', 1983, 5, 2
-    ),
-    (
-        186, 'Cursed Key and Steel', '978-3-225-27790-1', 1998, 2, 2
-    ),
-    (
-        187, 'Distant Throne Untold', '978-5-783-55537-1', 2005, 5, 2
-    ),
-    (
-        188, 'Shadow Dawn of Secrets', '978-2-912-57381-8', 1984, 1, 0
-    ),
-    (
-        189, 'Iron Forest of Darkness', '978-7-126-57303-8', 2006, 3, 3
-    ),
-    (
-        190, 'Iron Fire of Ice', '978-9-188-18617-4', 1995, 4, 4
-    ),
-    (
-        191, 'Hollow Heart and Blood', '978-9-175-26426-5', 2011, 1, 1
-    ),
-    (
-        192, 'Distant Dark Reborn', '978-5-231-82260-9', 1981, 2, 1
-    ),
-    (
-        193, 'Wild Key of Kings', '978-1-630-30056-4', 1980, 2, 1
-    ),
-    (
-        194, 'Golden Song of Darkness', '978-5-631-47230-1', 1986, 2, 2
-    ),
-    (
-        195, 'Infinite Night of Ice', '978-4-729-79924-1', 2002, 2, 2
-    ),
-    (
-        196, 'Shattered Forest of Secrets', '978-9-837-89316-5', 2023, 5, 0
-    ),
-    (
-        197, 'Glass World of Shadows', '978-1-146-94076-9', 1986, 2, 2
-    ),
-    (
-        198, 'Hollow Wind Eternal', '978-0-609-92203-8', 1988, 3, 3
-    ),
-    (
-        199, 'Final Mind Untold', '978-6-404-69446-1', 2014, 1, 0
-    ),
-    (
-        200, 'Distant Path and Steel', '978-7-308-54589-9', 1979, 3, 2
-    );
-/*!40000 ALTER TABLE books
-    ENABLE KEYS */;
+/*!40000 ALTER TABLE books DISABLE KEYS */;
+INSERT INTO books (id, title, isbn, year_published, total_copies, available_copies) VALUES
+(1, 'Wild Throne of Secrets', '978-1-709-18907-3', 1995, 1, 0),
+(2, 'Shattered Wind of Kings', '978-9-183-64948-9', 2006, 5, 2),
+(3, 'Golden Night of Light', '978-5-344-44814-6', 1978, 3, 3),
+(4, 'Forgotten Key of the Lost', '978-0-569-91416-9', 1976, 1, 0),
+(5, 'Wild Night of Ice', '978-5-170-42018-5', 1988, 2, 1),
+(6, 'Glass Fire of Memory', '978-9-926-95717-8', 1970, 5, 2),
+(7, 'Golden Dark of Fire', '978-2-370-25129-1', 2017, 5, 1),
+(8, 'Last Dawn Forsaken', '978-3-834-54942-3', 2013, 3, 3),
+(9, 'Last Gate of Kings', '978-1-749-65518-4', 1972, 1, 1),
+(10, 'Crimson Forest Eternal', '978-4-265-67912-8', 2015, 4, 4),
+(11, 'The Ocean of the Lost', '978-2-658-14722-5', 2007, 5, 1),
+(12, 'Hollow Forest of Kings', '978-4-473-15229-5', 1983, 2, 2),
+(13, 'Dark River Undone', '978-6-735-30257-3', 1980, 2, 1),
+(14, 'The Mountain of Dreams', '978-6-921-97806-3', 1987, 2, 2),
+(15, 'Dark Road of Kings', '978-7-327-36158-7', 1992, 3, 1),
+(16, 'Final Garden Untold', '978-3-508-53025-4', 1974, 3, 2),
+(17, 'Falling Peace and Ash', '978-8-439-13617-1', 1986, 2, 2),
+(18, 'Last Kingdom of Fire', '978-9-544-55309-5', 1997, 5, 4),
+(19, 'Dark Road Awakened', '978-3-360-15817-6', 1970, 5, 4),
+(20, 'Stolen Voice Untold', '978-3-472-66531-1', 2012, 3, 2),
+(21, 'Stolen World of Fire', '978-4-619-50538-6', 1990, 4, 2),
+(22, 'Infinite Forest of Light', '978-6-780-59695-2', 2009, 5, 2),
+(23, 'Frozen Fire of Shadows', '978-4-393-37549-6', 2020, 5, 4),
+(24, 'Falling Storm and Bone', '978-7-552-98555-3', 2002, 4, 1),
+(25, 'Stolen Throne of Memory', '978-8-779-92960-9', 1991, 1, 0),
+(26, 'Stolen Dawn of Darkness', '978-3-250-13201-0', 1985, 4, 4),
+(27, 'Storm Heart of the Lost', '978-7-524-92544-9', 1982, 4, 3),
+(28, 'Frozen Dream of Ice', '978-0-868-23970-6', 1984, 2, 2),
+(29, 'Wild Journey of Kings', '978-8-355-25906-7', 1978, 4, 4),
+(30, 'Infinite Wind of Dreams', '978-7-727-76162-6', 2023, 5, 3),
+(31, 'Shadow Mountain and Steel', '978-7-365-42406-4', 2019, 5, 3),
+(32, 'Falling Dream of Time', '978-7-179-47450-3', 1987, 3, 2),
+(33, 'Shadow Fire of the Lost', '978-2-254-40311-6', 2014, 2, 2),
+(34, 'Hidden Throne and Blood', '978-6-438-81121-7', 1996, 1, 0),
+(35, 'Glass Path and Ash', '978-9-812-12560-9', 1994, 4, 0),
+(36, 'Burning Dawn and Ash', '978-6-651-81582-9', 1984, 4, 1),
+(37, 'Last Path and Steel', '978-0-498-54057-6', 2016, 2, 1),
+(38, 'Golden Forest Forsaken', '978-8-127-61645-9', 2006, 1, 0),
+(39, 'Falling Path of Ice', '978-7-286-16590-4', 1994, 3, 1),
+(40, 'Distant Storm of Dreams', '978-6-384-65255-4', 2023, 1, 1),
+(41, 'The Voice Undone', '978-0-458-39389-1', 2019, 1, 0),
+(42, 'Final City of Shadows', '978-9-256-41266-2', 2000, 1, 0),
+(43, 'Distant Song of Time', '978-5-271-89415-9', 2017, 1, 0),
+(44, 'Secret Ocean Awakened', '978-0-419-85470-6', 1995, 2, 0),
+(45, 'Shattered Song Eternal', '978-3-204-49529-9', 2021, 1, 0),
+(46, 'Burning Fire and Blood', '978-5-170-76317-5', 1970, 4, 3),
+(47, 'Dark Path and Dust', '978-7-824-30052-6', 1981, 5, 5),
+(48, 'Last Wind Undone', '978-7-576-67091-9', 1987, 3, 1),
+(49, 'Glass Key of the Lost', '978-4-561-41963-7', 2006, 5, 5),
+(50, 'Frozen Storm of Shadows', '978-7-971-52600-2', 2001, 2, 1),
+(51, 'Iron Night of Dreams', '978-4-710-46211-8', 1970, 5, 1),
+(52, 'Lost Dream and Blood', '978-7-668-41499-7', 2011, 4, 3),
+(53, 'Iron Garden of the Lost', '978-4-326-63005-3', 1989, 5, 2),
+(54, 'Ancient Fire Reborn', '978-5-535-82140-5', 1992, 4, 2),
+(55, 'Secret Night of Darkness', '978-1-838-35242-5', 1977, 5, 5),
+(56, 'Broken City of Light', '978-7-383-87278-8', 2008, 3, 0),
+(57, 'Glass City of Memory', '978-3-469-33519-4', 1970, 5, 1),
+(58, 'Last Kingdom of Kings', '978-8-399-26551-7', 1976, 1, 1),
+(59, 'Ancient War and Bone', '978-5-288-16734-4', 2000, 1, 0),
+(60, 'Frozen War of the Lost', '978-9-744-99974-0', 1979, 2, 2),
+(61, 'Secret Throne of Darkness', '978-1-671-64548-9', 2008, 5, 1),
+(62, 'Crimson Peace and Ash', '978-7-553-48974-9', 1997, 3, 0),
+(63, 'Rising Voice of Fire', '978-3-740-37659-4', 2012, 1, 0),
+(64, 'Final Mountain Undone', '978-1-260-10350-6', 1998, 5, 3),
+(65, 'Secret Kingdom of Darkness', '978-4-823-47056-7', 1974, 2, 1),
+(66, 'Iron Mind Eternal', '978-9-777-35928-6', 1977, 5, 1),
+(67, 'Falling Forest of Time', '978-2-173-17816-2', 2020, 3, 2),
+(68, 'Distant Ocean and Bone', '978-4-816-62757-4', 2002, 5, 3),
+(69, 'Distant Throne Forsaken', '978-0-542-52247-9', 1986, 1, 0),
+(70, 'Final Dark Awakened', '978-9-121-98117-4', 2006, 1, 0),
+(71, 'Ancient Peace Eternal', '978-7-384-33788-9', 1997, 4, 0),
+(72, 'Ancient River and Blood', '978-5-428-97835-1', 1980, 3, 3),
+(73, 'Cursed War of Memory', '978-6-933-82102-0', 1999, 1, 1),
+(74, 'Last Storm of Fire', '978-6-985-77449-0', 2012, 5, 3),
+(75, 'Hollow Kingdom of Light', '978-8-470-91609-7', 2010, 4, 0),
+(76, 'Hidden Night Undone', '978-2-394-67424-7', 1977, 1, 0),
+(77, 'Cursed Mountain of Memory', '978-8-114-82384-6', 1975, 2, 0),
+(78, 'Distant Ocean Eternal', '978-2-610-48254-8', 2015, 3, 3),
+(79, 'Glass War and Steel', '978-3-567-82255-2', 1994, 2, 2),
+(80, 'Wild Voice of Ice', '978-1-382-64387-5', 2020, 5, 2),
+(81, 'Glass Garden of Memory', '978-4-957-86931-9', 2012, 4, 1),
+(82, 'Distant Fire and Steel', '978-5-440-82340-8', 1994, 4, 2),
+(83, 'Storm City of Darkness', '978-9-492-40613-6', 1972, 3, 3),
+(84, 'Cursed Key and Ash', '978-6-779-95461-2', 2001, 1, 0),
+(85, 'Wild Ice of Dreams', '978-1-995-67711-1', 2003, 4, 0),
+(86, 'Fading Forest and Blood', '978-2-176-71537-4', 1991, 5, 5),
+(87, 'Frozen Light of the Lost', '978-5-972-98389-8', 1994, 3, 3),
+(88, 'Storm Fire of Kings', '978-9-170-40771-4', 1984, 1, 1),
+(89, 'Dark Heart Eternal', '978-1-554-31805-4', 1971, 1, 1),
+(90, 'Iron Kingdom of Memory', '978-5-483-66450-2', 1985, 5, 3),
+(91, 'Shattered Dark of Secrets', '978-2-279-20350-9', 1994, 5, 5),
+(92, 'Final War Awakened', '978-2-337-70443-4', 1999, 3, 0),
+(93, 'Shadow Mind and Bone', '978-4-793-81643-2', 1974, 4, 2),
+(94, 'Shattered Dawn Eternal', '978-6-806-42780-7', 1989, 2, 1),
+(95, 'Storm War of Fire', '978-3-490-84963-5', 2006, 3, 2),
+(96, 'The Soul Untold', '978-6-381-11061-9', 2013, 1, 1),
+(97, 'Glass Gate of Memory', '978-3-721-56179-3', 2010, 2, 2),
+(98, 'Last Dark Untold', '978-2-743-22735-0', 1989, 4, 0),
+(99, 'Shattered River of Ice', '978-1-402-52823-6', 1981, 2, 0),
+(100, 'Iron Fire and Dust', '978-8-613-45720-2', 1986, 4, 2),
+(101, 'Fading World of Dreams', '978-1-579-19869-2', 2018, 2, 2),
+(102, 'Fading Dark and Ash', '978-8-474-21836-6', 1970, 3, 0),
+(103, 'Distant River Untold', '978-4-698-59941-5', 1976, 2, 1),
+(104, 'The Wind Undone', '978-5-724-39015-1', 2010, 4, 2),
+(105, 'Falling Path of Fire', '978-2-146-14877-4', 2001, 1, 0),
+(106, 'Final Gate Undone', '978-2-497-69459-5', 2012, 5, 3),
+(107, 'Shattered Voice of Ice', '978-6-770-22978-7', 2009, 4, 2),
+(108, 'A Song and Dust', '978-3-554-68287-3', 1993, 1, 1),
+(109, 'Infinite Gate Eternal', '978-5-162-62184-4', 1982, 1, 1),
+(110, 'Lost Dark of Light', '978-9-121-16629-5', 1985, 2, 2),
+(111, 'Hidden Throne Undone', '978-3-700-38305-3', 1991, 2, 2),
+(112, 'The Night of Ice', '978-2-653-42853-2', 1977, 1, 0),
+(113, 'The River of Darkness', '978-9-431-12068-2', 1986, 1, 0),
+(114, 'Fading Path Reborn', '978-1-863-18330-7', 1998, 3, 0),
+(115, 'Distant Peace of Darkness', '978-9-144-96363-8', 1989, 4, 0),
+(116, 'A War and Ash', '978-6-802-24150-7', 2015, 4, 0),
+(117, 'Shadow Throne of Dreams', '978-9-251-18609-2', 1987, 5, 5),
+(118, 'Shattered Fire of Dreams', '978-6-711-79541-4', 1999, 5, 4),
+(119, 'Hollow Ocean of Fire', '978-8-838-38183-6', 1998, 2, 1),
+(120, 'Forgotten Soul and Bone', '978-6-525-22463-5', 1997, 3, 2),
+(121, 'Burning Forest Untold', '978-7-168-21957-1', 1975, 4, 0),
+(122, 'Fading Voice and Dust', '978-2-669-17861-9', 2005, 5, 2),
+(123, 'Stolen Ocean and Blood', '978-5-994-97207-6', 2016, 1, 1),
+(124, 'Rising Dawn and Dust', '978-1-691-76507-3', 1979, 4, 1),
+(125, 'Storm Ocean and Dust', '978-8-476-25058-4', 2006, 2, 1),
+(126, 'Storm Fire Forsaken', '978-9-791-94239-8', 1971, 5, 5),
+(127, 'Glass Song of Time', '978-0-284-45818-4', 1991, 3, 0),
+(128, 'Broken World of Ice', '978-9-773-62531-1', 1979, 1, 0),
+(129, 'Fading Peace of Light', '978-6-529-69460-5', 1980, 3, 2),
+(130, 'Fading Storm Awakened', '978-9-186-16895-2', 1980, 5, 0),
+(131, 'Stolen Throne of Time', '978-7-777-65576-7', 2008, 4, 3),
+(132, 'Last City Reborn', '978-1-453-66349-1', 1988, 5, 3),
+(133, 'Wild Dark of Memory', '978-0-325-61807-9', 1973, 1, 0),
+(134, 'Secret City of Ice', '978-4-396-53007-1', 1970, 4, 3),
+(135, 'Broken Forest and Ash', '978-8-820-40161-8', 2005, 3, 0),
+(136, 'Frozen World of Kings', '978-6-119-70260-1', 1990, 5, 3),
+(137, 'Shattered Road Eternal', '978-6-396-25096-6', 1971, 3, 1),
+(138, 'Iron Wind and Bone', '978-5-190-67240-1', 1985, 4, 4),
+(139, 'Frozen Peace of the Lost', '978-6-991-50668-5', 1984, 3, 1),
+(140, 'Lost Peace Eternal', '978-1-643-76840-3', 2019, 3, 2),
+(141, 'Fading Soul Eternal', '978-2-341-23474-2', 1986, 2, 0),
+(142, 'Rising Forest Eternal', '978-1-281-92306-7', 1999, 5, 4),
+(143, 'Distant Dark Awakened', '978-9-430-92210-5', 1979, 4, 0),
+(144, 'Ancient Journey Eternal', '978-4-915-46002-9', 1973, 3, 0),
+(145, 'Secret Journey and Bone', '978-0-158-58331-4', 1974, 1, 1),
+(146, 'Distant Ice Undone', '978-0-560-84928-3', 1990, 5, 3),
+(147, 'Wild Forest of Kings', '978-7-205-55015-1', 2002, 2, 0),
+(148, 'Final Song and Bone', '978-7-636-78517-9', 1980, 3, 2),
+(149, 'Golden Dawn and Ash', '978-6-893-54350-9', 1973, 3, 0),
+(150, 'Forgotten Ocean Undone', '978-6-390-43029-9', 1979, 3, 0),
+(151, 'Shattered Dark of Ice', '978-5-417-95990-6', 1978, 5, 5),
+(152, 'Lost Dawn Undone', '978-6-758-53054-2', 2012, 5, 0),
+(153, 'Falling Dark and Blood', '978-8-470-12389-5', 1989, 2, 0),
+(154, 'Forgotten Heart and Steel', '978-3-331-28030-2', 1974, 3, 0),
+(155, 'Wild Heart Undone', '978-8-138-96760-5', 2019, 5, 1),
+(156, 'Rising Road of Ice', '978-2-285-91885-2', 2016, 4, 0),
+(157, 'Hollow River Untold', '978-3-554-90031-4', 2018, 4, 1),
+(158, 'Infinite Dream of Memory', '978-7-955-35430-5', 2013, 5, 3),
+(159, 'Distant Heart of Memory', '978-6-614-79135-6', 1980, 2, 2),
+(160, 'Silent World of Time', '978-0-756-72991-5', 2005, 1, 0),
+(161, 'Secret Throne of Secrets', '978-4-560-77286-2', 2023, 4, 0),
+(162, 'Golden Dream and Bone', '978-5-127-64381-0', 1995, 5, 2),
+(163, 'Final Road of the Lost', '978-5-329-13694-5', 1976, 3, 1),
+(164, 'Silent Kingdom of Memory', '978-7-812-28191-7', 1998, 5, 0),
+(165, 'Shadow Throne of Shadows', '978-4-320-29597-8', 2016, 5, 4),
+(166, 'Hollow Ocean of Memory', '978-3-408-25970-0', 1985, 4, 4),
+(167, 'Distant Throne of Fire', '978-7-711-80261-0', 2010, 5, 4),
+(168, 'Final Song of Ice', '978-4-539-10205-9', 1992, 2, 2),
+(169, 'Hollow Mountain Untold', '978-1-636-57265-1', 2003, 5, 4),
+(170, 'Iron Peace Undone', '978-0-499-71621-0', 2010, 4, 2),
+(171, 'Last Voice of Shadows', '978-5-907-18855-5', 1985, 1, 1),
+(172, 'Silent Kingdom and Dust', '978-8-446-94252-2', 2023, 4, 3),
+(173, 'Falling Mountain of Ice', '978-1-833-69988-0', 1988, 2, 0),
+(174, 'Iron City of Kings', '978-5-417-77552-6', 2022, 5, 3),
+(175, 'Last Kingdom Eternal', '978-3-392-56789-0', 2011, 3, 2),
+(176, 'Dark Mind and Dust', '978-6-509-67637-6', 1991, 2, 1),
+(177, 'Cursed War and Dust', '978-8-373-20828-6', 1975, 4, 4),
+(178, 'Glass Mountain Undone', '978-4-428-23447-1', 1990, 3, 2),
+(179, 'Distant Wind and Blood', '978-2-806-68183-5', 1998, 1, 1),
+(180, 'Rising Path of Time', '978-0-176-97973-6', 1993, 5, 5),
+(181, 'Stolen Mountain of Shadows', '978-2-969-89635-7', 1972, 2, 0),
+(182, 'Final Heart Eternal', '978-5-470-60181-9', 1972, 5, 1),
+(183, 'Stolen Journey and Dust', '978-5-554-20077-9', 1978, 5, 2),
+(184, 'Frozen Storm Eternal', '978-4-355-24869-0', 2017, 2, 1),
+(185, 'Wild Road Undone', '978-1-368-44116-7', 1983, 5, 2),
+(186, 'Cursed Key and Steel', '978-3-225-27790-1', 1998, 2, 2),
+(187, 'Distant Throne Untold', '978-5-783-55537-1', 2005, 5, 2),
+(188, 'Shadow Dawn of Secrets', '978-2-912-57381-8', 1984, 1, 0),
+(189, 'Iron Forest of Darkness', '978-7-126-57303-8', 2006, 3, 3),
+(190, 'Iron Fire of Ice', '978-9-188-18617-4', 1995, 4, 4),
+(191, 'Hollow Heart and Blood', '978-9-175-26426-5', 2011, 1, 1),
+(192, 'Distant Dark Reborn', '978-5-231-82260-9', 1981, 2, 1),
+(193, 'Wild Key of Kings', '978-1-630-30056-4', 1980, 2, 1),
+(194, 'Golden Song of Darkness', '978-5-631-47230-1', 1986, 2, 2),
+(195, 'Infinite Night of Ice', '978-4-729-79924-1', 2002, 2, 2),
+(196, 'Shattered Forest of Secrets', '978-9-837-89316-5', 2023, 5, 0),
+(197, 'Glass World of Shadows', '978-1-146-94076-9', 1986, 2, 2),
+(198, 'Hollow Wind Eternal', '978-0-609-92203-8', 1988, 3, 3),
+(199, 'Final Mind Untold', '978-6-404-69446-1', 2014, 1, 0),
+(200, 'Distant Path and Steel', '978-7-308-54589-9', 1979, 3, 2);
+/*!40000 ALTER TABLE books ENABLE KEYS */;
+UNLOCK TABLES;
+
+-- ------------------------------------------------------------
+-- BOOK_DESCRIPTIONS (1:1 med books)
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `book_descriptions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE book_descriptions (
+    book_id     INT PRIMARY KEY,
+    summary     TEXT,
+    lang        VARCHAR(50),
+    page_count  INT,
+    CONSTRAINT fk_bookdesc_book
+        FOREIGN KEY (book_id) REFERENCES books(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- BOOK_DESCRIPTIONS
 LOCK TABLES `book_descriptions` WRITE;
 /*!40000 ALTER TABLE `book_descriptions` DISABLE KEYS */;
-INSERT INTO book_descriptions (book_id, summary, lang, pageCount) VALUES
+INSERT INTO book_descriptions (book_id, summary, lang, page_count) VALUES
 (1, 'A quiet, devastating novel about ordinary people caught in extraordinary events.', 'German', 588),
 (2, 'A deeply personal story about loss, love, and finding one''s place in the world.', 'German', 707),
 (3, 'A beautifully written meditation on grief, hope, and the resilience of the human spirit.', 'English', 506),
@@ -1334,6 +629,25 @@ INSERT INTO book_descriptions (book_id, summary, lang, pageCount) VALUES
 (200, 'A deeply personal story about loss, love, and finding one''s place in the world.', 'English', 249);
 /*!40000 ALTER TABLE `book_descriptions` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- ------------------------------------------------------------
+-- BOOK_AUTHORS (M:M books <-> authors)
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `book_authors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE book_authors (
+    book_id     INT NOT NULL,
+    author_id   INT NOT NULL,
+    PRIMARY KEY (book_id, author_id),
+    CONSTRAINT fk_bookauthors_book
+        FOREIGN KEY (book_id) REFERENCES books(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_bookauthors_author
+        FOREIGN KEY (author_id) REFERENCES authors(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- BOOK_AUTHORS
 LOCK TABLES `book_authors` WRITE;
@@ -1562,6 +876,57 @@ INSERT INTO book_authors (book_id, author_id) VALUES
 (200, 36);
 /*!40000 ALTER TABLE `book_authors` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- ------------------------------------------------------------
+-- CATEGORIES
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `categories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE categories (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(100) NOT NULL,
+    description VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- CATEGORIES
+LOCK TABLES `categories` WRITE;
+/*!40000 ALTER TABLE `categories` DISABLE KEYS */;
+INSERT INTO categories (id, name, description) VALUES
+(1, 'Fiction', 'Narrative literature created from imagination'),
+(2, 'Non-Fiction', 'Prose based on real events and facts'),
+(3, 'Science Fiction', 'Speculative fiction involving science and technology'),
+(4, 'Fantasy', 'Fiction involving magic and supernatural elements'),
+(5, 'Mystery', 'Fiction dealing with crime and investigation'),
+(6, 'Thriller', 'Fiction designed to hold interest through suspense'),
+(7, 'Romance', 'Fiction focused on love and relationships'),
+(8, 'Historical Fiction', 'Fiction set in a historical period'),
+(9, 'Biography', 'Non-fiction account of a person''s life'),
+(10, 'Self-Help', 'Books intended to help readers improve themselves'),
+(11, 'Horror', 'Fiction intended to frighten or disturb'),
+(12, 'Adventure', 'Fiction involving exciting journeys or events');
+/*!40000 ALTER TABLE `categories` ENABLE KEYS */;
+UNLOCK TABLES;
+
+-- ------------------------------------------------------------
+-- BOOK_CATEGORIES (M:M books <-> categories)
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `book_categories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE book_categories (
+    book_id     INT NOT NULL,
+    category_id INT NOT NULL,
+    PRIMARY KEY (book_id, category_id),
+    CONSTRAINT fk_bookcats_book
+        FOREIGN KEY (book_id) REFERENCES books(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_bookcats_category
+        FOREIGN KEY (category_id) REFERENCES categories(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- BOOK_CATEGORIES
 LOCK TABLES `book_categories` WRITE;
@@ -1966,6 +1331,160 @@ INSERT INTO book_categories (book_id, category_id) VALUES
 /*!40000 ALTER TABLE `book_categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
+-- ------------------------------------------------------------
+-- MEMBERS
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `members`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE members (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    first_name      VARCHAR(100) NOT NULL,
+    last_name       VARCHAR(100) NOT NULL,
+    email           VARCHAR(255) NOT NULL UNIQUE,
+    membership_date DATE         NOT NULL,
+    membership_type VARCHAR(50)  NOT NULL DEFAULT 'standard',
+    status VARCHAR(50) NOT NULL DEFAULT 'active',
+    password VARCHAR(50) NOT NULL DEFAULT 'password',
+    role VARCHAR(50) NOT NULL DEFAULT 'READER'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- MEMBERS
+LOCK TABLES `members` WRITE;
+/*!40000 ALTER TABLE `members` DISABLE KEYS */;
+INSERT INTO members (id, first_name, last_name, email, membership_date, membership_type, status) VALUES
+(1, 'Emma', 'Hill', 'emma.hill88@email.com', '2022-10-14', 'standard', 'active'),
+(2, 'Harper', 'Thomas', 'harper.thomas36@email.com', '2021-02-20', 'premium', 'active'),
+(3, 'Oliver', 'Turner', 'oliver.turner80@email.com', '2020-10-03', 'standard', 'active'),
+(4, 'Jackson', 'Roberts', 'jackson.roberts62@email.com', '2018-09-07', 'standard', 'active'),
+(5, 'Logan', 'Wilson', 'logan.wilson54@email.com', '2020-03-27', 'standard', 'expired'),
+(6, 'Jack', 'Johnson', 'jack.johnson49@email.com', '2022-01-10', 'premium', 'suspended'),
+(7, 'Scarlett', 'Torres', 'scarlett.torres73@email.com', '2023-08-20', 'standard', 'active'),
+(8, 'Abigail', 'Thomas', 'abigail.thomas4@email.com', '2021-07-30', 'standard', 'active'),
+(9, 'Abigail', 'Brown', 'abigail.brown61@email.com', '2023-12-09', 'standard', 'suspended'),
+(10, 'Mason', 'Anderson', 'mason.anderson13@email.com', '2020-10-12', 'standard', 'active'),
+(11, 'Jack', 'Brown', 'jack.brown98@email.com', '2020-06-17', 'premium', 'active'),
+(12, 'Amelia', 'Thomas', 'amelia.thomas31@email.com', '2021-07-26', 'standard', 'suspended'),
+(13, 'Emma', 'Torres', 'emma.torres73@email.com', '2019-08-06', 'standard', 'active'),
+(14, 'Jack', 'King', 'jack.king23@email.com', '2023-07-02', 'standard', 'active'),
+(15, 'Sophia', 'Harris', 'sophia.harris78@email.com', '2020-06-15', 'standard', 'suspended'),
+(16, 'Aiden', 'Smith', 'aiden.smith43@email.com', '2020-04-05', 'standard', 'active'),
+(17, 'Amelia', 'Wright', 'amelia.wright8@email.com', '2018-03-31', 'standard', 'suspended'),
+(18, 'Charlotte', 'Davis', 'charlotte.davis68@email.com', '2022-02-03', 'standard', 'active'),
+(19, 'Sofia', 'Phillips', 'sofia.phillips13@email.com', '2021-10-10', 'standard', 'active'),
+(20, 'Lucas', 'Anderson', 'lucas.anderson94@email.com', '2022-11-25', 'premium', 'expired'),
+(21, 'Liam', 'Thomas', 'liam.thomas91@email.com', '2022-01-01', 'standard', 'expired'),
+(22, 'Grace', 'Thomas', 'grace.thomas49@email.com', '2021-06-10', 'standard', 'active'),
+(23, 'Amelia', 'Smith', 'amelia.smith90@email.com', '2022-05-23', 'standard', 'active'),
+(24, 'Theodore', 'Wright', 'theodore.wright79@email.com', '2020-06-23', 'standard', 'active'),
+(25, 'Charlotte', 'Scott', 'charlotte.scott96@email.com', '2018-11-15', 'standard', 'active'),
+(26, 'Liam', 'Anderson', 'liam.anderson82@email.com', '2018-12-30', 'standard', 'active'),
+(27, 'James', 'Thompson', 'james.thompson27@email.com', '2020-10-19', 'standard', 'active'),
+(28, 'Ethan', 'Miller', 'ethan.miller93@email.com', '2018-01-06', 'standard', 'active'),
+(29, 'Sebastian', 'Green', 'sebastian.green22@email.com', '2022-08-23', 'premium', 'active'),
+(30, 'Noah', 'Carter', 'noah.carter49@email.com', '2019-02-20', 'premium', 'suspended'),
+(31, 'Mason', 'Anderson', 'mason.anderson58@email.com', '2018-10-29', 'standard', 'active'),
+(32, 'Emma', 'Wright', 'emma.wright34@email.com', '2019-03-05', 'standard', 'active'),
+(33, 'Henry', 'Hill', 'henry.hill21@email.com', '2018-11-04', 'standard', 'active'),
+(34, 'Theodore', 'Turner', 'theodore.turner62@email.com', '2018-05-07', 'premium', 'expired'),
+(35, 'Henry', 'Evans', 'henry.evans56@email.com', '2019-10-06', 'standard', 'active'),
+(36, 'Ava', 'White', 'ava.white25@email.com', '2022-08-04', 'standard', 'expired'),
+(37, 'Daniel', 'King', 'daniel.king31@email.com', '2019-01-28', 'standard', 'active'),
+(38, 'Owen', 'Roberts', 'owen.roberts63@email.com', '2019-09-22', 'standard', 'active'),
+(39, 'James', 'Adams', 'james.adams12@email.com', '2021-04-21', 'premium', 'active'),
+(40, 'Benjamin', 'Johnson', 'benjamin.johnson27@email.com', '2019-12-01', 'standard', 'active'),
+(41, 'Aiden', 'Davis', 'aiden.davis40@email.com', '2022-06-17', 'premium', 'active'),
+(42, 'Ethan', 'Garcia', 'ethan.garcia83@email.com', '2022-05-07', 'standard', 'active'),
+(43, 'Logan', 'Nguyen', 'logan.nguyen24@email.com', '2022-12-31', 'standard', 'active'),
+(44, 'Sebastian', 'Baker', 'sebastian.baker34@email.com', '2020-07-15', 'standard', 'suspended'),
+(45, 'Sophia', 'Taylor', 'sophia.taylor97@email.com', '2019-02-01', 'standard', 'expired'),
+(46, 'Noah', 'Carter', 'noah.carter53@email.com', '2020-07-20', 'standard', 'active'),
+(47, 'Victoria', 'Green', 'victoria.green69@email.com', '2023-04-29', 'standard', 'active'),
+(48, 'Emily', 'Garcia', 'emily.garcia51@email.com', '2018-05-23', 'standard', 'active'),
+(49, 'Sebastian', 'Thomas', 'sebastian.thomas22@email.com', '2020-05-17', 'standard', 'active'),
+(50, 'Oliver', 'Adams', 'oliver.adams11@email.com', '2022-11-19', 'standard', 'expired');
+UPDATE members
+   SET password = CASE id WHEN 1 THEN 'QaMzTpLs'
+                          WHEN 2 THEN 'RkVnYeHu'
+                          WHEN 3 THEN 'BxDfJmPo'
+                          WHEN 4 THEN 'NtGaReWi'
+                          WHEN 5 THEN 'YuKpLsAd'
+                          WHEN 6 THEN 'CmZoXvNe'
+                          WHEN 7 THEN 'HjTaQwEr'
+                          WHEN 8 THEN 'PlMnBcXa'
+                          WHEN 9 THEN 'WqErTyUi'
+                          WHEN 10 THEN 'ZvCxBnMa'
+                          WHEN 11 THEN 'AfGtHyJu'
+                          WHEN 12 THEN 'KiLoPmNa'
+                          WHEN 13 THEN 'QsWeRtYu'
+                          WHEN 14 THEN 'EdCvFrTg'
+                          WHEN 15 THEN 'BhNjMkLp'
+                          WHEN 16 THEN 'ZaQsXwEd'
+                          WHEN 17 THEN 'CrFvTgBy'
+                          WHEN 18 THEN 'UnImOkJl'
+                          WHEN 19 THEN 'PaSdFgHj'
+                          WHEN 20 THEN 'LkJhGfDs'
+                          WHEN 21 THEN 'MwQeRtYu'
+                          WHEN 22 THEN 'NxZaSwEd'
+                          WHEN 23 THEN 'VoPlKmJn'
+                          WHEN 24 THEN 'BiHuYtRe'
+                          WHEN 25 THEN 'CtRxEvWq'
+                          WHEN 26 THEN 'DfGhJkLo'
+                          WHEN 27 THEN 'EgTrYuIo'
+                          WHEN 28 THEN 'FvBnMhJk'
+                          WHEN 29 THEN 'GqWeAsZd'
+                          WHEN 30 THEN 'HpLoKiJu'
+                          WHEN 31 THEN 'IrTyUiOp'
+                          WHEN 32 THEN 'JsDfGhJk'
+                          WHEN 33 THEN 'KxCvBnMq'
+                          WHEN 34 THEN 'LwErTyUi'
+                          WHEN 35 THEN 'MzXaScDv'
+                          WHEN 36 THEN 'NyUiOpAs'
+                          WHEN 37 THEN 'ObNmLkJh'
+                          WHEN 38 THEN 'PcVbNmAs'
+                          WHEN 39 THEN 'QlKoMnJi'
+                          WHEN 40 THEN 'RtYuIoPa'
+                          WHEN 41 THEN 'SfGhJkLz'
+                          WHEN 42 THEN 'TdRfTgYh'
+                          WHEN 43 THEN 'UjKiOlPm'
+                          WHEN 44 THEN 'VaQsWeRt'
+                          WHEN 45 THEN 'WmNbVcXz'
+                          WHEN 46 THEN 'XpLoKmJi'
+                          WHEN 47 THEN 'YhGtFrDe'
+                          WHEN 48 THEN 'ZiUxCvBn'
+                          WHEN 49 THEN 'AkSjDhFg'
+                          WHEN 50 THEN 'BrTyGhNu' END
+ WHERE id BETWEEN 1 AND 50;
+
+UPDATE library.members
+   SET role = 'LIBRARIAN'
+ WHERE id = 1;
+
+/*!40000 ALTER TABLE `members` ENABLE KEYS */;
+UNLOCK TABLES;
+
+-- ------------------------------------------------------------
+-- LOANS
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `loans`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE loans (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    book_id     INT  NOT NULL,
+    member_id   INT,
+    loan_date   DATE NOT NULL ,
+    due_date    DATE NOT NULL,
+    return_date DATE,
+    CONSTRAINT fk_loans_book
+        FOREIGN KEY (book_id) REFERENCES books(id)
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_loans_member
+        FOREIGN KEY (member_id) REFERENCES members(id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- LOANS
 LOCK TABLES `loans` WRITE;
@@ -2124,6 +1643,26 @@ INSERT INTO loans (id, book_id, member_id, loan_date, due_date, return_date) VAL
 /*!40000 ALTER TABLE `loans` ENABLE KEYS */;
 UNLOCK TABLES;
 
+-- ------------------------------------------------------------
+-- FINES
+-- RESTRICT on delete if fine is unpaid (enforced in application layer)
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `fines`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE fines (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    loan_id     INT            NOT NULL,
+    amount      DECIMAL(10,2)  NOT NULL,
+    issued_date DATE           NOT NULL ,
+    paid_date   DATE,
+    status      VARCHAR(50)    NOT NULL DEFAULT 'pending',
+    CONSTRAINT fk_fines_loan
+        FOREIGN KEY (loan_id) REFERENCES loans(id)
+        ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 -- FINES
 LOCK TABLES `fines` WRITE;
 /*!40000 ALTER TABLE `fines` DISABLE KEYS */;
@@ -2192,6 +1731,29 @@ INSERT INTO fines (id, loan_id, amount, issued_date, paid_date, status) VALUES
 (62, 150, 2660.0, '2023-02-17', NULL, 'pending');
 /*!40000 ALTER TABLE `fines` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- ------------------------------------------------------------
+-- NOTIFICATIONS
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE notifications (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    member_id   INT,
+    loan_id     INT,
+    type        VARCHAR(100) NOT NULL,
+    message     TEXT         NOT NULL,
+    sent_date   DATE         NOT NULL ,
+    is_read     BOOLEAN      NOT NULL DEFAULT FALSE,
+    CONSTRAINT fk_notif_member
+        FOREIGN KEY (member_id) REFERENCES members(id)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_notif_loan
+        FOREIGN KEY (loan_id) REFERENCES loans(id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- NOTIFICATIONS
 LOCK TABLES `notifications` WRITE;
@@ -2288,6 +1850,28 @@ INSERT INTO notifications (id, member_id, loan_id, type, message, sent_date, is_
 (89, 44, NULL, 'account_suspended', 'Your account has been suspended due to unpaid fines. Please settle your balance to regain access.', '2024-03-29', 1);
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- ------------------------------------------------------------
+-- REVIEWS
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS `reviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE reviews (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    book_id     INT NOT NULL,
+    member_id   INT,
+    rating      INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment     TEXT,
+    review_date DATE NOT NULL ,
+    CONSTRAINT fk_reviews_book
+        FOREIGN KEY (book_id) REFERENCES books(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_reviews_member
+        FOREIGN KEY (member_id) REFERENCES members(id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- REVIEWS
 LOCK TABLES `reviews` WRITE;
