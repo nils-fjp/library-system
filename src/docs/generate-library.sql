@@ -1342,7 +1342,7 @@ CREATE TABLE members (
     first_name      VARCHAR(100) NOT NULL,
     last_name       VARCHAR(100) NOT NULL,
     email           VARCHAR(255) NOT NULL UNIQUE,
-    membership_date DATE         NOT NULL,
+    membership_date DATE         NOT NULL DEFAULT (CURDATE()),
     membership_type VARCHAR(50)  NOT NULL DEFAULT 'standard',
     status VARCHAR(50) NOT NULL DEFAULT 'active',
     password VARCHAR(50) NOT NULL DEFAULT 'password',
@@ -1474,7 +1474,7 @@ CREATE TABLE loans (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     book_id     INT  NOT NULL,
     member_id   INT,
-    loan_date   DATE NOT NULL ,
+    loan_date   DATE NOT NULL DEFAULT (CURDATE()),
     due_date    DATE NOT NULL,
     return_date DATE,
     CONSTRAINT fk_loans_book
@@ -1654,7 +1654,7 @@ CREATE TABLE fines (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     loan_id     INT            NOT NULL,
     amount      DECIMAL(10,2)  NOT NULL,
-    issued_date DATE           NOT NULL ,
+    issued_date DATE           NOT NULL DEFAULT (CURDATE()),
     paid_date   DATE,
     status      VARCHAR(50)    NOT NULL DEFAULT 'pending',
     CONSTRAINT fk_fines_loan
@@ -1744,7 +1744,7 @@ CREATE TABLE notifications (
     loan_id     INT,
     type        VARCHAR(100) NOT NULL,
     message     TEXT         NOT NULL,
-    sent_date   DATE         NOT NULL ,
+    sent_date   DATE         NOT NULL DEFAULT (CURDATE()),
     is_read     BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT fk_notif_member
         FOREIGN KEY (member_id) REFERENCES members(id)
@@ -1863,7 +1863,7 @@ CREATE TABLE reviews (
     member_id   INT,
     rating      INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
     comment     TEXT,
-    review_date DATE NOT NULL ,
+    review_date DATE NOT NULL DEFAULT (CURDATE()),
     CONSTRAINT fk_reviews_book
         FOREIGN KEY (book_id) REFERENCES books(id)
         ON DELETE CASCADE,
