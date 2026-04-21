@@ -5,15 +5,15 @@ import ui.ConsolePrinter;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-import java.time.format.DateTimeParseException;
 
 public class AuthorController {
-    private static final Scanner scanner = new Scanner(System.in);
     static final ConsolePrinter printer = new ConsolePrinter();
+    private static final Scanner scanner = new Scanner(System.in);
 
     // 1. Show all authors
     public static void showAllAuthors() {
@@ -37,6 +37,7 @@ public class AuthorController {
             printer.printError("Database error: " + e.getMessage());
         }
     }
+
     // 2. Add author
     public static void addAuthor(Member currentMember) {
         AuthorService service = new AuthorService();
@@ -309,6 +310,5 @@ public class AuthorController {
             printer.printError("Database error: " + e.getMessage());
         }
     }
-
 
 }
