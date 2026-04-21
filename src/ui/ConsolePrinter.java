@@ -6,32 +6,24 @@ import java.util.Map;
 //import static member.MemberController.printer;
 
 public class ConsolePrinter {
+    private static final int BORDER = 48;
+    private static final int PADDING = BORDER - 4;
 
     public static void printHeader(String title) {
         System.out.println();
-        System.out.println("\t" + ANSI.CYAN + ANSI.BOLD + title + ANSI.NO_BOLD + ANSI.DEFAULT_FG);
-        System.out.println("\t" + ANSI.BRIGHT_BLACK + "────────────────────────────────────────" + ANSI.DEFAULT_FG);
+        String centerFlex = " ".repeat((BORDER - title.length()) / 2);
+        String flexRest = " ".repeat((BORDER - title.length()) % 2);
+        System.out.println("\t" + ANSI.CYAN + ANSI.BOLD + centerFlex + title + flexRest + ANSI.NO_BOLD + ANSI.DEFAULT_FG);
+        System.out.println("\t" + ANSI.BRIGHT_BLACK + "─".repeat(BORDER) + ANSI.DEFAULT_FG);
     }
 
     public static void printFooter() {
-        System.out.println("\t" + ANSI.BRIGHT_BLACK + "────────────────────────────────────────" + ANSI.DEFAULT_FG);
+        System.out.println("\t" + ANSI.BRIGHT_BLACK + "─".repeat(BORDER) + ANSI.DEFAULT_FG);
         System.out.println();
     }
 
     public static void printField(String label, Object value) {
         System.out.println("\t" + ANSI.YELLOW + label + ": " + ANSI.DEFAULT_FG + value);
-    }
-
-    public void printError(String message) {
-        System.out.println();
-        System.out.println("\t" + ANSI.RED + message + ANSI.DEFAULT_FG);
-        System.out.println();
-    }
-
-    public void printSuccess(String message) {
-        System.out.println();
-        System.out.println("\t" + ANSI.BRIGHT_GREEN + message + ANSI.DEFAULT_FG);
-        System.out.println();
     }
 
     public static void printPrompt(String message) {
@@ -48,5 +40,16 @@ public class ConsolePrinter {
         printFooter();
     }
 
+    public void printError(String message) {
+        System.out.println();
+        System.out.println("\t" + ANSI.RED + message + ANSI.DEFAULT_FG);
+        System.out.println();
+    }
+
+    public void printSuccess(String message) {
+        System.out.println();
+        System.out.println("\t" + ANSI.BRIGHT_GREEN + message + ANSI.DEFAULT_FG);
+        System.out.println();
+    }
 
 }
