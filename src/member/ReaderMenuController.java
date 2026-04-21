@@ -25,7 +25,7 @@ public class ReaderMenuController {
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> showBooksMenu(currentMember);
+                case 1 -> showBooksMenu();
                 case 2 -> LoanController.showMyLoansMenu(currentMember);
                 case 3 -> showMyProfileMenu(currentMember);
                 case 0 -> {
@@ -38,7 +38,7 @@ public class ReaderMenuController {
 
 
     //1. Books
-    private static void showBooksMenu(Member currentMember) throws SQLException {
+    private static void showBooksMenu() throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Book Menu");
         menu.addMenuOption("View Books");
@@ -46,7 +46,7 @@ public class ReaderMenuController {
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> BookController.showAllBooks(currentMember);
+                case 1 -> BookController.showAllBooks();
                 case 2 -> BookController.searchForBooks();
 
             }

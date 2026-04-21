@@ -33,5 +33,8 @@ public class Main {
 
 //          LIBRARIAN emma.hill88@email.com
 //                    QaMzTpLs
-//            READER ava.white25@email.com
+//            READER Expired: ava.white25@email.com
 //                   NyUiOpAs
+//            Reader Active:
+//                  abigail.thomas4@email.com
+//                  PlMnBcXa
