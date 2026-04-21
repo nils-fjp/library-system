@@ -23,12 +23,12 @@ public class ConsolePrinter {
     }
 
     public static void printField(String label, Object value) {
-        String centerFlex = " ".repeat((BORDER - label.length()) / 2);
+        String centerFlex = " ".repeat((BORDER - label.length()) / 3);
         System.out.println("\t" + ANSI.YELLOW + label + ": " + centerFlex + ANSI.DEFAULT_FG + value);
     }
 
     public static void printPrompt(String message) {
-        String centerFlex = " ".repeat((BORDER - message.length()) / 2);
+        String centerFlex = " ".repeat((BORDER - message.length()) / 3);
         System.out.println("\t" + ANSI.YELLOW + message + centerFlex + ANSI.DEFAULT_FG);
     }
 
