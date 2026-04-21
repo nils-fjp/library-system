@@ -15,13 +15,14 @@ public class BookDetailDTO {
     private List<String> authorNames;
     private List<String> categoryNames;
 
-
-    public BookDetailDTO(int id, String title, String isbn, int year_published, int availableCopies, String summary,
-                         String lang, int pageCount, List<String> authorNames, List<String> categoryNames) {
+    public BookDetailDTO(
+            int id, String title, String isbn, int yearPublished, int availableCopies, String summary,
+            String lang, int pageCount, List<String> authorNames, List<String> categoryNames
+    ) {
         this.isbn = isbn;
         this.id = id;
         this.title = title;
-        this.yearPublished = year_published;
+        this.yearPublished = yearPublished;
         this.availableCopies = availableCopies;
         this.summary = summary;
         this.lang = lang;
@@ -29,7 +30,6 @@ public class BookDetailDTO {
         this.authorNames = authorNames;
         this.categoryNames = categoryNames;
     }
-
 
     public int getId() {
         return id;
@@ -99,8 +99,8 @@ public class BookDetailDTO {
         return authorNames;
     }
 
-    public void setAuthorNames(List<String> authorName) {
-        this.authorNames = authorName;
+    public void setAuthorNames(List<String> authorNames) {
+        this.authorNames = authorNames;
     }
 
     public List<String> getCategoryNames() {

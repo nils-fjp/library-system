@@ -6,13 +6,17 @@ import java.util.List;
 public class BookManageDTO extends BookDetailDTO {
     private int totalCopies;
 
-    public BookManageDTO(int id, String isbn, String title, int year_published, int availableCopies, String summary,
-                         String lang, int page_count, List<String> authors, List<String> categories, int totalCopies) {
+    public BookManageDTO(
+            int id, String title, String isbn, int yearPublished, int availableCopies, String summary,
+            String lang, int pageCount, List<String> authorNames, List<String> categoryNames, int totalCopies
+    ) {
 
         // Anropar konstrukturen med alla parameterna
-        super(id, isbn, title, year_published, availableCopies, summary, lang, page_count,
-                authors,
-                categories);
+        super(
+                id, title, isbn, yearPublished, availableCopies, summary, lang, pageCount,
+                authorNames,
+                categoryNames
+        );
         this.totalCopies = totalCopies;
     }
 

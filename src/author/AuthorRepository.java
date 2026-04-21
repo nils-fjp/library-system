@@ -33,13 +33,13 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
 //                while (rs.next()) {
 //                    Author author = new Author();
 //                    author.setId(rs.getInt("id"));
-//                    author.setFirst_name(rs.getString("first_name"));
-//                    author.setLast_name(rs.getString("last_name"));
+//                    author.setFirstName(rs.getString("first_name"));
+//                    author.setLastName(rs.getString("last_name"));
 //                    author.setNationality(rs.getString("nationality"));
 //
 //                    Date birthDate = rs.getDate("birth_date");
 //                    if (birthDate != null) {
-//                        author.setBirth_date(birthDate.toLocalDate());
+//                        author.setBirthDate(birthDate.toLocalDate());
 //                    }
 //
 //                    authors.add(author);
@@ -94,13 +94,13 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                 while (rs.next()) {
                     Author author = new Author();
                     author.setId(rs.getInt("id"));
-                    author.setFirst_name(rs.getString("first_name"));
-                    author.setLast_name(rs.getString("last_name"));
+                    author.setFirstName(rs.getString("first_name"));
+                    author.setLastName(rs.getString("last_name"));
                     author.setNationality(rs.getString("nationality"));
 
                     Date birthDate = rs.getDate("birth_date");
                     if (birthDate != null) {
-                        author.setBirth_date(birthDate.toLocalDate());
+                        author.setBirthDate(birthDate.toLocalDate());
                     }
 
                     authors.add(author);
@@ -127,12 +127,12 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                      Statement.RETURN_GENERATED_KEYS
              )) {
 
-            statement.setString(1, entity.getFirst_name());
-            statement.setString(2, entity.getLast_name());
+            statement.setString(1, entity.getFirstName());
+            statement.setString(2, entity.getLastName());
             statement.setString(3, entity.getNationality());
 
-            if (entity.getBirth_date() != null) {
-                statement.setDate(4, Date.valueOf(entity.getBirth_date()));
+            if (entity.getBirthDate() != null) {
+                statement.setDate(4, Date.valueOf(entity.getBirthDate()));
             } else {
                 statement.setNull(4, Types.DATE);
             }
@@ -170,13 +170,13 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                 if (rs.next()) {
                     Author author = new Author();
                     author.setId(rs.getInt("id"));
-                    author.setFirst_name(rs.getString("first_name"));
-                    author.setLast_name(rs.getString("last_name"));
+                    author.setFirstName(rs.getString("first_name"));
+                    author.setLastName(rs.getString("last_name"));
                     author.setNationality(rs.getString("nationality"));
 
                     Date birthDate = rs.getDate("birth_date");
                     if (birthDate != null) {
-                        author.setBirth_date(birthDate.toLocalDate());
+                        author.setBirthDate(birthDate.toLocalDate());
                     }
 
                     return Optional.of(author);
@@ -203,13 +203,13 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
             while (rs.next()) {
                 Author author = new Author();
                 author.setId(rs.getInt("id"));
-                author.setFirst_name(rs.getString("first_name"));
-                author.setLast_name(rs.getString("last_name"));
+                author.setFirstName(rs.getString("first_name"));
+                author.setLastName(rs.getString("last_name"));
                 author.setNationality(rs.getString("nationality"));
 
                 Date birthDate = rs.getDate("birth_date");
                 if (birthDate != null) {
-                    author.setBirth_date(birthDate.toLocalDate());
+                    author.setBirthDate(birthDate.toLocalDate());
                 }
 
                 authors.add(author);
@@ -230,12 +230,12 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, entity.getFirst_name());
-            statement.setString(2, entity.getLast_name());
+            statement.setString(1, entity.getFirstName());
+            statement.setString(2, entity.getLastName());
             statement.setString(3, entity.getNationality());
 
-            if (entity.getBirth_date() != null) {
-                statement.setDate(4, Date.valueOf(entity.getBirth_date()));
+            if (entity.getBirthDate() != null) {
+                statement.setDate(4, Date.valueOf(entity.getBirthDate()));
             } else {
                 statement.setNull(4, Types.DATE);
             }

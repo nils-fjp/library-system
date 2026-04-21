@@ -40,11 +40,11 @@ public class AuthorService extends BaseService<Author, Integer> {
             throw new IllegalArgumentException("Author cannot be null.");
         }
 
-        if (author.getFirst_name() == null || author.getFirst_name().trim().isEmpty()) {
+        if (author.getFirstName() == null || author.getFirstName().trim().isEmpty()) {
             throw new IllegalArgumentException("First name cannot be empty.");
         }
 
-        if (author.getLast_name() == null || author.getLast_name().trim().isEmpty()) {
+        if (author.getLastName() == null || author.getLastName().trim().isEmpty()) {
             throw new IllegalArgumentException("Last name cannot be empty.");
         }
     }
