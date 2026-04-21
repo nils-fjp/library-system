@@ -23,11 +23,13 @@ public class ConsolePrinter {
     }
 
     public static void printField(String label, Object value) {
-        System.out.println("\t" + ANSI.YELLOW + label + ": " + ANSI.DEFAULT_FG + value);
+        String centerFlex = " ".repeat((BORDER - label.length()) / 2);
+        System.out.println("\t" + ANSI.YELLOW + label + ": " + centerFlex + ANSI.DEFAULT_FG + value);
     }
 
     public static void printPrompt(String message) {
-        System.out.println("\t" + ANSI.YELLOW + message + ANSI.DEFAULT_FG);
+        String centerFlex = " ".repeat((BORDER - message.length()) / 2);
+        System.out.println("\t" + ANSI.YELLOW + message + centerFlex + ANSI.DEFAULT_FG);
     }
 
     public static void printFields(String title, LinkedHashMap<String, Object> fields) {
