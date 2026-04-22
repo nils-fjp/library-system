@@ -18,7 +18,7 @@ public class LoanController extends BaseController<Loan, Integer> {
 
     public static void showMyLoansMenu(Member currentMember) {
         if (currentMember == null) {
-            printer.printError("No authorized user.");
+            ConsolePrinter.printError("No authorized user.");
             return;
         }
 
@@ -46,7 +46,8 @@ public class LoanController extends BaseController<Loan, Integer> {
 
     public static void showActiveLoansMenu(Member currentMember) {
         if (currentMember == null) {
-            printer.printError("No authorized user.");
+
+            ConsolePrinter.printError("No authorized user.");
             return;
         }
 
@@ -81,7 +82,7 @@ public class LoanController extends BaseController<Loan, Integer> {
 
     public static void showLoanHistoryMenu(Member currentMember) {
         if (currentMember == null) {
-            printer.printError("No authorized user.");
+            ConsolePrinter.printError("No authorized user.");
             return;
         }
 
@@ -115,11 +116,11 @@ public class LoanController extends BaseController<Loan, Integer> {
             int memberId = readPositiveInt("Enter member id: ");
             int bookId = readPositiveInt("Enter book id: ");
             loanService.createLoan(memberId, bookId);
-            printer.printSuccess("Loan created successfully.");
+            ConsolePrinter.printSuccess("Loan created successfully.");
         } catch (IllegalArgumentException | IllegalStateException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
@@ -128,11 +129,11 @@ public class LoanController extends BaseController<Loan, Integer> {
         try {
             int loanId = readPositiveInt("Enter loan id to return: ");
             loanService.returnLoan(loanId);
-            printer.printSuccess("Loan returned successfully.");
+            ConsolePrinter.printSuccess("Loan returned successfully.");
         } catch (IllegalArgumentException | IllegalStateException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
@@ -140,11 +141,11 @@ public class LoanController extends BaseController<Loan, Integer> {
         try {
             int loanId = readPositiveInt("Enter loan id to return: ");
             loanService.returnLoanForMember(currentMember.getId(), loanId);
-            printer.printSuccess("Loan returned successfully.");
+            ConsolePrinter.printSuccess("Loan returned successfully.");
         } catch (IllegalArgumentException | IllegalStateException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
@@ -166,7 +167,7 @@ public class LoanController extends BaseController<Loan, Integer> {
             }
             ConsolePrinter.printFooter();
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
@@ -187,9 +188,9 @@ public class LoanController extends BaseController<Loan, Integer> {
             }
             ConsolePrinter.printFooter();
         } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
@@ -210,9 +211,9 @@ public class LoanController extends BaseController<Loan, Integer> {
             }
             ConsolePrinter.printFooter();
         } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
@@ -229,7 +230,7 @@ public class LoanController extends BaseController<Loan, Integer> {
             } catch (NumberFormatException ignored) {
             }
 
-            printer.printError("Please enter a positive number.");
+            ConsolePrinter.printError("Please enter a positive number.");
         }
     }
 }

@@ -15,7 +15,8 @@ public class LibrarianMenuController {
     // endast test kod meny - ta bort senare
     public static void showLibrarianMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
-        menu.setTopTitle("Librarian Menu");
+        menu.setTopTitle("Main menu » Librarian Menu");
+        menu.setMainTitle("Librarian Menu");
         menu.addMenuOption("Manage Books");
         menu.addMenuOption("Manage Loans");
         menu.addMenuOption("Manage Readers");
@@ -37,7 +38,6 @@ public class LibrarianMenuController {
             }
         }
     }
-
 
     //1. Manage Books
     private static void showManageBooksMenu(Member currentMember) throws SQLException {
