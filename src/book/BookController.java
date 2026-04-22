@@ -1,6 +1,7 @@
 package book;
 
 import base.BaseController;
+import category.Category;
 import member.Member;
 import ui.ConsolePrinter;
 
@@ -77,30 +78,42 @@ public class BookController extends BaseController {
         }
     }
 
-    //  3. Add Book (+lägga böcker i kategorier) +
+    //  3. Add Book
     public static void addBookForAdmin(Member currentMember) {
         ConsolePrinter.printPrompt("Enter title: ");
         String title = scanner.nextLine();
-
         ConsolePrinter.printPrompt("ISBN: ");
         String isbn = scanner.nextLine();
-
         ConsolePrinter.printPrompt("Year Published: ");
         int year = Integer.parseInt(scanner.nextLine());
-
         ConsolePrinter.printPrompt("Total Copies: ");
         int totalCopies = Integer.parseInt(scanner.nextLine());
+        ConsolePrinter.printPrompt("Summary: ");
+        String summary = scanner.nextLine();
+        ConsolePrinter.printPrompt("Language: ");
+        String language = scanner.nextLine();
+        ConsolePrinter.printPrompt("Page Count: ");
+        int pageCount = Integer.parseInt(scanner.nextLine());
 
         ConsolePrinter.printPrompt("Author first name: ");
         String firstName = scanner.nextLine();
-
         ConsolePrinter.printPrompt("Author last name: ");
         String lastName = scanner.nextLine();
-
         ConsolePrinter.printPrompt("Category: ");
         String category = scanner.nextLine();
+
+        int categoryId = 0;
         try {
-            bookService.addBook(title, isbn, year, totalCopies, firstName, lastName, category);
+            List<Category> categories = bookService.getAllCategories();
+            ConsolePrinter.printHeader("Choose from categories: ");
+            for (Category c : categories) {
+                ConsolePrinter.printField(String.valueOf(c.getId()), c.getName());
+            }
+            ConsolePrinter.printFooter();
+
+            ConsolePrinter.printPrompt("Choose category (id): ");
+            categoryId = Integer.parseInt(scanner.nextLine());
+            bookService.addBook(title, isbn, year, totalCopies, summary, language, pageCount, firstName, lastName, categoryId);
             ConsolePrinter.printSuccess("Book added succesfully!");
         } catch (IllegalArgumentException e) {
             ConsolePrinter.printError("Invalid input: " + e.getMessage()); // validering från service
