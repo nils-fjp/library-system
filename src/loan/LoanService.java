@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class LoanService extends BaseService<Loan, Integer> {
 
@@ -64,6 +65,24 @@ public class LoanService extends BaseService<Loan, Integer> {
         }
 
         return result;
+    }
+
+    public Optional<LoanSummaryDto> getActiveLoanDetailsByMember(Integer memberId, Integer loanId) throws SQLException {
+        validateMemberExists(memberId);
+        validateId(loanId);
+
+        Optional<Loan> optionalLoan = loanRepository.getById(loanId);
+        if (optionalLoan.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Loan loan = optionalLoan.get();
+        if (loan.getMemberId() != memberId || !loan.isActive()) {
+            return Optional.empty();
+        }
+
+        String bookTitle = loanRepository.getBookTitle(loan.getBookId()).orElse("Unknown book");
+        return Optional.of(LoanMapper.toSummaryDto(loan, bookTitle));
     }
 
     public List<LoanHistoryDto> getLoanHistoryByMember(Integer memberId) throws SQLException {
