@@ -7,29 +7,30 @@ import java.util.Map;
 
 public class ConsolePrinter {
     private static final int MARGIN = Menu.MARGIN;
+    private static final int INNER_WIDTH = Menu.INNER_WIDTH;
     private static final int OUTER_WIDTH = Menu.OUTER_WIDTH;
     private static final int GAP = Menu.GAP;
 
     public static void printHeaderCenter(String title) {
-        title = fit(safe(title), OUTER_WIDTH);
-        String flexLine = ANSI.BRIGHT_BLACK + "─".repeat((OUTER_WIDTH - title.length()) / 2) + " " + ANSI.DEFAULT_FG;
-        String flexRest = ANSI.BRIGHT_BLACK + "─".repeat((OUTER_WIDTH - title.length()) % 2) + " " + ANSI.DEFAULT_FG;
+        title = fit(safe(title), INNER_WIDTH);
+        String flexLine = ANSI.BRIGHT_BLACK + "─".repeat((OUTER_WIDTH - title.length()) / 2) + ANSI.DEFAULT_FG;
+        String flexRest = ANSI.BRIGHT_BLACK + "─".repeat((OUTER_WIDTH - title.length()) % 2) + ANSI.DEFAULT_FG;
 
         System.out.println();
         System.out.println(" ".repeat(MARGIN) + flexLine + ANSI.BOLD + title + ANSI.NO_BOLD + flexLine + flexRest + ANSI.DEFAULT_FG);
     }
 
     public static void printHeader(String title) {
-        title = fit(safe(title), OUTER_WIDTH);
-        String flexLine = ANSI.BRIGHT_BLACK + "─".repeat((OUTER_WIDTH - title.length()) / 2) + ANSI.DEFAULT_FG;
+        title = fit(safe(title), INNER_WIDTH);
+        String flexLine = ANSI.BRIGHT_BLACK + "─".repeat((INNER_WIDTH - title.length()) / 2) + ANSI.DEFAULT_FG;
 
         System.out.println();
         System.out.println(" ".repeat(MARGIN) + flexLine + " " + ANSI.CYAN + ANSI.BOLD + title + ANSI.NO_BOLD + ANSI.DEFAULT_FG + " " + flexLine + ANSI.DEFAULT_FG);
-        
+
     }
 
     public static void printFooter() {
-        System.out.println(" ".repeat(MARGIN) + ANSI.BRIGHT_BLACK + "─".repeat(OUTER_WIDTH) + ANSI.DEFAULT_FG);
+        System.out.println(" ".repeat(MARGIN) + ANSI.BRIGHT_BLACK + "─".repeat(INNER_WIDTH) + ANSI.DEFAULT_FG);
     }
 
     public static void printField(String label, Object value) {
@@ -39,8 +40,8 @@ public class ConsolePrinter {
     }
 
     public static void printPrompt(String message) {
-        message = fit(safe(message), OUTER_WIDTH);
-        String centerFlex = " ".repeat((OUTER_WIDTH - message.length()) / 4);
+        message = fit(safe(message), INNER_WIDTH);
+        String centerFlex = " ".repeat((INNER_WIDTH - message.length()) / 4);
         System.out.println(" ".repeat(MARGIN) + ANSI.YELLOW + message + centerFlex + ANSI.DEFAULT_FG);
     }
 
