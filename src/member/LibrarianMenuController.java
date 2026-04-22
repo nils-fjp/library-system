@@ -3,20 +3,20 @@ package member;
 import author.AuthorController;
 import book.BookController;
 import loan.LoanController;
+import ui.ANSI;
 import ui.AuthController;
 import ui.Menu;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LibrarianMenuController {
 
     // endast test kod meny - ta bort senare
     public static void showLibrarianMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
-        menu.setTopTitle("Main menu » Librarian Menu");
+        menu.setTopTitle("Main Menu » Librarian Menu");
         menu.setMainTitle("Librarian Menu");
+        menu.setMenuInfo(ANSI.ITALIC + ANSI.BRIGHT_GREEN + "Welcome, " + currentMember.getFirstName() + "!" + ANSI.NO_ITALIC + ANSI.DEFAULT_FG);
         menu.addMenuOption("Manage Books");
         menu.addMenuOption("Manage Loans");
         menu.addMenuOption("Manage Readers");
@@ -34,7 +34,6 @@ public class LibrarianMenuController {
                     AuthController.logout();
                     return;
                 }
-                default -> System.out.println("Invalid option.");
             }
         }
     }
@@ -42,7 +41,7 @@ public class LibrarianMenuController {
     //1. Manage Books
     private static void showManageBooksMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
-        menu.setTopTitle("Manage Books");
+        menu.setTopTitle("Librarian Menu » Manage Books");
         menu.addMenuOption("View Books");
         menu.addMenuOption("Search");
         menu.addMenuOption("Add Book");
@@ -108,26 +107,20 @@ public class LibrarianMenuController {
 
     //2. Manage Loans
     public static void showManageLoansMenu(Member currentMember) {
-        Menu manageLoansMenu = new Menu(
-                "Librarian Menu » Manage Loans",
-                "Manage Loans",
-                "\n",
-                "Back to Librarian Menu",
-                new ArrayList<>(List.of(
-                        "View active loans",
-                        "Add loan",
-                        "Register return"
-                )),
-                "Type a number and press enter...",
-                "Enter: "
-        );
+        Menu manageLoansMenu = new Menu();
+        manageLoansMenu.setTopTitle("Librarian Menu » Manage Loans");
+        manageLoansMenu.setMainTitle("Manage Loans");
+        manageLoansMenu.setMenuInfo(ANSI.ITALIC + "Manage active loans and returns." + ANSI.NO_ITALIC);
+        manageLoansMenu.setExitOption("Back to Librarian Menu");
+        manageLoansMenu.addMenuOption("View All Active Loans");
+        manageLoansMenu.addMenuOption("Add Loan");
+        manageLoansMenu.addMenuOption("Register return");
 
         while (manageLoansMenu.showMenu()) {
             switch (manageLoansMenu.getChoice()) {
                 case 1 -> LoanController.showAllActiveLoans(currentMember);
                 case 2 -> LoanController.createLoan(currentMember);
                 case 3 -> LoanController.registerReturnedLoan(currentMember);
-                default -> manageLoansMenu.setMenuInfo("Invalid input!");
             }
         }
     }

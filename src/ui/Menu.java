@@ -9,6 +9,7 @@ public class Menu {
     protected static final int MARGIN = 4;
     protected static final int PADDING = 2;
     protected static final int GAP = OUTER_WIDTH / 2;
+    private static final String ANSI_ESCAPE_REGEX = "\u001B\\[[;\\d?]*[ -/]*[@-~]";
     private static final Scanner scanner = new Scanner(System.in);
     private ArrayList<String> menuOptions;
     private int choice;
@@ -24,7 +25,7 @@ public class Menu {
         this.topTitle = "";
         this.mainTitle = "";
         this.menuInfo = "";
-        this.exitOption = "Go Back";
+        this.exitOption = "Back";
         this.menuOptions = new ArrayList<>();
         this.menuOptions.addFirst(this.exitOption);
         // this.menuOptions.add(0,this.exitOption);
@@ -57,7 +58,7 @@ public class Menu {
 
     public static void drawTopBorder(String topText) {
         topText = fit(safe(topText), INNER_WIDTH - 3);
-        String topFlex = "─".repeat(Math.max(0, INNER_WIDTH - topText.length() - 3));
+        String topFlex = "─".repeat(Math.max(0, INNER_WIDTH - visibleLength(topText) - 3));
         String topBorder = "╭─ " + ANSI.BOLD + topText + ANSI.NO_BOLD + " " + topFlex + "╮";
         System.out.print(topBorder.indent(MARGIN));
     }
@@ -76,8 +77,9 @@ public class Menu {
         centerText = safe(centerText);
         if (!centerText.isEmpty()) {
             centerText = fit(centerText, INNER_WIDTH);
-            String centerFlex = " ".repeat((INNER_WIDTH - centerText.length()) / 2);
-            String flexRest = " ".repeat((INNER_WIDTH - centerText.length()) % 2);
+            int visibleWidth = visibleLength(centerText);
+            String centerFlex = " ".repeat((INNER_WIDTH - visibleWidth) / 2);
+            String flexRest = " ".repeat((INNER_WIDTH - visibleWidth) % 2);
             centerText = "│" + centerFlex + ANSI.BOLD + centerText + ANSI.NO_BOLD + centerFlex + flexRest + "│";
         } else {
             centerText = "│" + " ".repeat(INNER_WIDTH) + "│";
@@ -94,7 +96,7 @@ public class Menu {
         bottomText = safe(bottomText);
         if (!bottomText.isEmpty()) {
             bottomText = fit(bottomText, INNER_WIDTH - 3);
-            String bottomFlex = "─".repeat(Math.max(0, INNER_WIDTH - bottomText.length() - 3));
+            String bottomFlex = "─".repeat(Math.max(0, INNER_WIDTH - visibleLength(bottomText) - 3));
             bottomText = "╰" + bottomFlex + " " + ANSI.BOLD + bottomText + ANSI.NO_BOLD + " ─╯";
         } else {
             bottomText = "╰" + "─".repeat(INNER_WIDTH) + "╯";
@@ -113,10 +115,24 @@ public class Menu {
         String optionPrefix = optionNumber + ". ";
         int optionTextWidth = Math.max(0, INNER_WIDTH - (optionPrefix.length() + PADDING * 2));
         optionText = fit(optionText, optionTextWidth);
-        String optionFlex = " ".repeat(Math.max(0, optionTextWidth - optionText.length()));
+        String optionFlex = " ".repeat(Math.max(0, optionTextWidth - visibleLength(optionText)));
         optionText = "│" + " ".repeat(PADDING) + optionColor + optionPrefix + ANSI.DEFAULT_FG + optionText + optionFlex + " ".repeat(
                 PADDING) + "│";
         System.out.print(optionText.indent(MARGIN));
+    }
+
+    public static String formatInfoColumns(String leftText, String rightText) {
+        leftText = safe(leftText);
+        rightText = safe(rightText);
+
+        int rightWidth = Math.min(visibleLength(rightText), Math.max(0, INNER_WIDTH - 1));
+        int leftWidth = Math.max(0, INNER_WIDTH - rightWidth - 1);
+
+        leftText = fit(leftText, leftWidth);
+        int leftVisibleWidth = visibleLength(leftText);
+        int spacesBetween = Math.max(1, INNER_WIDTH - leftVisibleWidth - rightWidth);
+
+        return leftText + " ".repeat(spacesBetween) + rightText;
     }
 
     private static String safe(String text) {
@@ -124,11 +140,48 @@ public class Menu {
     }
 
     private static String fit(String text, int maxWidth) {
-        if (text.length() <= maxWidth) {
+        if (visibleLength(text) <= maxWidth) {
             return text;
         }
 
-        return text.substring(0, Math.max(0, maxWidth));
+        StringBuilder fitted = new StringBuilder();
+        int visibleCount = 0;
+
+        for (int i = 0; i < text.length() && visibleCount < maxWidth; ) {
+            if (text.charAt(i) == '\u001B') {
+                int sequenceEnd = findAnsiSequenceEnd(text, i);
+                fitted.append(text, i, sequenceEnd);
+                i = sequenceEnd;
+                continue;
+            }
+
+            fitted.append(text.charAt(i));
+            i++;
+            visibleCount++;
+        }
+
+        return fitted.toString();
+    }
+
+    private static int visibleLength(String text) {
+        return safe(text).replaceAll(ANSI_ESCAPE_REGEX, "").length();
+    }
+
+    private static int findAnsiSequenceEnd(String text, int startIndex) {
+        int i = startIndex + 1;
+        if (i >= text.length() || text.charAt(i) != '[') {
+            return Math.min(text.length(), startIndex + 1);
+        }
+
+        i++;
+        while (i < text.length()) {
+            char current = text.charAt(i++);
+            if (current >= '@' && current <= '~') {
+                break;
+            }
+        }
+
+        return i;
     }
 
     public ArrayList<String> getMenuOptions() {
@@ -182,9 +235,39 @@ public class Menu {
     // Visar information under menyns titel. Man behöver inte ha någon information om man inte vill.
     public void drawMenuInfo(String menuInfo) {
         menuInfo = safe(menuInfo);
-        if (!menuInfo.isEmpty()) {
-            System.out.print(menuInfo.indent(MARGIN + 1));
+        String[] lines = menuInfo.split("\\R", -1);
+
+        if (lines.length == 1) {
+            drawMenuInfoLine(lines[0], true);
+            return;
         }
+
+        for (String line : lines) {
+            drawMenuInfoLine(line, false);
+        }
+    }
+
+    private void drawMenuInfoLine(String line, boolean centered) {
+        line = safe(line);
+
+        if (line.isEmpty()) {
+            System.out.print((" " + " ".repeat(INNER_WIDTH) + " ").indent(MARGIN));
+            return;
+        }
+
+        line = fit(line, INNER_WIDTH);
+
+        if (centered) {
+            int visibleWidth = visibleLength(line);
+            String centerFlex = " ".repeat((INNER_WIDTH - visibleWidth) / 2);
+            String flexRest = " ".repeat((INNER_WIDTH - visibleWidth) % 2);
+            line = " " + centerFlex + line + centerFlex + flexRest + " ";
+        } else {
+            String flexRest = " ".repeat(Math.max(0, INNER_WIDTH - visibleLength(line)));
+            line = " " + line + flexRest + " ";
+        }
+
+        System.out.print(line.indent(MARGIN));
     }
 
     // Motsvarar raderna 19-25 i Nils BookController.showBookMenu()
@@ -230,9 +313,8 @@ public class Menu {
                     return input != 0;
                 }
 
-                setPrePrompt(ANSI.RED + "Invalid input!" + ANSI.BRIGHT_BLACK + " Please enter a valid number." + ANSI.DEFAULT_FG);
             } catch (NumberFormatException e) {
-                setPrePrompt(ANSI.RED + "Invalid input!" + ANSI.BRIGHT_BLACK + " Please enter a valid number." + ANSI.DEFAULT_FG);
+                setPrePrompt(ANSI.RED + "Invalid input!" + ANSI.BRIGHT_BLACK + " Please enter a valid number." + ANSI.NO_ITALIC + ANSI.DEFAULT_FG);
             }
         }
         return showing;

@@ -58,7 +58,9 @@ public class Main {
         ui.ConsolePrinter.printHeaderCenter("Welcome to the Library System");
         mainMenu.setTopTitle("Main Menu");
         mainMenu.setMainTitle("Library System");
-        mainMenu.setMenuInfo("Select which menu to open");
+        mainMenu.setMenuInfo(ANSI.ITALIC +
+                "Select which menu to open" +
+                ANSI.NO_ITALIC);
         mainMenu.setExitOption("Exit");
         mainMenu.addMenuOption("Search Books");
         mainMenu.addMenuOption("Log in");
@@ -78,10 +80,15 @@ public class Main {
     }
 }
 
-//          LIBRARIAN emma.hill88@email.com
-//                    QaMzTpLs
-//            READER Expired: ava.white25@email.com
-//                   NyUiOpAs
-//            Reader Active:
-//                  abigail.thomas4@email.com
-//                  PlMnBcXa
+//          LIBRARIAN:      emma.hill88@email.com
+//                          QaMzTpLs
+//          READER Expired:
+//                          ava.white25@email.com
+//                          NyUiOpAs
+//          READER Active:
+//                          abigail.thomas4@email.com
+//                          PlMnBcXa
+//          READER loan history:
+//                          harper.thomas36@email.com
+//                          RkVnYeHu
+//

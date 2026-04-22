@@ -19,7 +19,7 @@
         --> (3. Reader Menu) / (4. Librarian Menu)
 
     3. Reader Menu
-        1. Books
+        1. Browse Books
             1. View Books
             2. Search Books
             3. Search Authors
@@ -55,7 +55,7 @@
             0. Back to Main Menu --> (4. Librarian Menu)
 
         2. Manage Loans
-            1. View All Loans
+            1. View All Active Loans
             2. Add Loan
             3. Update Loan
             4. Delete Loan
