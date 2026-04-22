@@ -182,7 +182,8 @@ public class MemberController extends BaseController<Member, Integer> {
 
         try {
             service.validateLibrarianAccess(currentMember);
-            Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+            //Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
 
             if (optionalMember.isEmpty()) {
                 printer.printError("Member not found.");
@@ -247,9 +248,11 @@ public class MemberController extends BaseController<Member, Integer> {
         MemberService service = new MemberService();
 
 
+
         try {
             service.validateLibrarianAccess(currentMember);
-            Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+            //Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
 
             if (optionalMember.isEmpty()) {
                 printer.printError("Member not found.");
@@ -287,7 +290,8 @@ public class MemberController extends BaseController<Member, Integer> {
         try {
             service.validateLibrarianAccess(currentMember);
 
-            Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+            //Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
 
             if (optionalMember.isEmpty()) {
                 printer.printError("Member not found.");
@@ -329,7 +333,8 @@ public class MemberController extends BaseController<Member, Integer> {
         try {
             service.validateLibrarianAccess(currentMember);
 
-            Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+            //Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
 
             if (optionalMember.isEmpty()) {
                 printer.printError("Member not found.");
@@ -380,6 +385,46 @@ public class MemberController extends BaseController<Member, Integer> {
         return service.getByEmailForViewForAdmin(email);
     }
 
+    private static Optional<MemberAdminDto> findMemberByKeyword(MemberService service) throws SQLException {
+        String keyword = readRequiredInput(
+                "Enter member id, first name, last name, email, membership type, status, role, or membership date"
+        );
+
+        List<MemberAdminDto> foundMembers = service.searchMembersForAdmin(keyword);
+
+        if (foundMembers.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (foundMembers.size() == 1) {
+            return Optional.of(foundMembers.get(0));
+        }
+
+        printer.printSuccess("Found members:");
+        for (MemberAdminDto member : foundMembers) {
+            printAdminMember(member);
+        }
+
+        Integer selectedId = readRequiredInt("Enter member id");
+        for (MemberAdminDto member : foundMembers) {
+            if (member.getId().equals(selectedId)) {
+                return Optional.of(member);
+            }
+        }
+
+        return Optional.empty();
+    }
+    private static Integer readRequiredInt(String label) {
+        while (true) {
+            try {
+                ConsolePrinter.printPrompt(label + ": ");
+                String input = scanner.nextLine().trim();
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                printer.printError("Invalid number.");
+            }
+        }
+    }
     /**
      * Builds UpdateMemberDto from console input.
      * Keeps old values when user enters empty input.
@@ -394,11 +439,11 @@ public class MemberController extends BaseController<Member, Integer> {
         dto.setEmail(readUpdatedString("Enter new email", currentDto.getEmail()));
         dto.setMembershipDate(readUpdatedDate("Enter new membership date", currentDto.getMembershipDate()));
         dto.setMembershipType(readUpdatedString(
-                "Enter new membership type (standard/premium)",
+                "Enter new membership type " + colorOptions("standard/premium"),
                 currentDto.getMembershipType()
         ));
         dto.setStatus(readUpdatedString(
-                "Enter new status (active/suspended/expired)",
+                "Enter new status " + colorOptions("active/suspended/expired"),
                 currentDto.getStatus()
         ));
 
@@ -411,7 +456,7 @@ public class MemberController extends BaseController<Member, Integer> {
      */
     private static String readRequiredInput(String label) {
         while (true) {
-            System.out.print("\t" + label + ": ");
+            ConsolePrinter.printPrompt(label + ": ");
             String input = scanner.nextLine().trim();
 
             if (!input.isBlank()) {
@@ -427,7 +472,7 @@ public class MemberController extends BaseController<Member, Integer> {
      * Returns current value if input is empty.
      */
     private static String readUpdatedString(String label, String currentValue) {
-        System.out.print("\t" + label + " [" + currentValue + "]: ");
+        System.out.print("\t" + label + " " + colorCurrentValue(currentValue) + ": ");
         String input = scanner.nextLine().trim();
         return input.isBlank() ? currentValue : input;
     }
@@ -439,7 +484,9 @@ public class MemberController extends BaseController<Member, Integer> {
      */
     private static LocalDate readUpdatedDate(String label, LocalDate currentValue) {
         while (true) {
-            System.out.print("\t" + label + " [" + currentValue + "] (yyyy-mm-dd): ");
+            System.out.print(
+                    "\t" + label + " " + colorHint("yyyy-mm-dd") + " " + colorCurrentValue(currentValue) + ": "
+            );
             String input = scanner.nextLine().trim();
 
             if (input.isBlank()) {
@@ -503,5 +550,17 @@ public class MemberController extends BaseController<Member, Integer> {
             case "expired" -> ANSI.BRIGHT_RED + ANSI.BOLD + "[EXPIRED]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
             default -> ANSI.BRIGHT_BLACK + "[" + status.toUpperCase() + "]" + ANSI.DEFAULT_FG;
         };
+    }
+
+    private static String colorCurrentValue(Object value) {
+        return ANSI.BRIGHT_BLACK + "[" + value + "]" + ANSI.DEFAULT_FG;
+    }
+
+    private static String colorHint(String hint) {
+        return ANSI.BRIGHT_BLACK + "(" + hint + ")" + ANSI.DEFAULT_FG;
+    }
+
+    private static String colorOptions(String options) {
+        return ANSI.BRIGHT_BLACK + "(" + options + ")" + ANSI.DEFAULT_FG;
     }
 }
