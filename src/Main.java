@@ -5,11 +5,59 @@ import java.sql.SQLException;
 
 public class Main {
 
-    public static void main(String[] args) throws SQLException {
+//    private static final java.util.Scanner scanner = new java.util.Scanner(System.in);
+//    private static final ui.ConsolePrinter printer = new ui.ConsolePrinter();
+//    private static member.Member currentMember;
+
+//    public static void login() {
+//        member.MemberService memberService = new member.MemberService();
+//
+//        try {
+//            System.out.print("Enter email: ");
+//            String email = scanner.nextLine().trim();
+//
+//            System.out.print("Enter password: ");
+//            String password = scanner.nextLine().trim();
+//
+//            java.util.Optional<member.Member> optionalMember = memberService.authenticate(email, password);
+//
+//            if (optionalMember.isEmpty()) {
+//                printer.printError("Invalid email or password.");
+//                return;
+//            }
+//
+//            currentMember = optionalMember.get();
+//            printer.printSuccess("Welcome, " + currentMember.getFirstName() + "!");
+//
+//            String status = member.MemberValidator.getNormalizedStatus(currentMember);
+//            if ("suspended".equals(status)) {
+//                printer.printError("Your account is suspended. You can view your account and search books, but you cannot borrow, reserve, or renew items.");
+//            }
+//            if ("LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
+//                member.LibrarianMenuController.showLibrarianMenu(currentMember);
+//            } else {
+//                member.ReaderMenuController.showReaderMenu(currentMember);
+//            }
+//
+//        } catch (member.MembershipExpiredException e) {
+//            printer.printError(e.getMessage());
+//        } catch (IllegalArgumentException e) {
+//            printer.printError(e.getMessage());
+//        } catch (java.sql.SQLException e) {
+//            printer.printError("Database error: " + e.getMessage());
+//        }
+//    }
+//
+//    public static void logout() {
+//        currentMember = null;
+//    }
+
+    static void main(String[] args) throws SQLException {
         Menu mainMenu = new Menu();
 
+        ui.ConsolePrinter.printHeaderCenter("Welcome to the Library System");
         mainMenu.setTopTitle("Main Menu");
-        mainMenu.setMidTitle("Library System");
+        mainMenu.setMainTitle("Library System");
         mainMenu.setMenuInfo("Select which menu to open");
         mainMenu.setExitOption("Exit");
         mainMenu.addMenuOption("Search Books");
@@ -29,7 +77,6 @@ public class Main {
         System.out.println("Exiting application...");
     }
 }
-
 
 //          LIBRARIAN emma.hill88@email.com
 //                    QaMzTpLs
