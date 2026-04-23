@@ -7,64 +7,31 @@ import ui.ConsolePrinter;
 import ui.Menu;
 
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class LoanController extends BaseController<Loan, Integer> {
-
     private static final LoanService loanService = new LoanService();
-    private static final ConsolePrinter printer = new ConsolePrinter();
     private static final Scanner scanner = new Scanner(System.in);
-
-    /*public static void showMyLoansMenu(Member currentMember) {
-        if (currentMember == null) {
-            ConsolePrinter.printError("No authorized user.");
-            return;
-        }
-        Menu myLoansMenu = new Menu();
-        myLoansMenu.setTopTitle("Reader Menu » My Loans");
-        myLoansMenu.setMainTitle("My Loans");
-        myLoansMenu.setMenuInfo(ANSI.ITALIC + "View and manage your current and past loans." + ANSI.NO_ITALIC);
-        myLoansMenu.setExitOption("Back to Reader Menu");
-        myLoansMenu.addMenuOption("Active Loans");
-        myLoansMenu.addMenuOption("Loan History");
-
-        while (myLoansMenu.showMenu()) {
-            switch (myLoansMenu.getChoice()) {
-                case 1 -> showActiveLoansMenu(currentMember);
-                case 2 -> showLoanHistoryMenu(currentMember);
-            }
-        }
-    }*/
 
     public static void showActiveLoansMenu(Member currentMember) {
         if (currentMember == null) {
             ConsolePrinter.printError("No authorized user.");
             return;
         }
+
         Menu activeLoansMenu = new Menu();
-        activeLoansMenu.setTopTitle("My Loans » Active Loans");
-        activeLoansMenu.setMainTitle("My Active Loans");
-        activeLoansMenu.setMenuInfo(ANSI.ITALIC + "View and manage your current and past loans." + ANSI.NO_ITALIC);
+        activeLoansMenu.setTopTitle("My Loans » View Active Loans");
+        activeLoansMenu.setMainTitle("View Active Loans");
         activeLoansMenu.setExitOption("Back to My Loans");
-        activeLoansMenu.addMenuOption("View loan details");
-        activeLoansMenu.addMenuOption("Return loan");
-        activeLoansMenu.addMenuOption("Refresh list");
 
-        while (true) {
-            activeLoansMenu.setMenuInfo(buildActiveLoansMenuInfo(currentMember.getId()));
+        List<LoanSummaryDto> activeLoans = refreshActiveLoansMenu(activeLoansMenu, currentMember.getId());
 
-            if (!activeLoansMenu.showMenu()) {
-                return;
-            }
-
-            switch (activeLoansMenu.getChoice()) {
-                case 1 -> showActiveLoanDetails(currentMember);
-                case 2 -> returnLoanForCurrentMember(currentMember);
-                case 3 -> {
-                }
-            }
+        while (activeLoansMenu.showMenu()) {
+            LoanSummaryDto selectedLoan = activeLoans.get(activeLoansMenu.getChoice() - 1);
+            showActiveLoanActionsMenu(currentMember, selectedLoan);
+            activeLoans = refreshActiveLoansMenu(activeLoansMenu, currentMember.getId());
         }
     }
 
@@ -75,22 +42,16 @@ public class LoanController extends BaseController<Loan, Integer> {
         }
 
         Menu loanHistoryMenu = new Menu();
-        loanHistoryMenu.setTopTitle("My Loans » Loan History");
-        loanHistoryMenu.setMainTitle("My Loan History");
-        loanHistoryMenu.setMenuInfo(buildLoanHistoryMenuInfo(currentMember.getId()));
+        loanHistoryMenu.setTopTitle("My Loans » View Loan History");
+        loanHistoryMenu.setMainTitle("View Loan History");
         loanHistoryMenu.setExitOption("Back to My Loans");
-        loanHistoryMenu.addMenuOption("Refresh history");
 
-        while (true) {
-            loanHistoryMenu.setMenuInfo(buildLoanHistoryMenuInfo(currentMember.getId()));
+        List<LoanHistoryDto> loanHistory = refreshLoanHistoryMenu(loanHistoryMenu, currentMember.getId());
 
-            if (!loanHistoryMenu.showMenu()) {
-                return;
-            }
-
-            if (loanHistoryMenu.getChoice() != 1) {
-                loanHistoryMenu.setMenuInfo("Invalid input!");
-            }
+        while (loanHistoryMenu.showMenu()) {
+            LoanHistoryDto selectedLoan = loanHistory.get(loanHistoryMenu.getChoice() - 1);
+            showLoanHistoryDetails(selectedLoan);
+            loanHistory = refreshLoanHistoryMenu(loanHistoryMenu, currentMember.getId());
         }
     }
 
@@ -109,6 +70,8 @@ public class LoanController extends BaseController<Loan, Integer> {
             ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
             ConsolePrinter.printError("Database error: " + e.getMessage());
+        } finally {
+            pauseForEnter();
         }
     }
 
@@ -122,116 +85,141 @@ public class LoanController extends BaseController<Loan, Integer> {
             ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
             ConsolePrinter.printError("Database error: " + e.getMessage());
+        } finally {
+            pauseForEnter();
         }
     }
 
-    private static void returnLoanForCurrentMember(Member currentMember) {
+    private static void returnLoanForCurrentMember(Member currentMember, Integer loanId) {
         try {
-            int loanId = readPositiveInt("Enter loan id to return: ");
             loanService.returnLoanForMember(currentMember.getId(), loanId);
             ConsolePrinter.printSuccess("Loan returned successfully.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
             ConsolePrinter.printError("Database error: " + e.getMessage());
+        } finally {
+            pauseForEnter();
         }
     }
 
-    private static void showActiveLoanDetails(Member currentMember) {
+    private static void extendLoanForCurrentMember(Member currentMember, Integer loanId) {
         try {
-            int loanId = readPositiveInt("Enter loan id to view: ");
-            LoanSummaryDto loan = loanService.getActiveLoanDetailsByMember(currentMember.getId(), loanId)
-                    .orElseThrow(() -> new IllegalArgumentException("Active loan not found."));
-
-            LinkedHashMap<String, Object> fields = new LinkedHashMap<>();
-            fields.put("ID", loan.id());
-            fields.put("Book Title", loan.bookTitle());
-            fields.put("Loaned", loan.loanDate());
-            fields.put("Due", loan.dueDate());
-            fields.put("Status", loan.overdue() ? "Overdue" : "Active");
-            ConsolePrinter.printFields("Active Loan Details", fields);
-        } catch (IllegalArgumentException e) {
+            loanService.extendLoanForMember(currentMember.getId(), loanId);
+            ConsolePrinter.printSuccess("Loan extended successfully.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
             ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
             ConsolePrinter.printError("Database error: " + e.getMessage());
+        } finally {
+            pauseForEnter();
+        }
+    }
+
+    private static void showLoanHistoryDetails(LoanHistoryDto loan) {
+        ConsolePrinter.printFields("Loan History Details", LoanConsoleView.buildLoanHistoryDetailsFields(loan));
+        pauseForEnter();
+    }
+
+    private static void showAllActiveLoanDetails(ActiveLoanDto loan) {
+        ConsolePrinter.printFields("Active Loan Details", LoanConsoleView.buildAllActiveLoanDetailsFields(loan));
+        pauseForEnter();
+    }
+
+    private static void showActiveLoanActionsMenu(Member currentMember, LoanSummaryDto loan) {
+        Menu loanActionsMenu = new Menu();
+        loanActionsMenu.setTopTitle("My Loans » View Active Loans » Loan #" + loan.id());
+        loanActionsMenu.setMainTitle("Update Loan");
+        loanActionsMenu.setMenuInfo(LoanConsoleView.buildActiveLoanActionInfo(loan));
+        loanActionsMenu.setExitOption("Back to View Active Loans");
+        loanActionsMenu.addMenuOption("Extend Loan");
+        loanActionsMenu.addMenuOption("Return Book");
+
+        while (loanActionsMenu.showMenu()) {
+            switch (loanActionsMenu.getChoice()) {
+                case 1 -> {
+                    extendLoanForCurrentMember(currentMember, loan.id());
+                    return;
+                }
+                case 2 -> {
+                    returnLoanForCurrentMember(currentMember, loan.id());
+                    return;
+                }
+            }
         }
     }
 
     public static void showAllActiveLoans(Member currentMember) {
-        try {
-            List<ActiveLoanDto> loans = loanService.getAllActiveLoans();
+        Menu allActiveLoansMenu = new Menu();
+        allActiveLoansMenu.setTopTitle("Librarian Menu » Manage Loans » View All Active Loans");
+        allActiveLoansMenu.setMainTitle("View All Active Loans");
+        allActiveLoansMenu.setExitOption("Back to Manage Loans");
 
-            ConsolePrinter.printHeader("All Active Loans");
-            if (loans.isEmpty()) {
-                ConsolePrinter.printField("Status", "No active loans found");
-            } else {
-                for (ActiveLoanDto loan : loans) {
-                    System.out.println("\t" + loan.id() + ". " + loan.bookTitle()
-                            + " | " + loan.memberName()
-                            + " | loaned: " + loan.loanDate()
-                            + " | due: " + loan.dueDate()
-                            + (loan.overdue() ? " | OVERDUE" : ""));
-                }
-            }
-            ConsolePrinter.printFooter();
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        List<ActiveLoanDto> activeLoans = refreshAllActiveLoansMenu(allActiveLoansMenu);
+
+        while (allActiveLoansMenu.showMenu()) {
+            ActiveLoanDto selectedLoan = activeLoans.get(allActiveLoansMenu.getChoice() - 1);
+            showAllActiveLoanDetails(selectedLoan);
+            activeLoans = refreshAllActiveLoansMenu(allActiveLoansMenu);
         }
     }
 
-    private static String buildActiveLoansMenuInfo(Integer memberId) {
+    private static List<LoanSummaryDto> refreshActiveLoansMenu(Menu menu, Integer memberId) {
         try {
             List<LoanSummaryDto> loans = loanService.getActiveLoansByMember(memberId);
-            if (loans.isEmpty()) {
-                return ANSI.ITALIC + "No active loans found." + ANSI.NO_ITALIC;
-            }
-
-            StringBuilder menuInfo = new StringBuilder();
-            menuInfo.append(ANSI.ITALIC)
-                    .append("Select a loan ID to view details or return a book.")
-                    .append(ANSI.NO_ITALIC)
-                    .append("\n\n");
-
-            for (LoanSummaryDto loan : loans) {
-                String status = loan.overdue()
-                        ? ANSI.RED + "OVERDUE" + ANSI.DEFAULT_FG
-                        : ANSI.BRIGHT_GREEN + "ACTIVE" + ANSI.DEFAULT_FG;
-                String leftText = loan.id() + ". " + loan.bookTitle();
-                menuInfo.append(Menu.formatInfoColumns(leftText, status)).append("\n");
-            }
-
-            return menuInfo.toString().stripTrailing();
+            menu.setMenuInfo(LoanConsoleView.buildActiveLoansMenuInfo(loans));
+            String exitOption = menu.getMenuOptions().getFirst();
+            ArrayList<String> menuOptions = new ArrayList<>();
+            menuOptions.add(exitOption);
+            menuOptions.addAll(LoanConsoleView.buildActiveLoanOptionTexts(loans));
+            menu.setMenuOptions(menuOptions);
+            return loans;
         } catch (IllegalArgumentException e) {
-            return ANSI.RED + e.getMessage() + ANSI.DEFAULT_FG;
+            menu.setMenuInfo(ANSI.RED + e.getMessage() + ANSI.DEFAULT_FG);
+            menu.setMenuOptions(new ArrayList<>(List.of(menu.getMenuOptions().getFirst())));
+            return List.of();
         } catch (SQLException e) {
-            return ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
+            menu.setMenuInfo(ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG);
+            menu.setMenuOptions(new ArrayList<>(List.of(menu.getMenuOptions().getFirst())));
+            return List.of();
         }
     }
 
-    private static String buildLoanHistoryMenuInfo(Integer memberId) {
+    private static List<LoanHistoryDto> refreshLoanHistoryMenu(Menu menu, Integer memberId) {
         try {
             List<LoanHistoryDto> loans = loanService.getLoanHistoryByMember(memberId);
-            if (loans.isEmpty()) {
-                return ANSI.ITALIC + "No loan history found." + ANSI.NO_ITALIC;
-            }
-
-            StringBuilder menuInfo = new StringBuilder();
-            menuInfo.append(ANSI.ITALIC)
-                    .append("Your returned loans are listed below.")
-                    .append(ANSI.NO_ITALIC)
-                    .append("\n\n");
-
-            for (LoanHistoryDto loan : loans) {
-                String leftText = loan.id() + ". " + loan.bookTitle();
-                String status = ANSI.BRIGHT_BLACK + "RETURNED" + ANSI.DEFAULT_FG;
-                menuInfo.append(Menu.formatInfoColumns(leftText, status)).append("\n");
-            }
-
-            return menuInfo.toString().stripTrailing();
+            menu.setMenuInfo(LoanConsoleView.buildLoanHistoryMenuInfo(loans));
+            String exitOption = menu.getMenuOptions().getFirst();
+            ArrayList<String> menuOptions = new ArrayList<>();
+            menuOptions.add(exitOption);
+            menuOptions.addAll(LoanConsoleView.buildLoanHistoryOptionTexts(loans));
+            menu.setMenuOptions(menuOptions);
+            return loans;
         } catch (IllegalArgumentException e) {
-            return ANSI.RED + e.getMessage() + ANSI.DEFAULT_FG;
+            menu.setMenuInfo(ANSI.RED + e.getMessage() + ANSI.DEFAULT_FG);
+            menu.setMenuOptions(new ArrayList<>(List.of(menu.getMenuOptions().getFirst())));
+            return List.of();
         } catch (SQLException e) {
-            return ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
+            menu.setMenuInfo(ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG);
+            menu.setMenuOptions(new ArrayList<>(List.of(menu.getMenuOptions().getFirst())));
+            return List.of();
+        }
+    }
+
+    private static List<ActiveLoanDto> refreshAllActiveLoansMenu(Menu menu) {
+        try {
+            List<ActiveLoanDto> loans = loanService.getAllActiveLoans();
+            menu.setMenuInfo(LoanConsoleView.buildAllActiveLoansMenuInfo(loans));
+            String exitOption = menu.getMenuOptions().getFirst();
+            ArrayList<String> menuOptions = new ArrayList<>();
+            menuOptions.add(exitOption);
+            menuOptions.addAll(LoanConsoleView.buildAllActiveLoanOptionTexts(loans));
+            menu.setMenuOptions(menuOptions);
+            return loans;
+        } catch (SQLException e) {
+            menu.setMenuInfo(ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG);
+            menu.setMenuOptions(new ArrayList<>(List.of(menu.getMenuOptions().getFirst())));
+            return List.of();
         }
     }
 
@@ -250,5 +238,10 @@ public class LoanController extends BaseController<Loan, Integer> {
 
             ConsolePrinter.printError("Please enter a positive number.");
         }
+    }
+
+    private static void pauseForEnter() {
+        ConsolePrinter.printPrompt("Press Enter to continue...");
+        scanner.nextLine();
     }
 }
