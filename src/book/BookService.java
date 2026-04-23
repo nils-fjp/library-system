@@ -45,6 +45,14 @@ public class BookService extends BaseService<Book, Integer> {
                 .toList();
     }
 
+    public boolean hasRemovedBookMatch(String keyword) throws SQLException {
+        if (keyword == null || keyword.isBlank()) {
+            return false;
+        }
+        String term = "%" + keyword.trim() + "%";
+        return bookRepository.hasInactiveMatch(term);
+    }
+
 
     // Librarian
 
@@ -63,10 +71,32 @@ public class BookService extends BaseService<Book, Integer> {
                 .toList();
     }
 
+    public void removeBookCopy(Integer bookId) throws SQLException {
+        if (bookId == null || bookId <= 0) {
+            throw new IllegalArgumentException("Invalid book id.");
+        }
+        boolean removed = bookRepository.reduceBookCopy(bookId);
+        if (!removed) {
+            throw new IllegalArgumentException("Book not found or not available copies to remove.");
+        }
+
+    }
+
+    public void deleteBook(Integer bookId) throws SQLException {
+        if (bookId == null || bookId <= 0) {
+            throw new IllegalArgumentException("Invalid book id.");
+        }
+        if (bookRepository.isBookOnLoan(bookId)) {
+            throw new IllegalArgumentException("Book is currently on loan.");
+        }
+        bookRepository.deleteById(bookId);
+    }
+
     // Hämtar alla kategorier för BookController
     public List<Category> getAllCategories() throws SQLException {
         return categoryRepository.getAll();
     }
+
 
     public void addBook(String title, String isbn, int year, int totalCopies,
                         String summary, String lanuage, int pageCount,
