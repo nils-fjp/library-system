@@ -128,6 +128,36 @@ public class LoanService extends BaseService<Loan, Integer> {
         loanRepository.returnLoan(loanId);
     }
 
+    public void extendLoanForMember(Integer memberId, Integer loanId) throws SQLException {
+        validateMemberExists(memberId);
+        validateId(loanId);
+
+        if (!loanRepository.memberCanBorrow(memberId)) {
+            throw new IllegalStateException("Member is not allowed to extend loans.");
+        }
+
+        Loan loan = loanRepository.getById(loanId)
+                .orElseThrow(() -> new IllegalArgumentException("Loan not found."));
+
+        if (loan.getMemberId() != memberId) {
+            throw new IllegalArgumentException("That loan does not belong to the current member.");
+        }
+
+        if (loan.isReturned()) {
+            throw new IllegalStateException("Loan has already been returned.");
+        }
+
+        if (loan.isOverdue()) {
+            throw new IllegalStateException("Overdue loans cannot be extended.");
+        }
+
+        if (isExtended(loan)) {
+            throw new IllegalStateException("Loan has already been extended once.");
+        }
+
+        loanRepository.extendLoan(loanId, loan.getDueDate().plusWeeks(DEFAULT_LOAN_WEEKS));
+    }
+
     // uppdatera status för ett lån så att lånet blir återlämnat
     public void returnLoan(Integer loanId) throws SQLException {
         validateId(loanId);
@@ -149,5 +179,9 @@ public class LoanService extends BaseService<Loan, Integer> {
         if (!loanRepository.memberExists(memberId)) {
             throw new IllegalArgumentException("Member not found.");
         }
+    }
+
+    private boolean isExtended(Loan loan) {
+        return loan.getDueDate().isAfter(loan.getLoanDate().plusWeeks(DEFAULT_LOAN_WEEKS));
     }
 }
