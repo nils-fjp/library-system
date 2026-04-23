@@ -25,9 +25,7 @@ public class MemberProfileDto {
         this.status = status;
     }
 
-//    public Integer getId() {
-//        return id;
-//    }
+
 
     public String getFirstName() {
         return firstName;
@@ -52,9 +50,5 @@ public class MemberProfileDto {
     public String getStatus() {
         return status;
     }
-
-//    public String getRole() {
-//        return role;
-//    }
 
 }

@@ -2,6 +2,8 @@ package member;
 
 import base.BaseRepository;
 import base.BaseService;
+import loan.LoanService;
+import loan.LoanSummaryDto;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Optional;
 public class MemberService extends BaseService<Member, Integer> {
 
     private final MemberRepository memberRepository = new MemberRepository();
+    private final LoanService loanService = new LoanService();
     private final MemberMapper memberMapper = new MemberMapper();
 
     // =========================================================
@@ -28,40 +31,12 @@ public class MemberService extends BaseService<Member, Integer> {
         MemberValidator.validateId(id);
     }
 
-
-    public Optional<Member> getByEmail(String email) throws SQLException {
-        MemberValidator.validateEmail(email);
-        return memberRepository.getByEmail(email);
-    }
-
-
-
-    // =========================================================
-    // Reader actions - 3. View my profile
-    //                        --> 1. View my profile
-    // =========================================================
-    // 1 showCurrentMemberProfile (MemberController)
-    //    -> 2 getProfileById (MemberService) +
-    //       -> 3 validateId (MemberService) +
-    //          -> 4 validateId (BaseService)
-    //       -> 5 getById (MemberRepository)
-    //       -> 6 toProfileDto (MemberMapper)
-    //    -> 7 printProfileMember (MemberController)
-    //    -> 8 printError (ConsolePrinter)
-
     public Optional<MemberProfileDto> getProfileById(Integer id) throws SQLException {
         validateId(id);
         return memberRepository.getById(id).map(memberMapper::toProfileDto);
     }
 
-
-
     //get
-    public Optional<MemberAdminDto> getByEmailForViewForAdmin(String email) throws SQLException {
-        MemberValidator.validateEmail(email);
-        return memberRepository.getByEmail(email)
-                .map(memberMapper::toAdminDto);
-    }
     public List<MemberAdminDto> getAllForAdminView() throws SQLException {
         List<Member> members = memberRepository.getAll();
         List<MemberAdminDto> result = new ArrayList<>();
@@ -163,6 +138,7 @@ public class MemberService extends BaseService<Member, Integer> {
         memberRepository.updatePassword(dto.getMemberId(), dto.getNewPassword());
         return true;
     }
+
     //create
     public Optional<MemberAdminDto> createMemberByAdmin(CreateMemberDto dto) throws SQLException{
         MemberValidator.validateCreateMemberDto(dto);
@@ -180,7 +156,6 @@ public class MemberService extends BaseService<Member, Integer> {
     }
 
     //delete
-
     public boolean deleteMemberByAdmin(Integer memberId) throws SQLException {
         MemberValidator.validateId(memberId);
 
@@ -189,11 +164,16 @@ public class MemberService extends BaseService<Member, Integer> {
             return false;
         }
 
+        List<LoanSummaryDto> activeLoans = loanService.getActiveLoansByMember(memberId);
+        if (!activeLoans.isEmpty()) {
+            throw new MemberException(
+                    "Member cannot be deleted because they have borrowed books that are not returned yet."
+            );
+        }
+
         memberRepository.deleteById(memberId);
         return true;
     }
-
-
 
 
 
@@ -222,15 +202,15 @@ public class MemberService extends BaseService<Member, Integer> {
 
     }
 
-    public void validateLibrarianAccess(Member currentMember) {
-        if (currentMember == null) {
-            throw new IllegalArgumentException("User is not authorized.");
-        }
-
-        if (!"LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
-            throw new IllegalArgumentException("Access denied.");
-        }
-    }
+//    public void validateLibrarianAccess(Member currentMember) {
+//        if (currentMember == null) {
+//            throw new IllegalArgumentException("User is not authorized.");
+//        }
+//
+//        if (!"LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
+//            throw new IllegalArgumentException("Access denied.");
+//        }
+//    }
 
     // =========================================================
     // Validation helpers
@@ -244,3 +224,17 @@ public class MemberService extends BaseService<Member, Integer> {
         }
     }
 }
+
+
+// =========================================================
+// Reader actions - 3. View my profile
+//                        --> 1. View my profile
+// =========================================================
+// 1 showCurrentMemberProfile (MemberController)
+//    -> 2 getProfileById (MemberService) +
+//       -> 3 validateId (MemberService) +
+//          -> 4 validateId (BaseService)
+//       -> 5 getById (MemberRepository)
+//       -> 6 toProfileDto (MemberMapper)
+//    -> 7 printProfileMember (MemberController)
+//    -> 8 printError (ConsolePrinter)
