@@ -3,46 +3,40 @@ package ui;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static ui.ANSI.*;
+import static ui.Constants.*;
+
 //import static member.MemberController.printer;
 
 public class ConsolePrinter {
-    private static final int MARGIN = Menu.MARGIN;
-    private static final int INNER_WIDTH = Menu.INNER_WIDTH;
-    private static final int OUTER_WIDTH = Menu.OUTER_WIDTH;
-    private static final int GAP = Menu.GAP;
+    private static final String ANSI_ESCAPE_REGEX = "\u001B\\[[;\\d?]*[ -/]*[@-~]";
 
-    public static void printHeaderCenter(String title) {
-        title = fit(safe(title), INNER_WIDTH);
-        String flexLine = ANSI.BRIGHT_BLACK + "─".repeat((OUTER_WIDTH - title.length()) / 2) + ANSI.DEFAULT_FG;
-        String flexRest = ANSI.BRIGHT_BLACK + "─".repeat((OUTER_WIDTH - title.length()) % 2) + ANSI.DEFAULT_FG;
-
+    public static void printStyledHeader(String headerText, String ansiTextColor, String ansiLineColor) {
+        headerText = fit(safe(headerText), INNER_WIDTH);
         System.out.println();
-        System.out.println(" ".repeat(MARGIN) + flexLine + ANSI.BOLD + title + ANSI.NO_BOLD + flexLine + flexRest + ANSI.DEFAULT_FG);
+        System.out.println(formatHeaderLine(ansiTextColor + headerText + RESET, ansiLineColor));
     }
 
-    public static void printHeader(String title) {
-        title = fit(safe(title), INNER_WIDTH);
-        String flexLine = ANSI.BRIGHT_BLACK + "─".repeat((INNER_WIDTH - title.length()) / 2) + ANSI.DEFAULT_FG;
-
+    public static void printHeader(String text) {
+        text = fit(safe(text), INNER_WIDTH);
         System.out.println();
-        System.out.println(" ".repeat(MARGIN) + flexLine + " " + ANSI.CYAN + ANSI.BOLD + title + ANSI.NO_BOLD + ANSI.DEFAULT_FG + " " + flexLine + ANSI.DEFAULT_FG);
-
+        System.out.println(formatHeaderLine(BOLD + text + NO_BOLD + DEFAULT_FG, BRIGHT_BLACK));
     }
 
     public static void printFooter() {
-        System.out.println(" ".repeat(MARGIN) + ANSI.BRIGHT_BLACK + "─".repeat(INNER_WIDTH) + ANSI.DEFAULT_FG);
+        System.out.println(" ".repeat(MARGIN) + BRIGHT_BLACK + "─".repeat(OUTER_WIDTH) + DEFAULT_FG);
     }
 
-    public static void printField(String label, Object value) {
-        label = fit(safe(label), Math.max(0, GAP - 2));
-        String flexGap = " ".repeat(Math.max(0, GAP - (label.length() + 2)));
-        System.out.println(" ".repeat(MARGIN + 1) + ANSI.YELLOW + label + ": " + flexGap + ANSI.DEFAULT_FG + value);
+    public static void printField(String key, Object value) {
+        String keyWithSeparator = fit(safe(key), Math.max(0, GAP - 2)) + ":";
+        String paddedKey = padRight(keyWithSeparator, Math.max(0, GAP - 1));
+        System.out.println(" ".repeat(MARGIN + 1) + YELLOW + paddedKey + " " + DEFAULT_FG + value);
     }
 
     public static void printPrompt(String message) {
         message = fit(safe(message), INNER_WIDTH);
-        String centerFlex = " ".repeat((INNER_WIDTH - message.length()) / 4);
-        System.out.println(" ".repeat(MARGIN) + ANSI.YELLOW + message + centerFlex + ANSI.DEFAULT_FG);
+        String centerFlex = " ".repeat((INNER_WIDTH - visibleLength(message)) / 4);
+        System.out.println(" ".repeat(MARGIN) + YELLOW + message + centerFlex + DEFAULT_FG);
     }
 
     public static void printFields(String title, LinkedHashMap<String, Object> fields) {
@@ -58,27 +52,96 @@ public class ConsolePrinter {
     public static void printError(String message) {
         message = safe(message);
         System.out.println();
-        System.out.println("\t" + ANSI.RED + message + ANSI.DEFAULT_FG);
+        System.out.println(" ".repeat(MARGIN + 1) + BRIGHT_RED + message + DEFAULT_FG);
         System.out.println();
     }
 
     public static void printSuccess(String message) {
         message = safe(message);
         System.out.println();
-        System.out.println("\t" + ANSI.BRIGHT_GREEN + message + ANSI.DEFAULT_FG);
+        System.out.println(" ".repeat(MARGIN + 1) + BRIGHT_GREEN + message + DEFAULT_FG);
         System.out.println();
     }
 
-    private static String safe(String text) {
+    static String center(String text, int width) {
+        text = fit(safe(text), width);
+        int visibleWidth = visibleLength(text);
+        String leftPadding = " ".repeat(Math.max(0, (width - visibleWidth) / 2));
+        String rightPadding = " ".repeat(Math.max(0, width - visibleWidth - leftPadding.length()));
+        return leftPadding + text + rightPadding;
+    }
+
+    static String padRight(String text, int width) {
+        text = fit(safe(text), width);
+        return text + " ".repeat(Math.max(0, width - visibleLength(text)));
+    }
+
+    static String formatTwoColumnLine(String leftText, String rightText, int width) {
+        leftText = safe(leftText);
+        rightText = safe(rightText);
+
+        int rightWidth = Math.clamp(width - 1, 0, visibleLength(rightText));
+        int leftWidth = Math.max(0, width - rightWidth - 1);
+        String fittedLeftText = fit(leftText, leftWidth);
+        int spacesBetween = Math.max(1, width - visibleLength(fittedLeftText) - rightWidth);
+
+        return fittedLeftText + " ".repeat(spacesBetween) + rightText;
+    }
+
+    static String safe(String text) {
         return text == null ? "" : text;
     }
 
-    private static String fit(String text, int maxWidth) {
-        if (text.length() <= maxWidth) {
+    static String fit(String text, int maxWidth) {
+        if (visibleLength(text) <= maxWidth) {
             return text;
         }
 
-        return text.substring(0, Math.max(0, maxWidth));
+        StringBuilder fitted = new StringBuilder();
+        int visibleCount = 0;
+
+        for (int i = 0; i < text.length() && visibleCount < maxWidth; ) {
+            if (text.charAt(i) == '\u001B') {
+                int sequenceEnd = findAnsiSequenceEnd(text, i);
+                fitted.append(text, i, sequenceEnd);
+                i = sequenceEnd;
+                continue;
+            }
+
+            fitted.append(text.charAt(i));
+            i++;
+            visibleCount++;
+        }
+
+        return fitted.toString();
+    }
+
+    static int visibleLength(String text) {
+        return safe(text).replaceAll(ANSI_ESCAPE_REGEX, "").length();
+    }
+
+    private static String formatHeaderLine(String styledHeaderText, String ansiLineColor) {
+        int headerWidth = visibleLength(styledHeaderText);
+        String flexRest = ansiLineColor + "─".repeat((INNER_WIDTH - headerWidth) % 2) + DEFAULT_FG;
+        String flexLine = ansiLineColor + "─".repeat((INNER_WIDTH - headerWidth) / 2) + DEFAULT_FG;
+        return " ".repeat(MARGIN) + flexLine + " " + styledHeaderText + " " + flexLine + flexRest + DEFAULT_FG;
+    }
+
+    private static int findAnsiSequenceEnd(String text, int startIndex) {
+        int i = startIndex + 1;
+        if (i >= text.length() || text.charAt(i) != '[') {
+            return Math.min(text.length(), startIndex + 1);
+        }
+
+        i++;
+        while (i < text.length()) {
+            char current = text.charAt(i++);
+            if (current >= '@' && current <= '~') {
+                break;
+            }
+        }
+
+        return i;
     }
 
 }
