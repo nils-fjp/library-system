@@ -23,8 +23,15 @@ public class BookController extends BaseController {
         String keyword = scanner.nextLine();
 
         try {
-
-            printBooks(bookService.search(keyword));
+            List<BookDetailDTO> books = bookService.search(keyword);
+            if (books.isEmpty()) {
+                if (bookService.hasRemovedBookMatch(keyword)) {
+                    ConsolePrinter.printError("Book removed!");
+                } else {
+                    ConsolePrinter.printError("No books found.");
+                }
+            }
+            printBooks(books);
         } catch (SQLException e) {
             ConsolePrinter.printError("Error: " + e.getMessage());
         }
@@ -78,6 +85,52 @@ public class BookController extends BaseController {
         }
     }
 
+
+    public static void updateBookForAdmin(Member currentMember) {
+
+        try {
+            int bookId = searchAndSelect("Remove Book Copy");
+            bookService.removeBookCopy(bookId);
+            ConsolePrinter.printSuccess("Book copy removed!");
+
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Error: " + e.getMessage());
+        }
+    }
+
+    public static void deleteBookForAdmin(Member currentMember) {
+        try {
+            int bookId = searchAndSelect("Delete book");
+            bookService.deleteBook(bookId);
+            ConsolePrinter.printSuccess("Book deleted!");
+
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Error: " + e.getMessage());
+        }
+    }
+
+    private static int searchAndSelect(String header) throws SQLException {
+        ConsolePrinter.printHeader(header);
+        ConsolePrinter.printPrompt("Search title, author or genre: ");
+        String keyword = scanner.nextLine();
+
+        List<BookManageDTO> bookManageDTOS = bookService.AdminSearch(keyword);
+        if (bookManageDTOS.isEmpty()) {
+            ConsolePrinter.printError("No books found.");
+        }
+
+        for (BookManageDTO book : bookManageDTOS) {
+            ConsolePrinter.printField(String.valueOf(book.getId()), book.getTitle());
+        }
+        ConsolePrinter.printPrompt("Enter book id: ");
+        return Integer.parseInt(scanner.nextLine());
+    }
+
+
     //  3. Add Book
     public static void addBookForAdmin(Member currentMember) {
         ConsolePrinter.printPrompt("Enter title: ");
@@ -99,8 +152,8 @@ public class BookController extends BaseController {
         String firstName = scanner.nextLine();
         ConsolePrinter.printPrompt("Author last name: ");
         String lastName = scanner.nextLine();
-        ConsolePrinter.printPrompt("Category: ");
-        String category = scanner.nextLine();
+//        ConsolePrinter.printPrompt("Category: ");
+//        String category = scanner.nextLine();
 
         int categoryId = 0;
         try {

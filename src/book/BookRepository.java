@@ -68,9 +68,9 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                 "JOIN authors a ON a.id = ba.author_id " +
                 "JOIN book_categories bc ON b.id = bc.book_id " +
                 "JOIN categories c ON c.id = bc.category_id " +
-                "WHERE b.title LIKE ? " +
+                "WHERE b.is_active = 1 AND (b.title LIKE ? " +
                 "OR CONCAT(a.first_name, ' ', a.last_name) LIKE ? " +
-                "OR c.name LIKE ? ";
+                "OR c.name LIKE ?) ";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, keyword);
@@ -84,74 +84,133 @@ public class BookRepository extends BaseRepository<Book, Integer> {
         return books;
     }
 
-    @Override
-    public void save(Book entity) throws SQLException {
-        String sql = "INSERT INTO books (title, isbn, year_published, total_copies, available_copies)" +
-                "VALUES(?, ?, ?, ?, ?)";
-
+    public boolean hasInactiveMatch(String keyword) throws SQLException {
+        String sql = "SELECT 1 FROM books b " +
+                "JOIN books_authors ba ON b.id = ba.book_id " +
+                "JOIN authors a ON a.id = ba.author_id " +
+                "JOIN book_categories bc ON b.id = bc.book_id " +
+                "JOIN categories c ON c.id = bc.category_id " +
+                "WHERE b.is_active = 0 AND (b.title LIKE ? " +
+                "OR CONCAT(a.first_name, ' ', a.last_name) LIKE ? " +
+                "OR c.name LIKE ?) " +
+                "LIMIT 1";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            // RETRUN_GENERATED_KEYS - sparar den id:et databasen generenar
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, keyword);
+            statement.setString(2, keyword);
+            statement.setString(3, keyword);
 
-            statement.setString(1, entity.getTitle());
-            statement.setString(2, entity.getIsbn());
-            statement.setInt(3, entity.getYearPublished());
-            statement.setInt(4, entity.getTotalCopies());
-            statement.setInt(5, entity.getAvailableCopies());
-            statement.executeUpdate();
-
-            // Hämtar det nya id:et
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int bookId = generatedKeys.getInt(1);
-
-                    saveDescription(bookId, entity);
-                    for (Author author : entity.getAuthors()) {
-                        authorRepository.findOrSave(author, bookId);
-                    }
-                    for (Category category : entity.getCategories()) {
-                        categoryRepository.saveBookCategories(bookId, category.getId());
-                    }
-                }
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
             }
         }
     }
 
-    private void saveDescription(int bookId, Book entity) throws SQLException {
-        String sql = "INSERT INTO book_description(book_id, summary, language, page_count) ";
+    @Override
+    public void save(Book entity) throws SQLException {
+        String bookSql = "INSERT INTO books (title, isbn, year_published, total_copies, available_copies)" +
+                "VALUES(?, ?, ?, ?, ?)";
+        String descSql = "INSERT INTO book_descriptions (book_id, summary, language, page_count) VALUES (?, ?, ?, ?)";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false); // Transaktion - allt eller inget
+
+            try (PreparedStatement bookStmt = connection.prepareStatement(bookSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                // RETRUN_GENERATED_KEYS - sparar den id:et databasen generenar
+
+                bookStmt.setString(1, entity.getTitle());
+                bookStmt.setString(2, entity.getIsbn());
+                bookStmt.setInt(3, entity.getYearPublished());
+                bookStmt.setInt(4, entity.getTotalCopies());
+                bookStmt.setInt(5, entity.getAvailableCopies()); // available = total vid boktillägg
+                bookStmt.executeUpdate();
+
+                // Hämtar det nya id:et
+                try (ResultSet generatedKeys = bookStmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int bookId = generatedKeys.getInt(1);
+
+                        // Anropa metoder från Author och Category
+                        saveDescription(connection, bookId, entity);
+//                        authorRepository.save(bookId, entity);
+//                        categoryRepository.saveBookCategories(bookId, entity);
+                    }
+                }
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
+        }
+    }
+
+    private void saveDescription(Connection connection, int bookId, Book entity) throws SQLException {
+        String sql = "INSERT INTO book_descriptions(book_id, summary, language, page_count) " +
+                "VALUES (?, ?, ?, ?) ";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, bookId);
             statement.setString(2, entity.getSummary());
             statement.setString(3, entity.getLang());
             statement.setInt(4, entity.getPageCount());
+            statement.executeUpdate();
         }
     }
 
     @Override
     public void update(Book entity) throws SQLException {
-        // TODO: update available copies?
-        // TODO: Koppla med loan när en bok lånas och tillgänglighet går ner
-        // TODO: Fråfa Nills om hans metod automatisk ändrar databasen varje gång en sker en lån
 
-        String sql = "UPDATE books SET ";
     }
 
     @Override
+    //TODO: fråga gruppen om man ska lägga till en ny kolumn i databsen(is_active) eller ändra book_id i loans (ej NN)
     public void deleteById(Integer id) throws SQLException {
-        String sql = "DELETE FROM book WHERE id = ?";
+        String deletesql = "UPDATE books SET is_active = 0 WHERE id = ?"; // Soft delete
 
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
-            int rowsAffected = statement.executeUpdate();
+        try (Connection connection = getConnection()) {
+//            PreparedStatement updateStatement = connection.prepareStatement(updatesql);
+            PreparedStatement deleteStatement = connection.prepareStatement(deletesql);
+
+//            updateStatement.setInt(1, id);
+//            updateStatement.executeUpdate();
+
+            deleteStatement.setInt(1, id);
+            int rowsAffected = deleteStatement.executeUpdate();
             if (rowsAffected == 0) {
-                throw new SQLException("No book found with id: " + id);
+                throw new SQLException("No book found with ID: ");
             }
         }
+    }
 
+    public boolean isBookOnLoan(Integer bookId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM loans WHERE book_id = ? AND return_date IS NULL";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, bookId);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public boolean reduceBookCopy(Integer id) throws SQLException {
+        String sql = "UPDATE books SET total_copies = total_copies -1, " +
+                "available_copies = available_copies -1 " + // tar bort en kopia åt gången
+                "WHERE id = ? " +
+                "AND total_copies > 0 " +
+                "AND available_copies > 0";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            return statement.executeUpdate() > 0;
+        }
     }
 
 

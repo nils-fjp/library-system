@@ -36,7 +36,6 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                 }
             }
         }
-
         return Optional.empty();
     }
 
