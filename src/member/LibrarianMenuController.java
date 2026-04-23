@@ -161,7 +161,7 @@ public class LibrarianMenuController {
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
                 case 1 -> MemberController.showAllMembersForAdmin(currentMember);
-                case 2 -> MemberController.showMemberByEmail(currentMember);
+                case 2 -> MemberController.showMember(currentMember);
                 case 0 -> {
                     return;
                 }
@@ -182,12 +182,11 @@ public class LibrarianMenuController {
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                //case 1 -> System.out.println("AuthorController.showAllAuthors()");
-                case 1 -> AuthorController.showAllAuthors();
+                case 1 -> AuthorController.showAllAuthors(currentMember);
                 case 2 -> AuthorController.addAuthor(currentMember);
                 case 3 -> AuthorController.updateAuthor(currentMember);
                 case 4 -> AuthorController.deleteAuthor(currentMember);
-                case 5 -> AuthorController.findAuthor();
+                case 5 -> AuthorController.showAuthor(currentMember);
                 case 0 -> {
                     return;
                 }

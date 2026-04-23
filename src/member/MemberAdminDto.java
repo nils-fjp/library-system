@@ -3,7 +3,7 @@ package member;
 import java.time.LocalDate;
 
 public class MemberAdminDto {
-    private int id;
+    private Integer id;
     private String firstName;
     private String lastName;
     private String email;
@@ -85,6 +85,10 @@ public class MemberAdminDto {
 
     public String getRole() {
         return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }

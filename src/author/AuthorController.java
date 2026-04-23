@@ -1,5 +1,6 @@
 package author;
 
+import base.BaseController;
 import member.Member;
 import ui.ConsolePrinter;
 
@@ -11,21 +12,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
-public class AuthorController {
-    static final ConsolePrinter printer = new ConsolePrinter();
+public class AuthorController extends BaseController<Author, Integer> {
+
     private static final Scanner scanner = new Scanner(System.in);
 
-    // 1. Show all authors
-    public static void showAllAuthors() {
+    // =========================================================
+    // AUTHOR ACTIONS
+    // =========================================================
+
+    public static void showAllAuthors(Member currentMember) {
         AuthorService service = new AuthorService();
 
         try {
-            ConsolePrinter.printHeader("All authors");
-
             List<Author> authors = service.getAllAuthors();
 
             if (authors.isEmpty()) {
-                printer.printError("No authors found.");
+                ConsolePrinter.printError("No authors found.");
                 return;
             }
 
@@ -33,12 +35,33 @@ public class AuthorController {
                 printAuthor(author);
             }
 
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
-    // 2. Add author
+    public static void showAuthor(Member currentMember) {
+        AuthorService service = new AuthorService();
+
+        try {
+            Optional<Author> optionalAuthor = findAuthorByKeyword(service);
+
+            if (optionalAuthor.isEmpty()) {
+                ConsolePrinter.printError("Author not found.");
+                return;
+            }
+
+            printAuthor(optionalAuthor.get());
+
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Database error: " + e.getMessage());
+        }
+    }
+
     public static void addAuthor(Member currentMember) {
         AuthorService service = new AuthorService();
 
@@ -46,55 +69,219 @@ public class AuthorController {
             ConsolePrinter.printHeader("Create author");
 
             Author author = buildAuthorFromInput();
-
             Optional<Author> createdAuthor = service.createAuthor(currentMember, author);
 
             if (createdAuthor.isEmpty()) {
-                printer.printError("Author was not created.");
+                ConsolePrinter.printError("Author was not created.");
                 return;
             }
 
-            printer.printSuccess("Author created successfully.");
+            ConsolePrinter.printSuccess("Author created successfully.");
             printAuthor(createdAuthor.get());
 
-        } catch (DateTimeParseException e) {
-            printer.printError("Invalid date format. Use yyyy-mm-dd.");
         } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
+    public static void updateAuthor(Member currentMember) {
+        AuthorService service = new AuthorService();
+
+        try {
+            Optional<Author> optionalAuthor = findAuthorByKeyword(service);
+
+            if (optionalAuthor.isEmpty()) {
+                ConsolePrinter.printError("Author not found.");
+                return;
+            }
+
+            Author currentAuthor = optionalAuthor.get();
+
+            ConsolePrinter.printSuccess("Current author data:");
+            printAuthor(currentAuthor);
+
+            Author updatedAuthor = buildUpdatedAuthorFromInput(currentAuthor);
+            Optional<Author> savedAuthor = service.updateAuthor(currentMember, updatedAuthor);
+
+            if (savedAuthor.isEmpty()) {
+                ConsolePrinter.printError("Author was not updated.");
+                return;
+            }
+
+            ConsolePrinter.printSuccess("Author updated successfully.");
+            printAuthor(savedAuthor.get());
+
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    public static void deleteAuthor(Member currentMember) {
+        AuthorService service = new AuthorService();
+
+        try {
+            Optional<Author> optionalAuthor = findAuthorByKeyword(service);
+
+            if (optionalAuthor.isEmpty()) {
+                ConsolePrinter.printError("Author not found.");
+                return;
+            }
+
+            Author targetAuthor = optionalAuthor.get();
+
+            ConsolePrinter.printSuccess("Selected author:");
+            printAuthor(targetAuthor);
+
+            ConsolePrinter.printPrompt("Are you sure you want to delete this author?");
+            String confirmation = promptRequired("Type yes or no");
+
+            if (!"yes".equalsIgnoreCase(confirmation)) {
+                ConsolePrinter.printError("Deletion cancelled.");
+                return;
+            }
+
+            boolean deleted = service.deleteAuthor(currentMember, targetAuthor.getId());
+
+            if (!deleted) {
+                ConsolePrinter.printError("Author was not deleted.");
+                return;
+            }
+
+            ConsolePrinter.printSuccess("Author deleted successfully.");
+
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    // =========================================================
+    // FLOW HELPERS
+    // =========================================================
+
     private static Author buildAuthorFromInput() {
         Author author = new Author();
-
-        ConsolePrinter.printPrompt("Enter first name: ");
-        author.setFirstName(scanner.nextLine().trim());
-
-        ConsolePrinter.printPrompt("Enter last name: ");
-        author.setLastName(scanner.nextLine().trim());
-
-        ConsolePrinter.printPrompt("Enter nationality: ");
-        author.setNationality(scanner.nextLine().trim());
-
-        author.setBirthDate(readBirthDate());
-
+        author.setFirstName(promptRequired("Enter first name"));
+        author.setLastName(promptRequired("Enter last name"));
+        author.setNationality(promptRequired("Enter nationality"));
+        author.setBirthDate(promptRequiredDate("Enter birth date"));
         return author;
     }
 
-    private static LocalDate readBirthDate() {
+    private static Author buildUpdatedAuthorFromInput(Author currentAuthor) {
+        Author author = new Author();
+        author.setId(currentAuthor.getId());
+        author.setFirstName(promptTextOrKeepCurrent("Enter new first name", currentAuthor.getFirstName()));
+        author.setLastName(promptTextOrKeepCurrent("Enter new last name", currentAuthor.getLastName()));
+        author.setNationality(promptTextOrKeepCurrent("Enter new nationality", currentAuthor.getNationality()));
+        author.setBirthDate(promptDateOrKeepCurrent("Enter new birth date", currentAuthor.getBirthDate()));
+        return author;
+    }
+
+    private static Optional<Author> findAuthorByKeyword(AuthorService service) throws SQLException {
+        ConsolePrinter.printPrompt("Search author by id, name, nationality,");
+        ConsolePrinter.printPrompt("or birth date.");
+        String keyword = promptRequired("Enter");
+
+        List<Author> foundAuthors = service.searchAuthors(keyword);
+
+        if (foundAuthors.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (foundAuthors.size() == 1) {
+            return Optional.of(foundAuthors.get(0));
+        }
+
+        ConsolePrinter.printSuccess("Found authors:");
+        for (Author author : foundAuthors) {
+            printAuthor(author);
+        }
+
+        Integer selectedId = promptRequiredInt("Enter author id");
+        for (Author author : foundAuthors) {
+            if (author.getId().equals(selectedId)) {
+                return Optional.of(author);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    // =========================================================
+    // INPUT HELPERS
+    // =========================================================
+
+    private static String prompt(String label) {
+        ConsolePrinter.printPromptInline(label + ": ");
+        return scanner.nextLine().trim();
+    }
+
+    private static String promptRequired(String label) {
+        while (true) {
+            String input = prompt(label);
+
+            if (!input.isBlank()) {
+                return input;
+            }
+
+            ConsolePrinter.printError("Input cannot be empty.");
+        }
+    }
+
+    private static int promptRequiredInt(String label) {
         while (true) {
             try {
-                ConsolePrinter.printPrompt("Enter birth date (yyyy-mm-dd): ");
-                return LocalDate.parse(scanner.nextLine().trim());
-            } catch (java.time.format.DateTimeParseException e) {
-                printer.printError("Invalid date format. Use yyyy-mm-dd.");
+                return Integer.parseInt(promptRequired(label));
+            } catch (NumberFormatException e) {
+                ConsolePrinter.printError("Invalid number.");
             }
         }
     }
 
-    private static void printAuthor(Author author) {
+    private static String promptTextOrKeepCurrent(String label, String currentValue) {
+        String input = prompt(label + " " + ConsolePrinter.colorCurrentValue(currentValue));
+        return input.isBlank() ? currentValue : input;
+    }
+
+    private static LocalDate promptRequiredDate(String label) {
+        while (true) {
+            String input = promptRequired(label + " " + ConsolePrinter.colorHint("yyyy-mm-dd"));
+
+            try {
+                return LocalDate.parse(input);
+            } catch (DateTimeParseException e) {
+                ConsolePrinter.printError("Invalid date format. Use yyyy-mm-dd.");
+            }
+        }
+    }
+
+    private static LocalDate promptDateOrKeepCurrent(String label, LocalDate currentValue) {
+        while (true) {
+            String input = prompt(label + " " + ConsolePrinter.colorHint("yyyy-mm-dd") + " " + ConsolePrinter.colorCurrentValue(currentValue));
+
+            if (input.isBlank()) {
+                return currentValue;
+            }
+
+            try {
+                return LocalDate.parse(input);
+            } catch (DateTimeParseException e) {
+                ConsolePrinter.printError("Invalid date format. Use yyyy-mm-dd.");
+            }
+        }
+    }
+
+    // =========================================================
+    // OUTPUT HELPERS
+    // =========================================================
+
+    public static void printAuthor(Author author) {
         LinkedHashMap<String, Object> fields = new LinkedHashMap<>();
         fields.put("ID", author.getId());
         fields.put("First name", author.getFirstName());
@@ -102,213 +289,7 @@ public class AuthorController {
         fields.put("Nationality", author.getNationality());
         fields.put("Birth date", author.getBirthDate());
 
-        ConsolePrinter.printFields("Author info", fields);
-    }
-
-    private static Author buildUpdatedAuthorFromInput(Author currentAuthor) {
-        Author author = new Author();
-
-        ConsolePrinter.printPrompt("Enter first name [" + currentAuthor.getFirstName() + "]: ");
-        String firstName = scanner.nextLine().trim();
-        author.setFirstName(firstName.isEmpty() ? currentAuthor.getFirstName() : firstName);
-
-        ConsolePrinter.printPrompt("Enter last name [" + currentAuthor.getLastName() + "]: ");
-        String lastName = scanner.nextLine().trim();
-        author.setLastName(lastName.isEmpty() ? currentAuthor.getLastName() : lastName);
-
-        ConsolePrinter.printPrompt("Enter nationality [" + currentAuthor.getNationality() + "]: ");
-        String nationality = scanner.nextLine().trim();
-        author.setNationality(nationality.isEmpty() ? currentAuthor.getNationality() : nationality);
-
-        ConsolePrinter.printPrompt("Enter birth date [" + currentAuthor.getBirthDate() + "] (yyyy-mm-dd): ");
-        String birthDateInput = scanner.nextLine().trim();
-
-        if (birthDateInput.isEmpty()) {
-            author.setBirthDate(currentAuthor.getBirthDate());
-        } else {
-            author.setBirthDate(LocalDate.parse(birthDateInput));
-        }
-
-        return author;
-    }
-
-    //
-    private static Integer resolveAuthorIdFromSearch(List<Author> foundAuthors, String keyword, String actionText) {
-        if (keyword.matches("\\d+") && foundAuthors.size() == 1) {
-            return foundAuthors.get(0).getId();
-        }
-
-        ConsolePrinter.printPrompt("Enter author id to " + actionText + ": ");
-        return Integer.parseInt(scanner.nextLine().trim());
-    }
-
-    //3. Modify author
-    public static void updateAuthor(Member currentMember) {
-        AuthorService service = new AuthorService();
-
-        try {
-            ConsolePrinter.printHeader("Update author");
-
-            ConsolePrinter.printPrompt("Enter author id, first name, last name, nationality, or birth date: ");
-            String keyword = scanner.nextLine().trim();
-
-            List<Author> foundAuthors = service.searchAuthors(keyword);
-
-            if (foundAuthors.isEmpty()) {
-                printer.printError("No authors found.");
-                return;
-            }
-
-            printer.printSuccess("Found authors:");
-            for (Author author : foundAuthors) {
-                printAuthor(author);
-            }
-
-            Author currentAuthor;
-
-            if (foundAuthors.size() == 1) {
-                currentAuthor = foundAuthors.get(0);
-            } else {
-                Integer authorId = resolveAuthorIdFromSearch(foundAuthors, keyword, "update");
-
-                Optional<Author> optionalAuthor = service.getAuthorById(authorId);
-                if (optionalAuthor.isEmpty()) {
-                    printer.printError("Author not found.");
-                    return;
-                }
-
-                currentAuthor = optionalAuthor.get();
-            }
-
-            printer.printSuccess("Current author data:");
-            printAuthor(currentAuthor);
-
-            Author updatedAuthor = buildUpdatedAuthorFromInput(currentAuthor);
-            updatedAuthor.setId(currentAuthor.getId());
-
-            Optional<Author> result = service.updateAuthor(currentMember, updatedAuthor);
-
-            if (result.isEmpty()) {
-                printer.printError("Author was not updated.");
-                return;
-            }
-
-            printer.printSuccess("Author updated successfully.");
-            printAuthor(result.get());
-
-        } catch (DateTimeParseException e) {
-            printer.printError("Invalid date format. Use yyyy-mm-dd.");
-        } catch (NumberFormatException e) {
-            printer.printError("Invalid id.");
-        } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
-        } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
-        }
-    }
-
-    //4. Delete author
-    public static void deleteAuthor(Member currentMember) {
-        AuthorService service = new AuthorService();
-
-        try {
-            ConsolePrinter.printHeader("Delete author");
-
-            ConsolePrinter.printPrompt("Enter author id, first name, last name, nationality, or birth date: ");
-            String keyword = scanner.nextLine().trim();
-
-            List<Author> foundAuthors = service.searchAuthors(keyword);
-
-            if (foundAuthors.isEmpty()) {
-                printer.printError("No authors found.");
-                return;
-            }
-
-            printer.printSuccess("Found authors:");
-            for (Author author : foundAuthors) {
-                printAuthor(author);
-            }
-
-            Author authorToDelete;
-
-            if (foundAuthors.size() == 1) {
-                authorToDelete = foundAuthors.get(0);
-            } else {
-                Integer authorId = resolveAuthorIdFromSearch(foundAuthors, keyword, "delete");
-
-                Optional<Author> optionalAuthor = service.getAuthorById(authorId);
-                if (optionalAuthor.isEmpty()) {
-                    printer.printError("Author not found.");
-                    return;
-                }
-
-                authorToDelete = optionalAuthor.get();
-            }
-
-            printer.printSuccess("Selected author:");
-            printAuthor(authorToDelete);
-
-            ConsolePrinter.printPrompt("Are you sure you want to delete this author? (yes/no): ");
-            String confirmation = scanner.nextLine().trim();
-
-            if (!confirmation.equalsIgnoreCase("yes")) {
-                printer.printError("Deletion cancelled.");
-                return;
-            }
-
-            boolean deleted = service.deleteAuthor(currentMember, authorToDelete.getId());
-
-            if (!deleted) {
-                printer.printError("Author was not deleted.");
-                return;
-            }
-
-            printer.printSuccess("Author deleted successfully.");
-
-        } catch (DateTimeParseException e) {
-            printer.printError("Invalid date format. Use yyyy-mm-dd.");
-        } catch (NumberFormatException e) {
-            printer.printError("Invalid id.");
-        } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
-        } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
-        }
-    }
-
-    // find author
-    public static void findAuthor() {
-        AuthorService service = new AuthorService();
-
-        try {
-            ConsolePrinter.printHeader("Find author");
-
-            ConsolePrinter.printPrompt("Enter author id, first name, last name, nationality, or birth date: ");
-            String keyword = scanner.nextLine().trim();
-
-            List<Author> foundAuthors = service.searchAuthors(keyword);
-
-            if (foundAuthors.isEmpty()) {
-                printer.printError("No authors found.");
-                return;
-            }
-
-            if (foundAuthors.size() == 1) {
-                printer.printSuccess("Author found:");
-                printAuthor(foundAuthors.get(0));
-                return;
-            }
-
-            printer.printSuccess("Found authors:");
-            for (Author author : foundAuthors) {
-                printAuthor(author);
-            }
-
-        } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
-        } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
-        }
+        ConsolePrinter.printFields("Author Info", fields);
     }
 
 }
