@@ -110,11 +110,11 @@ public class LibrarianMenuController {
         Menu manageLoansMenu = new Menu();
         manageLoansMenu.setTopTitle("Librarian Menu » Manage Loans");
         manageLoansMenu.setMainTitle("Manage Loans");
-        manageLoansMenu.setMenuInfo(ANSI.ITALIC + "Manage active loans and returns." + ANSI.NO_ITALIC);
+        manageLoansMenu.setMenuInfo(ANSI.ITALIC + "Manage active loans." + ANSI.NO_ITALIC);
         manageLoansMenu.setExitOption("Back to Librarian Menu");
         manageLoansMenu.addMenuOption("View All Active Loans");
         manageLoansMenu.addMenuOption("Add Loan");
-        manageLoansMenu.addMenuOption("Register return");
+        manageLoansMenu.addMenuOption("Update Loan");
 
         while (manageLoansMenu.showMenu()) {
             switch (manageLoansMenu.getChoice()) {

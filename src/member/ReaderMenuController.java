@@ -70,9 +70,9 @@ public class ReaderMenuController {
         myLoansMenu.setMainTitle("My Loans");
         myLoansMenu.setMenuInfo(ANSI.ITALIC + "View and manage your current and past loans." + ANSI.NO_ITALIC);
         myLoansMenu.setExitOption("Back to Reader Menu");
-        myLoansMenu.addMenuOption("Active Loans");
-        myLoansMenu.addMenuOption("Loan History");
-        myLoansMenu.addMenuOption("Loan A Book");
+        myLoansMenu.addMenuOption("View Active Loans");
+        myLoansMenu.addMenuOption("View Loan History");
+        myLoansMenu.addMenuOption("Loan a Book");
         //myLoansMenu.addMenuOption("View Fines");
 
         while (myLoansMenu.showMenu()) {
