@@ -3,6 +3,7 @@ package loan;
 import base.BaseRepository;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -275,6 +276,26 @@ public class LoanRepository extends BaseRepository<Loan, Integer> {
             throw e;
         } finally {
             resetAutoCommitAndClose(connection);
+        }
+    }
+
+    public void extendLoan(Integer loanId, LocalDate newDueDate) throws SQLException {
+        String sql = """
+                UPDATE loans
+                SET due_date = ?
+                WHERE id = ? AND return_date IS NULL
+                """;
+
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setDate(1, Date.valueOf(newDueDate));
+            statement.setInt(2, loanId);
+
+            if (statement.executeUpdate() == 0) {
+                throw new SQLException("Loan due date was not updated.");
+            }
         }
     }
 
