@@ -96,19 +96,19 @@ final class LoanConsoleView {
         fields.put("Member", loan.memberName());
         fields.put("Loaned", loan.loanDate());
         fields.put("Due", loan.dueDate());
-        fields.put("Status", loan.overdue() ? "Overdue" : "Active");
+        fields.put("Status", loan.overdue() ? "Overdue" : "Loaned");
         return fields;
     }
 
     private static String buildActiveStatusLabel(boolean overdue) {
         return overdue
                 ? ANSI.BRIGHT_RED + "OVERDUE" + ANSI.DEFAULT_FG
-                : ANSI.BRIGHT_GREEN + "ACTIVE" + ANSI.DEFAULT_FG;
+                : ANSI.BRIGHT_GREEN + "LOANED" + ANSI.DEFAULT_FG;
     }
 
     private static String buildActiveStatusText(boolean overdue) {
         return overdue
                 ? ANSI.BRIGHT_RED + "Overdue" + ANSI.DEFAULT_FG
-                : ANSI.BRIGHT_GREEN + "Active" + ANSI.DEFAULT_FG;
+                : ANSI.BRIGHT_GREEN + "Loaned" + ANSI.DEFAULT_FG;
     }
 }
