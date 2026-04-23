@@ -156,7 +156,7 @@ public class LibrarianMenuController {
         Menu menu = new Menu();
         menu.setTopTitle("View Readers");
         menu.addMenuOption("View all readers");
-        menu.addMenuOption("Search reader by email");
+        menu.addMenuOption("Search reader");
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
