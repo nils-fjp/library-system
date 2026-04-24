@@ -6,9 +6,9 @@ import loan.LoanController;
 import ui.ANSI;
 import ui.AuthController;
 import ui.Menu;
-import java.util.Optional;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class LibrarianMenuController {
 
@@ -58,9 +58,9 @@ public class LibrarianMenuController {
             switch (manageBooksMenu.getChoice()) {
                 case 1 -> BookController.showAllBooksForAdmin(currentMember);
                 case 2 -> BookController.AdminSearchForBooks(currentMember);
-//                case 3 -> BookController.addBookForAdmin(currentMember);
-//                case 4 -> BookController.updateBookForAdmin(currentMember);
-//                case 5 -> BookController.deleteBookForAdmin(currentMember);
+                case 3 -> BookController.addBookForAdmin(currentMember);
+                case 4 -> BookController.updateBookForAdmin(currentMember);
+                case 5 -> BookController.deleteBookForAdmin(currentMember);
             }
         }
     }
@@ -122,6 +122,7 @@ public class LibrarianMenuController {
             }
         }
     }
+
     private static void showReaderActionsMenu(Member currentMember, MemberAdminDto reader) throws SQLException {
 
         Menu menu = new Menu();

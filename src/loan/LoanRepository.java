@@ -71,6 +71,7 @@ public class LoanRepository extends BaseRepository<Loan, Integer> {
         }
     }
 
+    // Hämtar alla återlämnade lån för en medlem, sorterade senaste först.
     public List<Loan> getLoanHistoryByMember(Integer memberId) throws SQLException {
         String sql = """
                 SELECT id, book_id, member_id, loan_date, due_date, return_date

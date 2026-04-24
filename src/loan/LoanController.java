@@ -19,6 +19,26 @@ public class LoanController extends BaseController<Loan, Integer> {
     private static final String ACTIVE_LOANS_PROMPT = ANSI.ITALIC + "Choose a loan to manage." + ANSI.NO_ITALIC;
     private static final String UPDATE_LOAN_PROMPT = ANSI.ITALIC + "Choose a loan to register as returned." + ANSI.NO_ITALIC;
 
+    // Startar menyn för att skapa ett nytt lån.
+    public static String createLoan(Member currentMember) {
+        try {
+            int memberId;
+            if (currentMember.getRole().equals("LIBRARIAN")) {
+                memberId = readPositiveInt("Enter member id: ");
+            } else {
+                memberId = currentMember.getId();
+            }
+            int bookId = readPositiveInt("Enter book id: ");
+            loanService.createLoan(memberId, bookId);
+            return ANSI.BRIGHT_GREEN + "Loan created successfully." + ANSI.DEFAULT_FG;
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ANSI.BRIGHT_RED + e.getMessage() + ANSI.DEFAULT_FG;
+        } catch (SQLException e) {
+            return ANSI.BRIGHT_RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
+        }
+    }
+
+    // Visar listan med aktiva lån för den inloggade medlemmen.
     public static void showActiveLoansMenu(Member currentMember) {
         Menu activeLoansMenu = new Menu();
         activeLoansMenu.setTopTitle("My Loans » View Active Loans");
@@ -38,86 +58,24 @@ public class LoanController extends BaseController<Loan, Integer> {
         }
     }
 
-    public static void showLoanHistoryMenu(Member currentMember) {
-        Menu loanHistoryMenu = new Menu();
-        loanHistoryMenu.setTopTitle("My Loans » View Loan History");
-        loanHistoryMenu.setMainTitle("View Loan History");
-        loanHistoryMenu.setExitOption("Back to My Loans");
-
-        loadLoanHistoryScreen(loanHistoryMenu, currentMember.getId());
-        loanHistoryMenu.showMenu();
-    }
-
-    public static void showUpdateLoanMenu() {
-        Menu updateLoanMenu = new Menu();
-        updateLoanMenu.setTopTitle("Librarian Menu » Manage Loans » Update Loan");
-        updateLoanMenu.setMainTitle("Update Loan");
-        updateLoanMenu.setRenderMode(Menu.RenderMode.LIST);
-        updateLoanMenu.setExitOption("Back to Manage Loans");
-
-        List<ActiveLoanDto> activeLoans = refreshUpdateLoanMenu(updateLoanMenu);
-
-        while (updateLoanMenu.showMenu()) {
-            ActiveLoanDto selectedLoan = activeLoans.get(updateLoanMenu.getChoice() - 1);
-            String feedback = showUpdateLoanActionsMenu(selectedLoan);
-            if (!feedback.isEmpty()) {
-                updateLoanMenu.setTemporaryPrePrompt(feedback);
-            }
-            activeLoans = refreshUpdateLoanMenu(updateLoanMenu);
-        }
-    }
-
-    public static String createLoan(Member currentMember) {
+    // Hämtar aktiva lån via service och uppdaterar listmenyn.
+    private static List<LoanSummaryDto> refreshActiveLoansMenu(Menu menu, Integer memberId) {
         try {
-            int memberId;
-            if (currentMember.getRole().equals("LIBRARIAN")) {
-                memberId = readPositiveInt("Enter member id: ");
-            } else {
-                memberId = currentMember.getId();
-            }
-            int bookId = readPositiveInt("Enter book id: ");
-            loanService.createLoan(memberId, bookId);
-            return ANSI.BRIGHT_GREEN + "Loan created successfully." + ANSI.DEFAULT_FG;
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ANSI.BRIGHT_RED + e.getMessage() + ANSI.DEFAULT_FG;
+            List<LoanSummaryDto> loans = loanService.getActiveLoansByMember(memberId);
+            setListMenuState(
+                    menu,
+                    loans.isEmpty() ? NO_ACTIVE_LOANS : ACTIVE_LOANS_PROMPT,
+                    buildActiveLoanOptionTexts(loans)
+            );
+            return loans;
+        } catch (IllegalArgumentException e) {
+            return setListLoadError(menu, e.getMessage());
         } catch (SQLException e) {
-            return ANSI.BRIGHT_RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
+            return setListLoadError(menu, "Database error: " + e.getMessage());
         }
     }
 
-    private static String registerReturnedLoan(Integer loanId) {
-        try {
-            loanService.returnLoan(loanId);
-            return ANSI.BRIGHT_GREEN + "Loan returned successfully." + ANSI.DEFAULT_FG;
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ANSI.BRIGHT_RED + e.getMessage() + ANSI.DEFAULT_FG;
-        } catch (SQLException e) {
-            return ANSI.BRIGHT_RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
-        }
-    }
-
-    private static String returnLoanForCurrentMember(Member currentMember, Integer loanId) {
-        try {
-            loanService.returnLoanForMember(currentMember.getId(), loanId);
-            return ANSI.BRIGHT_GREEN + "Loan returned successfully." + ANSI.DEFAULT_FG;
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ANSI.BRIGHT_RED + e.getMessage() + ANSI.DEFAULT_FG;
-        } catch (SQLException e) {
-            return ANSI.BRIGHT_RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
-        }
-    }
-
-    private static String extendLoanForCurrentMember(Member currentMember, Integer loanId) {
-        try {
-            loanService.extendLoanForMember(currentMember.getId(), loanId);
-            return ANSI.BRIGHT_GREEN + "Loan extended successfully." + ANSI.DEFAULT_FG;
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ANSI.BRIGHT_RED + e.getMessage() + ANSI.DEFAULT_FG;
-        } catch (SQLException e) {
-            return ANSI.BRIGHT_RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
-        }
-    }
-
+    // Visar åtgärder för ett valt aktivt lån.
     private static String showActiveLoanActionsMenu(Member currentMember, LoanSummaryDto loan) {
         Menu loanActionsMenu = new Menu();
         loanActionsMenu.setTopTitle("My Loans » View Active Loans » Loan #" + loan.id());
@@ -141,83 +99,7 @@ public class LoanController extends BaseController<Loan, Integer> {
         return "";
     }
 
-    private static String showUpdateLoanActionsMenu(ActiveLoanDto loan) {
-        Menu loanActionsMenu = new Menu();
-        loanActionsMenu.setTopTitle("Librarian Menu » Manage Loans » Update Loan » Loan #" + loan.id());
-        loanActionsMenu.setMainTitle("Update Loan");
-        loanActionsMenu.setMenuInfo(buildUpdateLoanActionInfo(loan));
-        loanActionsMenu.setExitOption("Back to Update Loan");
-        loanActionsMenu.addMenuOption("Register Return");
-
-        while (loanActionsMenu.showMenu()) {
-            if (loanActionsMenu.getChoice() == 1) {
-                return registerReturnedLoan(loan.id());
-            }
-        }
-
-        return "";
-    }
-
-    public static void showAllActiveLoans() {
-        Menu allActiveLoansMenu = new Menu();
-        allActiveLoansMenu.setTopTitle("Librarian Menu » Manage Loans » View All Active Loans");
-        allActiveLoansMenu.setMainTitle("View All Active Loans");
-        allActiveLoansMenu.setExitOption("Back to Manage Loans");
-
-        loadAllActiveLoansScreen(allActiveLoansMenu);
-        allActiveLoansMenu.showMenu();
-    }
-
-    private static List<LoanSummaryDto> refreshActiveLoansMenu(Menu menu, Integer memberId) {
-        try {
-            List<LoanSummaryDto> loans = loanService.getActiveLoansByMember(memberId);
-            setListMenuState(
-                    menu,
-                    loans.isEmpty() ? NO_ACTIVE_LOANS : ACTIVE_LOANS_PROMPT,
-                    buildActiveLoanOptionTexts(loans)
-            );
-            return loans;
-        } catch (IllegalArgumentException e) {
-            return setListLoadError(menu, e.getMessage());
-        } catch (SQLException e) {
-            return setListLoadError(menu, "Database error: " + e.getMessage());
-        }
-    }
-
-    private static void loadLoanHistoryScreen(Menu menu, Integer memberId) {
-        try {
-            List<LoanHistoryDto> loans = loanService.getLoanHistoryByMember(memberId);
-            menu.setMenuInfo(loans.isEmpty() ? NO_LOAN_HISTORY : String.join("\n", buildLoanHistoryLines(loans)));
-        } catch (IllegalArgumentException e) {
-            menu.setMenuInfo(ANSI.RED + e.getMessage() + ANSI.DEFAULT_FG);
-        } catch (SQLException e) {
-            menu.setMenuInfo(ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG);
-        }
-    }
-
-    private static List<ActiveLoanDto> refreshUpdateLoanMenu(Menu menu) {
-        return refreshActiveLoanListMenu(menu, UPDATE_LOAN_PROMPT);
-    }
-
-    private static void loadAllActiveLoansScreen(Menu menu) {
-        try {
-            List<ActiveLoanDto> loans = loanService.getAllActiveLoans();
-            menu.setMenuInfo(loans.isEmpty() ? NO_ACTIVE_LOANS : String.join("\n", buildAllActiveLoanLines(loans)));
-        } catch (SQLException e) {
-            menu.setMenuInfo(ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG);
-        }
-    }
-
-    private static List<ActiveLoanDto> refreshActiveLoanListMenu(Menu menu, String prompt) {
-        try {
-            List<ActiveLoanDto> loans = loanService.getAllActiveLoans();
-            setListMenuState(menu, loans.isEmpty() ? NO_ACTIVE_LOANS : prompt, buildActiveLoanListOptionTexts(loans));
-            return loans;
-        } catch (SQLException e) {
-            return setListLoadError(menu, "Database error: " + e.getMessage());
-        }
-    }
-
+    // Bygger informationsraderna för åtgärdsmenyn för aktiva lån.
     private static String buildActiveLoanActionInfo(LoanSummaryDto loan) {
         return String.join(
                 "\n",
@@ -230,19 +112,7 @@ public class LoanController extends BaseController<Loan, Integer> {
         );
     }
 
-    private static String buildUpdateLoanActionInfo(ActiveLoanDto loan) {
-        return String.join(
-                "\n",
-                Menu.formatDetailLine("Loan ID:", loan.id()),
-                Menu.formatDetailLine("Book Title:", loan.bookTitle()),
-                Menu.formatDetailLine("Member:", loan.memberName()),
-                Menu.formatDetailLine("Due:", loan.dueDate()),
-                Menu.formatDetailLine("Status:", formatActiveStatusText(loan.overdue())),
-                "",
-                ANSI.ITALIC + "Choose a number to update this loan." + ANSI.NO_ITALIC
-        );
-    }
-
+    // Formaterar de aktiva lånen till valbara rader i listmenyn.
     private static ArrayList<String> buildActiveLoanOptionTexts(List<LoanSummaryDto> loans) {
         ArrayList<String> optionTexts = new ArrayList<>();
 
@@ -257,20 +127,54 @@ public class LoanController extends BaseController<Loan, Integer> {
         return optionTexts;
     }
 
-    private static ArrayList<String> buildActiveLoanListOptionTexts(List<ActiveLoanDto> loans) {
-        ArrayList<String> optionTexts = new ArrayList<>();
-
-        for (ActiveLoanDto loan : loans) {
-            optionTexts.add(Menu.formatListColumns(
-                    loans.size(),
-                    loan.bookTitle() + " | " + loan.memberName(),
-                    formatActiveLoanRightText(loan.overdue(), loan.dueDate().toString())
-            ));
+    // Returnerar ett aktivt lån för den inloggade medlemmen.
+    private static String returnLoanForCurrentMember(Member currentMember, Integer loanId) {
+        try {
+            loanService.returnLoanForMember(currentMember.getId(), loanId);
+            return ANSI.BRIGHT_GREEN + "Loan returned successfully." + ANSI.DEFAULT_FG;
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ANSI.BRIGHT_RED + e.getMessage() + ANSI.DEFAULT_FG;
+        } catch (SQLException e) {
+            return ANSI.BRIGHT_RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
         }
-
-        return optionTexts;
     }
 
+    // Förlänger ett aktivt lån för den inloggade medlemmen.
+    private static String extendLoanForCurrentMember(Member currentMember, Integer loanId) {
+        try {
+            loanService.extendLoanForMember(currentMember.getId(), loanId);
+            return ANSI.BRIGHT_GREEN + "Loan extended successfully." + ANSI.DEFAULT_FG;
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ANSI.BRIGHT_RED + e.getMessage() + ANSI.DEFAULT_FG;
+        } catch (SQLException e) {
+            return ANSI.BRIGHT_RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
+        }
+    }
+
+    // Visar historikskärmen för den inloggade medlemmen.
+    public static void showLoanHistoryMenu(Member currentMember) {
+        Menu loanHistoryMenu = new Menu();
+        loanHistoryMenu.setTopTitle("My Loans » View Loan History");
+        loanHistoryMenu.setMainTitle("View Loan History");
+        loanHistoryMenu.setExitOption("Back to My Loans");
+
+        loadLoanHistoryScreen(loanHistoryMenu, currentMember.getId());
+        loanHistoryMenu.showMenu();
+    }
+
+    // Hämtar lånehistoriken via service och fyller menyn med innehåll.
+    private static void loadLoanHistoryScreen(Menu menu, Integer memberId) {
+        try {
+            List<LoanHistoryDto> loans = loanService.getLoanHistoryByMember(memberId);
+            menu.setMenuInfo(loans.isEmpty() ? NO_LOAN_HISTORY : String.join("\n", buildLoanHistoryLines(loans)));
+        } catch (IllegalArgumentException e) {
+            menu.setMenuInfo(ANSI.RED + e.getMessage() + ANSI.DEFAULT_FG);
+        } catch (SQLException e) {
+            menu.setMenuInfo(ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG);
+        }
+    }
+
+    // Formaterar varje historikpost till rader som passar informationsvyn.
     private static ArrayList<String> buildLoanHistoryLines(List<LoanHistoryDto> loans) {
         ArrayList<String> lines = new ArrayList<>();
 
@@ -287,6 +191,28 @@ public class LoanController extends BaseController<Loan, Integer> {
         return lines;
     }
 
+    // Visar bibliotekariens vy över alla aktiva lån.
+    public static void showAllActiveLoans() {
+        Menu allActiveLoansMenu = new Menu();
+        allActiveLoansMenu.setTopTitle("Librarian Menu » Manage Loans » View All Active Loans");
+        allActiveLoansMenu.setMainTitle("View All Active Loans");
+        allActiveLoansMenu.setExitOption("Back to Manage Loans");
+
+        loadAllActiveLoansScreen(allActiveLoansMenu);
+        allActiveLoansMenu.showMenu();
+    }
+
+    // Hämtar alla aktiva lån och visar dem i informationsvyn.
+    private static void loadAllActiveLoansScreen(Menu menu) {
+        try {
+            List<ActiveLoanDto> loans = loanService.getAllActiveLoans();
+            menu.setMenuInfo(loans.isEmpty() ? NO_ACTIVE_LOANS : String.join("\n", buildAllActiveLoanLines(loans)));
+        } catch (SQLException e) {
+            menu.setMenuInfo(ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG);
+        }
+    }
+
+    // Formaterar alla aktiva lån till rader för bibliotekariens översikt.
     private static ArrayList<String> buildAllActiveLoanLines(List<ActiveLoanDto> loans) {
         ArrayList<String> lines = new ArrayList<>();
 
@@ -306,6 +232,102 @@ public class LoanController extends BaseController<Loan, Integer> {
         return lines;
     }
 
+    // Visar listan med lån som bibliotekarien kan uppdatera.
+    public static void showUpdateLoanMenu() {
+        Menu updateLoanMenu = new Menu();
+        updateLoanMenu.setTopTitle("Librarian Menu » Manage Loans » Update Loan");
+        updateLoanMenu.setMainTitle("Update Loan");
+        updateLoanMenu.setRenderMode(Menu.RenderMode.LIST);
+        updateLoanMenu.setExitOption("Back to Manage Loans");
+
+        List<ActiveLoanDto> activeLoans = refreshUpdateLoanMenu(updateLoanMenu);
+
+        while (updateLoanMenu.showMenu()) {
+            ActiveLoanDto selectedLoan = activeLoans.get(updateLoanMenu.getChoice() - 1);
+            String feedback = showUpdateLoanActionsMenu(selectedLoan);
+            if (!feedback.isEmpty()) {
+                updateLoanMenu.setTemporaryPrePrompt(feedback);
+            }
+            activeLoans = refreshUpdateLoanMenu(updateLoanMenu);
+        }
+    }
+
+    // Laddar om listan med aktiva lån för uppdateringsmenyn.
+    private static List<ActiveLoanDto> refreshUpdateLoanMenu(Menu menu) {
+        return refreshActiveLoanListMenu(menu, UPDATE_LOAN_PROMPT);
+    }
+
+    // Hämtar aktiva lån och bygger listmenyn för bibliotekarien.
+    private static List<ActiveLoanDto> refreshActiveLoanListMenu(Menu menu, String prompt) {
+        try {
+            List<ActiveLoanDto> loans = loanService.getAllActiveLoans();
+            setListMenuState(menu, loans.isEmpty() ? NO_ACTIVE_LOANS : prompt, buildActiveLoanListOptionTexts(loans));
+            return loans;
+        } catch (SQLException e) {
+            return setListLoadError(menu, "Database error: " + e.getMessage());
+        }
+    }
+
+    // Visar åtgärdsmenyn för ett lån som bibliotekarien valt.
+    private static String showUpdateLoanActionsMenu(ActiveLoanDto loan) {
+        Menu loanActionsMenu = new Menu();
+        loanActionsMenu.setTopTitle("Librarian Menu » Manage Loans » Update Loan » Loan #" + loan.id());
+        loanActionsMenu.setMainTitle("Update Loan");
+        loanActionsMenu.setMenuInfo(buildUpdateLoanActionInfo(loan));
+        loanActionsMenu.setExitOption("Back to Update Loan");
+        loanActionsMenu.addMenuOption("Register Return");
+
+        while (loanActionsMenu.showMenu()) {
+            if (loanActionsMenu.getChoice() == 1) {
+                return registerReturnedLoan(loan.id());
+            }
+        }
+
+        return "";
+    }
+
+    // Bygger informationsraderna för bibliotekariens uppdateringsmeny.
+    private static String buildUpdateLoanActionInfo(ActiveLoanDto loan) {
+        return String.join(
+                "\n",
+                Menu.formatDetailLine("Loan ID:", loan.id()),
+                Menu.formatDetailLine("Book Title:", loan.bookTitle()),
+                Menu.formatDetailLine("Member:", loan.memberName()),
+                Menu.formatDetailLine("Due:", loan.dueDate()),
+                Menu.formatDetailLine("Status:", formatActiveStatusText(loan.overdue())),
+                "",
+                ANSI.ITALIC + "Choose a number to update this loan." + ANSI.NO_ITALIC
+        );
+    }
+
+    // Formaterar aktiva lån till valbara rader i bibliotekariens listmeny.
+    private static ArrayList<String> buildActiveLoanListOptionTexts(List<ActiveLoanDto> loans) {
+        ArrayList<String> optionTexts = new ArrayList<>();
+
+        for (ActiveLoanDto loan : loans) {
+            optionTexts.add(Menu.formatListColumns(
+                    loans.size(),
+                    loan.bookTitle() + " | " + loan.memberName(),
+                    formatActiveLoanRightText(loan.overdue(), loan.dueDate().toString())
+            ));
+        }
+
+        return optionTexts;
+    }
+
+    // Registrerar ett återlämnat lån från bibliotekariens meny.
+    private static String registerReturnedLoan(Integer loanId) {
+        try {
+            loanService.returnLoan(loanId);
+            return ANSI.BRIGHT_GREEN + "Loan returned successfully." + ANSI.DEFAULT_FG;
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ANSI.BRIGHT_RED + e.getMessage() + ANSI.DEFAULT_FG;
+        } catch (SQLException e) {
+            return ANSI.BRIGHT_RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG;
+        }
+    }
+
+    // Bygger listan med menyval där första valet alltid är exit.
     private static ArrayList<String> buildListMenuOptions(Menu menu, List<String> optionTexts) {
         ArrayList<String> menuOptions = new ArrayList<>();
         menuOptions.add(menu.getMenuOptions().getFirst());
@@ -313,28 +335,33 @@ public class LoanController extends BaseController<Loan, Integer> {
         return menuOptions;
     }
 
+    // Uppdaterar både menyns informationstext och dess valbara rader.
     private static void setListMenuState(Menu menu, String menuInfo, List<String> optionTexts) {
         menu.setMenuInfo(menuInfo);
         menu.setMenuOptions(buildListMenuOptions(menu, optionTexts));
     }
 
+    // Visar ett fel i listmenyn och returnerar en tom lista.
     private static <T> List<T> setListLoadError(Menu menu, String message) {
         setListMenuState(menu, ANSI.RED + message + ANSI.DEFAULT_FG, List.of());
         return List.of();
     }
 
+    // Formaterar högerspalten för aktiva lån med förfallodatum eller overdue-status.
     private static String formatActiveLoanRightText(boolean overdue, String dueDate) {
         return overdue
                 ? ANSI.BRIGHT_RED + "[OVERDUE]" + ANSI.DEFAULT_FG
                 : "due: " + dueDate;
     }
 
+    // Formaterar statusfältet för ett aktivt lån.
     private static String formatActiveStatusText(boolean overdue) {
         return overdue
                 ? ANSI.BRIGHT_RED + "Overdue" + ANSI.DEFAULT_FG
                 : ANSI.BRIGHT_GREEN + "Active" + ANSI.DEFAULT_FG;
     }
 
+    // Läser in ett positivt heltal från användaren.
     private static int readPositiveInt(String prompt) {
         while (true) {
             System.out.print(prompt);

@@ -68,6 +68,7 @@ public class LoanService extends BaseService<Loan, Integer> {
         return result;
     }
 
+    // Hämtar medlemmens avslutade lån och mappar dem till DTO:er för historikvyn.
     public List<LoanHistoryDto> getLoanHistoryByMember(Integer memberId) throws SQLException {
         validateMemberExists(memberId);
 
