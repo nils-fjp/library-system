@@ -227,9 +227,11 @@ public class Menu {
             String bottomText = isPagingActive() ? NEXT_PAGE_TEXT : "";
 
             System.out.print(CLEAR_SCREEN);
-            drawTopBorderRow(this.topTitle);
-            drawCenteredBoxRow(safe(this.mainTitle).toUpperCase());
-            drawBottomBorderRow();
+            if (!safe(this.topTitle).isEmpty() || !safe(this.mainTitle).isEmpty()) {
+                drawTopBorderRow(this.topTitle);
+                drawCenteredBoxRow(safe(this.mainTitle).toUpperCase());
+                drawBottomBorderRow();
+            }
 
             if (this.renderMode == RenderMode.LIST) {
                 drawListDisplayArea();
