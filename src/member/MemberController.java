@@ -112,8 +112,7 @@ public class MemberController extends BaseController<Member, Integer> {
         MemberService service = new MemberService();
 
         try {
-            //service.validateLibrarianAccess(currentMember);
-            List<MemberAdminDto> members = service.getAllForAdminView();
+            List<MemberAdminDto> members = service.getAllForAdminView(currentMember);
 
             if (members.isEmpty()) {
                 ConsolePrinter.printError("No readers found.");
@@ -133,7 +132,7 @@ public class MemberController extends BaseController<Member, Integer> {
         MemberService service = new MemberService();
 
         try {
-            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
             if (optionalMember.isEmpty()) {
                 ConsolePrinter.printError("Member not found.");
@@ -159,7 +158,7 @@ public class MemberController extends BaseController<Member, Integer> {
             //service.validateLibrarianAccess(currentMember);
 
             CreateMemberDto createDto = buildCreateMemberFromInput();
-            Optional<MemberAdminDto> createdDto = service.createMemberByAdmin(createDto);
+            Optional<MemberAdminDto> createdDto = service.createMemberByAdmin(currentMember,createDto);
 
             if (createdDto.isEmpty()) {
                 ConsolePrinter.printError("Member was not created.");
@@ -180,7 +179,7 @@ public class MemberController extends BaseController<Member, Integer> {
         MemberService service = new MemberService();
 
         try {
-            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
             if (optionalMember.isEmpty()) {
                 ConsolePrinter.printError("Member not found.");
@@ -204,7 +203,7 @@ public class MemberController extends BaseController<Member, Integer> {
             printAdminMember(currentDto);
 
             UpdateMemberDto updateDto = buildUpdatedMemberFromInput(currentDto);
-            Optional<MemberAdminDto> updatedDto = service.updateMemberByAdmin(updateDto);
+            Optional<MemberAdminDto> updatedDto = service.updateMemberByAdmin(currentMember, updateDto);
 
             if (updatedDto.isEmpty()) {
                 ConsolePrinter.printError("Member was not updated.");
@@ -225,7 +224,7 @@ public class MemberController extends BaseController<Member, Integer> {
         MemberService memberService = new MemberService();
 
         try {
-            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(memberService);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(memberService, currentMember);
 
             if (optionalMember.isEmpty()) {
                 ConsolePrinter.printError("Member not found.");
@@ -242,6 +241,7 @@ public class MemberController extends BaseController<Member, Integer> {
     }
 
     public static void deleteMemberByAdmin(Member currentMember, MemberAdminDto targetMember) {
+
         MemberService memberService = new MemberService();
         LoanService loanService = new LoanService();
 
@@ -265,7 +265,7 @@ public class MemberController extends BaseController<Member, Integer> {
                 return;
             }
 
-            boolean deleted = memberService.deleteMemberByAdmin(targetMember.getId());
+            boolean deleted = memberService.deleteMemberByAdmin(currentMember, targetMember.getId());
 
             if (!deleted) {
                 ConsolePrinter.printError("Member was not deleted.");
@@ -287,7 +287,7 @@ public class MemberController extends BaseController<Member, Integer> {
         MemberService service = new MemberService();
 
         try {
-            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
             if (optionalMember.isEmpty()) {
                 ConsolePrinter.printError("Member not found.");
@@ -383,12 +383,12 @@ public class MemberController extends BaseController<Member, Integer> {
         return dto;
     }
 
-    private static Optional<MemberAdminDto> findMemberByKeyword(MemberService service) throws SQLException {
+    private static Optional<MemberAdminDto> findMemberByKeyword(MemberService service, Member currentMember) throws SQLException {
         ConsolePrinter.printPrompt(MemberConsoleView.memberSearchPromptLine1());
         ConsolePrinter.printPrompt(MemberConsoleView.memberSearchPromptLine2());
         String keyword = promptRequired("Enter");
 
-        List<MemberAdminDto> foundMembers = service.searchMembersForAdmin(keyword);
+        List<MemberAdminDto> foundMembers = service.searchMembersForAdmin(currentMember, keyword);
 
         if (foundMembers.isEmpty()) {
             return Optional.empty();

@@ -37,7 +37,8 @@ public class MemberService extends BaseService<Member, Integer> {
     }
 
     //get
-    public List<MemberAdminDto> getAllForAdminView() throws SQLException {
+    public List<MemberAdminDto> getAllForAdminView(Member currentMember) throws SQLException {
+        validateLibrarianAccess(currentMember);
         List<Member> members = memberRepository.getAll();
         List<MemberAdminDto> result = new ArrayList<>();
 
@@ -47,7 +48,8 @@ public class MemberService extends BaseService<Member, Integer> {
 
         return result;
     }
-    public List<MemberAdminDto> searchMembersForAdmin(String keyword) throws SQLException {
+    public List<MemberAdminDto> searchMembersForAdmin(Member currentMember, String keyword) throws SQLException {
+        validateLibrarianAccess(currentMember);
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new IllegalArgumentException("Search keyword cannot be empty.");
         }
@@ -63,7 +65,8 @@ public class MemberService extends BaseService<Member, Integer> {
     }
 
     //update
-    public Optional<MemberAdminDto> updateMemberByAdmin(UpdateMemberDto dto) throws SQLException {
+    public Optional<MemberAdminDto> updateMemberByAdmin(Member currentMember,UpdateMemberDto dto) throws SQLException {
+        validateLibrarianAccess(currentMember);
         MemberValidator.validateUpdateMemberAdminDto(dto);
 
         Optional<Member> optionalMember = memberRepository.getById(dto.getId());
@@ -140,7 +143,8 @@ public class MemberService extends BaseService<Member, Integer> {
     }
 
     //create
-    public Optional<MemberAdminDto> createMemberByAdmin(CreateMemberDto dto) throws SQLException{
+    public Optional<MemberAdminDto> createMemberByAdmin(Member currentMember, CreateMemberDto dto) throws SQLException{
+        validateLibrarianAccess(currentMember);
         MemberValidator.validateCreateMemberDto(dto);
         Optional<Member> optionalMember = memberRepository.getByEmail(dto.getEmail());
         if (optionalMember.isPresent()){
@@ -156,8 +160,10 @@ public class MemberService extends BaseService<Member, Integer> {
     }
 
     //delete
-    public boolean deleteMemberByAdmin(Integer memberId) throws SQLException {
+    public boolean deleteMemberByAdmin(Member currentMember, Integer memberId) throws SQLException {
+        validateLibrarianAccess(currentMember);
         MemberValidator.validateId(memberId);
+
 
         Optional<Member> optionalMember = memberRepository.getById(memberId);
         if (optionalMember.isEmpty()) {
