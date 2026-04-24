@@ -1,22 +1,8 @@
 package member;
 
-import java.time.LocalDate;
 
 public class MemberMapper {
 
-    //Maps Member to MemberProfileDto for reader view
-    // =========================================================
-    // Reader actions - 3. View my profile
-    //                        --> 1. View my profile
-    // =========================================================
-    // 1 showCurrentMemberProfile (MemberController)
-    //    -> 2 getProfileById (MemberService)
-    //       -> 3 validateId (MemberService)
-    //          -> 4 validateId (BaseService)
-    //       -> 5 getById (MemberRepository)
-    //       -> 6 toProfileDto (MemberMapper) +
-    //    -> 7 printProfileMember (MemberController)
-    //    -> 8 printError (ConsolePrinter)
     public MemberProfileDto toProfileDto (Member member) {
         return new MemberProfileDto(
                 member.getFirstName(),

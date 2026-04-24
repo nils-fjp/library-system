@@ -10,14 +10,16 @@ import static ui.Constants.*;
 public class Menu {
     private static final String NEXT_PAGE_TEXT = BOLD + "Next [" + BRIGHT_BLACK + "Enter" + DEFAULT_FG + "]" + NO_BOLD;
     private static final Scanner scanner = new Scanner(System.in);
+    private int currentPage;
     private ArrayList<String> menuOptions;
     private int choice;
-    private int currentOptionsPage;
+    private String temporaryPrePrompt;
     private String topTitle;
     private String mainTitle;
     private String menuInfo;
     private String exitOption;
     private String prePrompt;
+    private RenderMode renderMode;
     private String promptLine;
 
     public Menu() {
@@ -27,9 +29,12 @@ public class Menu {
         this.exitOption = "Back";
         this.menuOptions = new ArrayList<>();
         this.menuOptions.addFirst(this.exitOption);
-        this.currentOptionsPage = 0;
+        this.choice = 0;
+        this.currentPage = 0;
         this.prePrompt = "Type a number and press enter...";
+        this.temporaryPrePrompt = "";
         this.promptLine = "Enter: ";
+        this.renderMode = RenderMode.STANDARD;
     }
 
     public Menu(
@@ -51,9 +56,17 @@ public class Menu {
             this.menuOptions = menuOptions;
             this.menuOptions.addFirst(this.exitOption);
         }
-        this.currentOptionsPage = 0;
+        this.choice = 0;
+        this.currentPage = 0;
         this.prePrompt = prePrompt;
+        this.temporaryPrePrompt = "";
         this.promptLine = promptLine;
+        this.renderMode = RenderMode.STANDARD;
+    }
+
+    private static void drawBlankBoxRow() {
+        String centerText = "│" + " ".repeat(INNER_WIDTH) + "│";
+        System.out.print(centerText.indent(MARGIN));
     }
 
     private static void drawTopBorderRow(String topText) {
@@ -68,58 +81,80 @@ public class Menu {
         System.out.print(topBorder.indent(MARGIN));
     }
 
-    private static void drawBlankRow() {
-        String centerText = "│" + " ".repeat(INNER_WIDTH) + "│";
-        System.out.print(centerText.indent(MARGIN));
-    }
-
-    private static void drawCenteredRow(String centerText) {
+    private static void drawCenteredBoxRow(String centerText) {
         centerText = safe(centerText);
-        if (!centerText.isEmpty()) {
-            centerText = "│" + center(BOLD + centerText + NO_BOLD, INNER_WIDTH) + "│";
-        } else {
-            drawBlankRow();
+        if (centerText.isEmpty()) {
+            drawBlankBoxRow();
             return;
         }
-        System.out.print(centerText.indent(MARGIN));
+
+        System.out.print(("│" + center(BOLD + centerText + NO_BOLD, INNER_WIDTH) + "│").indent(MARGIN));
     }
 
     private static void drawBottomBorderRow() {
-        String bottomBorder = "╰" + "─".repeat(INNER_WIDTH) + "╯";
-        System.out.print(bottomBorder.indent(MARGIN));
+        System.out.print(("╰" + "─".repeat(INNER_WIDTH) + "╯").indent(MARGIN));
     }
 
     private static void drawBottomBorderRow(String bottomText) {
         bottomText = safe(bottomText);
-        if (!bottomText.isEmpty()) {
-            bottomText = fit(bottomText, INNER_WIDTH - 3);
-            String bottomFlex = "─".repeat(Math.max(0, INNER_WIDTH - visibleLength(bottomText) - 3));
-            bottomText = "╰" + bottomFlex + " " + bottomText + " ─╯";
-        } else {
+        if (bottomText.isEmpty()) {
             drawBottomBorderRow();
             return;
         }
-        System.out.print(bottomText.indent(MARGIN));
+
+        bottomText = fit(bottomText, INNER_WIDTH - 3);
+        String bottomFlex = "─".repeat(Math.max(0, INNER_WIDTH - visibleLength(bottomText) - 3));
+        System.out.print(("╰" + bottomFlex + " " + bottomText + " ─╯").indent(MARGIN));
     }
 
     private static void drawSeparatorRow() {
-        String separator = "├" + "─".repeat(INNER_WIDTH) + "┤";
-        System.out.print(separator.indent(MARGIN));
-    }
-
-    private static void drawOptionRow(int optionNumber, String optionText) {
-        optionText = safe(optionText);
-        String optionColor = optionNumber < 1 ? BRIGHT_BLACK : YELLOW;
-        String optionPrefix = optionNumber + ". ";
-        int optionTextWidth = Math.max(0, INNER_WIDTH - (optionPrefix.length() + PADDING * 2));
-        optionText = padRight(optionText, optionTextWidth);
-        optionText = "│" + " ".repeat(PADDING) + optionColor + optionPrefix + DEFAULT_FG + optionText + " ".repeat(
-                PADDING) + "│";
-        System.out.print(optionText.indent(MARGIN));
+        System.out.print(("├" + "─".repeat(INNER_WIDTH) + "┤").indent(MARGIN));
     }
 
     public static String formatInfoColumns(String leftText, String rightText) {
-        return formatTwoColumnLine(leftText, rightText, INNER_WIDTH);
+        return formatInfoColumns(leftText, rightText, INNER_WIDTH);
+    }
+
+    public static String formatInfoColumns(String leftText, String rightText, int width) {
+        return formatTwoColumnLine(leftText, rightText, width);
+    }
+
+    public static String formatListColumns(int optionCount, String leftText, String rightText) {
+        int contentWidth = Math.max(0, INNER_WIDTH - (String.valueOf(Math.max(1, optionCount)).length() + 2));
+        return formatInfoColumns(leftText, rightText, contentWidth);
+    }
+
+    public static String formatDetailLine(String label, Object value) {
+        return formatInfoColumns(label, value == null ? "" : value.toString());
+    }
+
+    private void drawOptionRow(int optionNumber, String optionText) {
+        String optionColor = optionNumber < 1 ? BRIGHT_BLACK : YELLOW;
+        String optionPrefix = buildOptionPrefix(optionNumber);
+        int optionTextWidth = Math.max(0, INNER_WIDTH - (optionPrefix.length() + PADDING * 2));
+        String line = "│"
+                + " ".repeat(PADDING)
+                + optionColor + optionPrefix + DEFAULT_FG
+                + padRight(safe(optionText), optionTextWidth)
+                + " ".repeat(PADDING)
+                + "│";
+        System.out.print(line.indent(MARGIN));
+    }
+
+    private void drawDisplayRow(String line, boolean centered) {
+        line = safe(line);
+        if (line.isEmpty()) {
+            System.out.print((" ".repeat(INNER_WIDTH)).indent(MARGIN + 1));
+            return;
+        }
+
+        String renderedLine = centered ? center(line, INNER_WIDTH) : padRight(line, INNER_WIDTH);
+        System.out.print(renderedLine.indent(MARGIN + 1));
+    }
+
+    private void drawListRow(int optionNumber, String optionText) {
+        String line = padRight(buildOptionPrefix(optionNumber) + safe(optionText), INNER_WIDTH);
+        System.out.print(line.indent(MARGIN + 1));
     }
 
     public ArrayList<String> getMenuOptions() {
@@ -128,7 +163,12 @@ public class Menu {
 
     public void setMenuOptions(ArrayList<String> menuOptions) {
         this.menuOptions = menuOptions;
-        normalizeCurrentOptionsPage();
+        normalizeCurrentPage();
+    }
+
+    public void setMenuInfo(String menuInfo) {
+        this.menuInfo = menuInfo;
+        normalizeCurrentPage();
     }
 
     public int getChoice() {
@@ -143,8 +183,8 @@ public class Menu {
         this.mainTitle = mainTitle;
     }
 
-    public void setMenuInfo(String menuInfo) {
-        this.menuInfo = menuInfo;
+    public void setTemporaryPrePrompt(String temporaryPrePrompt) {
+        this.temporaryPrePrompt = safe(temporaryPrePrompt);
     }
 
     public void setExitOption(String exitOption) {
@@ -156,111 +196,173 @@ public class Menu {
         this.prePrompt = prePrompt;
     }
 
+    public void setRenderMode(RenderMode renderMode) {
+        this.renderMode = renderMode;
+        normalizeCurrentPage();
+    }
+
     public void setPromptLine(String promptLine) {
         this.promptLine = promptLine;
     }
 
     public void addMenuOption(String menuOption) {
         this.menuOptions.add(menuOption);
-    }
-
-    private void drawInfoRow(String line, boolean centered) {
-        line = safe(line);
-
-        if (line.isEmpty()) {
-            System.out.print((" " + " ".repeat(INNER_WIDTH) + " ").indent(MARGIN));
-            return;
-        }
-
-        if (centered) {
-            line = " " + center(line, INNER_WIDTH) + " ";
-        } else {
-            line = " " + padRight(line, INNER_WIDTH) + " ";
-        }
-
-        System.out.print(line.indent(MARGIN));
+        normalizeCurrentPage();
     }
 
     public void drawPrePrompt(String prePrompt) {
         prePrompt = safe(prePrompt);
-        System.out.println(" ".repeat(MARGIN + 1) + BRIGHT_BLACK + ITALIC + prePrompt + NO_ITALIC + DEFAULT_FG);
+        System.out.println((" ".repeat(MARGIN + 1) + BRIGHT_BLACK + ITALIC + prePrompt + NO_ITALIC + DEFAULT_FG));
     }
 
     public void drawPromptLine(String promptLine) {
-        promptLine = safe(promptLine);
-        System.out.print(" ".repeat(MARGIN + 1) + promptLine);
+        System.out.print(" ".repeat(MARGIN + 1) + safe(promptLine));
     }
 
     public boolean showMenu() {
-        String defaultPrePrompt = safe(this.prePrompt);
-
         boolean showing = true;
+
         while (showing) {
-            normalizeCurrentOptionsPage();
-            int selectableOptionCount = this.menuOptions.size() - 1;
-            int optionsPageCount = Math.max(1, (selectableOptionCount + OPTIONS_PER_PAGE - 1) / OPTIONS_PER_PAGE);
-            String bottomText = selectableOptionCount > OPTIONS_PER_PAGE ? NEXT_PAGE_TEXT : "";
-            int startIndex = 1 + this.currentOptionsPage * OPTIONS_PER_PAGE;
-            int endExclusive = Math.min(this.menuOptions.size(), startIndex + OPTIONS_PER_PAGE);
+            normalizeCurrentPage();
+            String bottomText = isPagingActive() ? NEXT_PAGE_TEXT : "";
 
             System.out.print(CLEAR_SCREEN);
             drawTopBorderRow(this.topTitle);
-            drawCenteredRow(safe(this.mainTitle).toUpperCase());
+            drawCenteredBoxRow(safe(this.mainTitle).toUpperCase());
             drawBottomBorderRow();
 
-            String[] infoLines = safe(this.menuInfo).split("\\R", -1);
-            if (infoLines.length == 1) {
-                drawInfoRow(infoLines[0], true);
+            if (this.renderMode == RenderMode.LIST) {
+                drawListDisplayArea();
+                drawTopBorderRow();
+                drawCenteredBoxRow(safe(this.menuInfo));
+                drawSeparatorRow();
+                drawOptionRow(0, this.exitOption);
+                drawBottomBorderRow(bottomText);
             } else {
-                for (String line : infoLines) {
-                    drawInfoRow(line, false);
+                drawStandardDisplayArea();
+                drawTopBorderRow();
+                for (int i = 1; i < this.menuOptions.size(); i++) {
+                    drawOptionRow(i, this.menuOptions.get(i));
                 }
+                drawSeparatorRow();
+                drawOptionRow(0, this.exitOption);
+                drawBottomBorderRow(bottomText);
             }
 
-            drawTopBorderRow();
-            if (this.currentOptionsPage > 0) {
-                bottomText = NEXT_PAGE_TEXT;
-                drawCenteredRow("Select an item to view details or see more options.");
-            }
-            for (int i = startIndex; i < endExclusive; i++) {
-                drawOptionRow(i, this.menuOptions.get(i));
-            }
-            drawSeparatorRow();
-            drawOptionRow(0, this.exitOption);
-            drawBottomBorderRow(bottomText);
-            drawPrePrompt(this.prePrompt);
+            drawPrePrompt(this.temporaryPrePrompt.isEmpty() ? this.prePrompt : this.temporaryPrePrompt);
             drawPromptLine(this.promptLine);
 
             String input = scanner.nextLine().trim();
-            if (input.isEmpty() && selectableOptionCount > OPTIONS_PER_PAGE) {
-                setPrePrompt(defaultPrePrompt);
-                this.currentOptionsPage = (this.currentOptionsPage + 1) % optionsPageCount;
+            if (input.isEmpty() && isPagingActive()) {
+                this.temporaryPrePrompt = "";
+                this.currentPage = (this.currentPage + 1) % getPageCount();
                 continue;
             }
 
             try {
                 int parsedInput = Integer.parseInt(input);
-                if (parsedInput >= 0 && parsedInput < menuOptions.size()) {
+                if (parsedInput >= 0 && parsedInput < this.menuOptions.size()) {
                     choice = parsedInput;
-                    setPrePrompt(defaultPrePrompt);
+                    this.temporaryPrePrompt = "";
                     showing = parsedInput != 0;
                     break;
                 }
             } catch (NumberFormatException e) {
-                setPrePrompt(BRIGHT_RED + "Invalid input!" + BRIGHT_BLACK + " Please enter a valid number." + NO_ITALIC + DEFAULT_FG);
+                this.temporaryPrePrompt = BRIGHT_RED + "Invalid input!" + BRIGHT_BLACK + " Please enter a valid number." + NO_ITALIC + DEFAULT_FG;
                 continue;
             }
 
-            setPrePrompt(BRIGHT_RED + "Invalid input!" + BRIGHT_BLACK + " Please enter a valid number." + NO_ITALIC + DEFAULT_FG);
+            this.temporaryPrePrompt = BRIGHT_RED + "Invalid input!" + BRIGHT_BLACK + " Please enter a valid number." + NO_ITALIC + DEFAULT_FG;
         }
+
         return showing;
     }
 
-    private void normalizeCurrentOptionsPage() {
-        int lastOptionsPage = 0;
-        if (this.menuOptions.size() > 1) {
-            lastOptionsPage = (this.menuOptions.size() - 2) / OPTIONS_PER_PAGE;
+    private void drawStandardDisplayArea() {
+        String[] infoLines = getInfoLines();
+        int displayRows = getDisplayRowCount();
+        int start = this.currentPage * displayRows;
+        int end = Math.min(infoLines.length, start + displayRows);
+        boolean centered = infoLines.length == 1;
+        int drawnRows = 0;
+
+        for (int i = start; i < end; i++) {
+            drawDisplayRow(infoLines[i], centered);
+            drawnRows++;
         }
-        this.currentOptionsPage = Math.min(this.currentOptionsPage, lastOptionsPage);
+
+        while (drawnRows < displayRows) {
+            drawDisplayRow("", false);
+            drawnRows++;
+        }
+    }
+
+    private void drawListDisplayArea() {
+        int displayRows = getDisplayRowCount();
+        int startIndex = 1 + this.currentPage * displayRows;
+        int endExclusive = Math.min(this.menuOptions.size(), startIndex + displayRows);
+        int drawnRows = 0;
+
+        for (int i = startIndex; i < endExclusive; i++) {
+            drawListRow(i, this.menuOptions.get(i));
+            drawnRows++;
+        }
+
+        while (drawnRows < displayRows) {
+            drawDisplayRow("", false);
+            drawnRows++;
+        }
+    }
+
+    private String[] getInfoLines() {
+        return safe(this.menuInfo).split("\\R", -1);
+    }
+
+    private int getDisplayRowCount() {
+        if (this.renderMode == RenderMode.LIST) {
+            return OPTIONS_PER_PAGE;
+        }
+
+        return Math.max(0, MENU_BODY_ROWS - getStandardFooterRowCount());
+    }
+
+    private int getPageCount() {
+        int displayRowCount = getDisplayRowCount();
+        if (displayRowCount <= 0) {
+            return 1;
+        }
+
+        if (this.renderMode == RenderMode.LIST) {
+            int itemCount = Math.max(0, this.menuOptions.size() - 1);
+            return Math.max(1, (itemCount + displayRowCount - 1) / displayRowCount);
+        }
+
+        String[] infoLines = getInfoLines();
+        return Math.max(1, (infoLines.length + displayRowCount - 1) / displayRowCount);
+    }
+
+    private boolean isPagingActive() {
+        return getPageCount() > 1;
+    }
+
+    private int getStandardFooterRowCount() {
+        return this.menuOptions.size() + 3;
+    }
+
+    private void normalizeCurrentPage() {
+        this.currentPage = Math.min(this.currentPage, getPageCount() - 1);
+    }
+
+    private String buildOptionPrefix(int optionNumber) {
+        return padRight(optionNumber + ".", getOptionPrefixWidth() - 1) + " ";
+    }
+
+    private int getOptionPrefixWidth() {
+        return String.valueOf(Math.max(0, this.menuOptions.size() - 1)).length() + 2;
+    }
+
+    public enum RenderMode {
+        STANDARD,
+        LIST
     }
 }

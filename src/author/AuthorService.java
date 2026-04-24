@@ -12,7 +12,6 @@ public class AuthorService extends BaseService<Author, Integer> {
 
     private final AuthorRepository authorRepository = new AuthorRepository();
 
-
     @Override
     protected BaseRepository<Author, Integer> getRepository() {
         return authorRepository;
@@ -21,41 +20,15 @@ public class AuthorService extends BaseService<Author, Integer> {
     @Override
     protected void validateId(Integer id) {
         super.validateId(id);
-        if (id <= 0) {
-            throw new IllegalArgumentException("Invalid author id.");
-        }
+        AuthorValidator.validateId(id);
     }
 
     public Optional<Author> createAuthor(Member currentMember, Author author) throws SQLException {
         validateLibrarianAccess(currentMember);
-        validateAuthor(author);
+        AuthorValidator.validateAuthor(author);
 
         authorRepository.save(author);
         return authorRepository.getById(author.getId());
-    }
-
-    private void validateAuthor(Author author) {
-        if (author == null) {
-            throw new IllegalArgumentException("Author cannot be null.");
-        }
-
-        if (author.getFirstName() == null || author.getFirstName().trim().isEmpty()) {
-            throw new IllegalArgumentException("First name cannot be empty.");
-        }
-
-        if (author.getLastName() == null || author.getLastName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Last name cannot be empty.");
-        }
-    }
-
-    private void validateLibrarianAccess(Member currentMember) {
-        if (currentMember == null) {
-            throw new IllegalArgumentException("User is not authorized.");
-        }
-
-        if (!"LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
-            throw new IllegalArgumentException("Access denied.");
-        }
     }
 
     public Optional<Author> getAuthorById(Integer id) throws SQLException {
@@ -65,7 +38,7 @@ public class AuthorService extends BaseService<Author, Integer> {
 
     public Optional<Author> updateAuthor(Member currentMember, Author author) throws SQLException {
         validateLibrarianAccess(currentMember);
-        validateAuthor(author);
+        AuthorValidator.validateAuthor(author);
         validateId(author.getId());
 
         Optional<Author> optionalAuthor = authorRepository.getById(author.getId());
@@ -97,11 +70,7 @@ public class AuthorService extends BaseService<Author, Integer> {
     }
 
     public List<Author> searchAuthors(String keyword) throws SQLException {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            throw new IllegalArgumentException("Search keyword cannot be empty.");
-        }
-
-        return authorRepository.search(keyword);
+        AuthorValidator.validateSearchKeyword(keyword);
+        return authorRepository.search(keyword.trim());
     }
-
 }

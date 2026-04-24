@@ -36,9 +36,8 @@ public class CategoryRepository extends BaseRepository<Category, Integer> {
         return categories;
     }
 
-    public void saveBookCategories(Connection connection, int bookId, int categoryId) throws SQLException {
-        String sql = "INSERT INTO book_categories (book_id, category_id) " +
-                "VALUES (?, ?)";
+    public void saveBookCategories(int bookId, int categoryId) throws SQLException {
+        String sql = "INSERT INTO book_categories (book_id, category_id) VALUES (?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, bookId);

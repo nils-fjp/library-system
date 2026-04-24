@@ -3,6 +3,7 @@ package base;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import member.Member;
 
 public abstract class BaseService<T, ID> {
 
@@ -38,21 +39,19 @@ public abstract class BaseService<T, ID> {
         }
     }
 
-    // =========================================================
-    // Reader actions - 3. View my profile
-    //                        --> 1. View my profile
-    // =========================================================
-    // 1 showCurrentMemberProfile (MemberController)
-    //    -> 2 getProfileById (MemberService)
-    //       -> 3 validateId (MemberService)
-    //          -> 4 validateId (BaseService) +
-    //       -> 5 getById (MemberRepository)
-    //       -> 6 toProfileDto (MemberMapper)
-    //    -> 7 printProfileMember (MemberController)
-    //    -> 8 printError (ConsolePrinter)
     protected void validateId(ID id) {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null");
+        }
+    }
+
+    protected void validateLibrarianAccess(Member currentMember) {
+        if (currentMember == null) {
+            throw new IllegalArgumentException("User is not authorized.");
+        }
+
+        if (!"LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
+            throw new IllegalArgumentException("Access denied.");
         }
     }
 }
