@@ -6,5 +6,6 @@ public class Constants {
     public static final int MARGIN = 4;
     public static final int PADDING = 2;
     public static final int GAP = OUTER_WIDTH / 3;
+    public static final int MENU_BODY_ROWS = 11;
     public static final int OPTIONS_PER_PAGE = 5;
 }

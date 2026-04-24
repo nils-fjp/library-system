@@ -1,19 +1,25 @@
 package loan;
 
+import author.AuthorRepository;
 import base.BaseRepository;
 import base.BaseService;
+import book.Book;
+import book.BookRepository;
+import member.Member;
+import member.MemberRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class LoanService extends BaseService<Loan, Integer> {
 
     private static final int DEFAULT_LOAN_WEEKS = 2;
 
     private final LoanRepository loanRepository = new LoanRepository();
+    private final MemberRepository memberRepository = new MemberRepository();
+    private final BookRepository bookRepository = new BookRepository(new AuthorRepository());
 
     @Override
     protected BaseRepository<Loan, Integer> getRepository() {
@@ -34,19 +40,13 @@ public class LoanService extends BaseService<Loan, Integer> {
         validateId(memberId);
         validateId(bookId);
 
-        if (!loanRepository.memberExists(memberId)) {
-            throw new IllegalArgumentException("Member not found.");
-        }
-
-        if (!loanRepository.memberCanBorrow(memberId)) {
+        Member member = getMemberById(memberId);
+        if (!memberCanBorrow(member)) {
             throw new IllegalStateException("Member is not allowed to borrow books.");
         }
 
-        if (!loanRepository.bookExists(bookId)) {
-            throw new IllegalArgumentException("Book not found.");
-        }
-
-        if (!loanRepository.bookHasAvailableCopies(bookId)) {
+        Book book = getBookById(bookId);
+        if (book.getAvailableCopies() <= 0) {
             throw new IllegalStateException("Book is not available for loan.");
         }
 
@@ -60,29 +60,11 @@ public class LoanService extends BaseService<Loan, Integer> {
 
         List<LoanSummaryDto> result = new ArrayList<>();
         for (Loan loan : loanRepository.getActiveLoansByMember(memberId)) {
-            String bookTitle = loanRepository.getBookTitle(loan.getBookId()).orElse("Unknown book");
+            String bookTitle = getBookTitle(loan.getBookId());
             result.add(LoanMapper.toSummaryDto(loan, bookTitle));
         }
 
         return result;
-    }
-
-    public Optional<LoanSummaryDto> getActiveLoanDetailsByMember(Integer memberId, Integer loanId) throws SQLException {
-        validateMemberExists(memberId);
-        validateId(loanId);
-
-        Optional<Loan> optionalLoan = loanRepository.getById(loanId);
-        if (optionalLoan.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Loan loan = optionalLoan.get();
-        if (loan.getMemberId() != memberId || !loan.isActive()) {
-            return Optional.empty();
-        }
-
-        String bookTitle = loanRepository.getBookTitle(loan.getBookId()).orElse("Unknown book");
-        return Optional.of(LoanMapper.toSummaryDto(loan, bookTitle));
     }
 
     public List<LoanHistoryDto> getLoanHistoryByMember(Integer memberId) throws SQLException {
@@ -90,7 +72,7 @@ public class LoanService extends BaseService<Loan, Integer> {
 
         List<LoanHistoryDto> result = new ArrayList<>();
         for (Loan loan : loanRepository.getLoanHistoryByMember(memberId)) {
-            String bookTitle = loanRepository.getBookTitle(loan.getBookId()).orElse("Unknown book");
+            String bookTitle = getBookTitle(loan.getBookId());
             result.add(LoanMapper.toHistoryDto(loan, bookTitle));
         }
 
@@ -101,8 +83,8 @@ public class LoanService extends BaseService<Loan, Integer> {
         List<ActiveLoanDto> result = new ArrayList<>();
 
         for (Loan loan : loanRepository.getActiveLoans()) {
-            String bookTitle = loanRepository.getBookTitle(loan.getBookId()).orElse("Unknown book");
-            String memberName = loanRepository.getMemberName(loan.getMemberId()).orElse("Unknown member");
+            String bookTitle = getBookTitle(loan.getBookId());
+            String memberName = getMemberName(loan.getMemberId());
             result.add(LoanMapper.toActiveLoanDto(loan, bookTitle, memberName));
         }
 
@@ -110,43 +92,16 @@ public class LoanService extends BaseService<Loan, Integer> {
     }
 
     public void returnLoanForMember(Integer memberId, Integer loanId) throws SQLException {
-        validateMemberExists(memberId);
-        validateId(loanId);
-
-        // använder lambda
-        Loan loan = loanRepository.getById(loanId)
-                .orElseThrow(() -> new IllegalArgumentException("Loan not found."));
-
-        if (loan.getMemberId() != memberId) {
-            throw new IllegalArgumentException("That loan does not belong to the current member.");
-        }
-
-        if (loan.isReturned()) {
-            throw new IllegalStateException("Loan has already been returned.");
-        }
-
+        getActiveLoanForMember(memberId, loanId);
         loanRepository.returnLoan(loanId);
     }
 
     public void extendLoanForMember(Integer memberId, Integer loanId) throws SQLException {
-        validateMemberExists(memberId);
-        validateId(loanId);
-
-        if (!loanRepository.memberCanBorrow(memberId)) {
+        if (!memberCanBorrow(getMemberById(memberId))) {
             throw new IllegalStateException("Member is not allowed to extend loans.");
         }
 
-        Loan loan = loanRepository.getById(loanId)
-                .orElseThrow(() -> new IllegalArgumentException("Loan not found."));
-
-        if (loan.getMemberId() != memberId) {
-            throw new IllegalArgumentException("That loan does not belong to the current member.");
-        }
-
-        if (loan.isReturned()) {
-            throw new IllegalStateException("Loan has already been returned.");
-        }
-
+        Loan loan = getActiveLoanForMember(memberId, loanId);
         if (loan.isOverdue()) {
             throw new IllegalStateException("Overdue loans cannot be extended.");
         }
@@ -174,14 +129,57 @@ public class LoanService extends BaseService<Loan, Integer> {
     }
 
     private void validateMemberExists(Integer memberId) throws SQLException {
-        validateId(memberId);
+        getMemberById(memberId);
+    }
 
-        if (!loanRepository.memberExists(memberId)) {
-            throw new IllegalArgumentException("Member not found.");
+    private Loan getActiveLoanForMember(Integer memberId, Integer loanId) throws SQLException {
+        validateMemberExists(memberId);
+        validateId(loanId);
+
+        Loan loan = loanRepository.getById(loanId)
+                .orElseThrow(() -> new IllegalArgumentException("Loan not found."));
+
+        if (loan.getMemberId() != memberId) {
+            throw new IllegalArgumentException("That loan does not belong to the current member.");
         }
+
+        if (loan.isReturned()) {
+            throw new IllegalStateException("Loan has already been returned.");
+        }
+
+        return loan;
     }
 
     private boolean isExtended(Loan loan) {
         return loan.getDueDate().isAfter(loan.getLoanDate().plusWeeks(DEFAULT_LOAN_WEEKS));
+    }
+
+    private Member getMemberById(Integer memberId) throws SQLException {
+        validateId(memberId);
+        return memberRepository.getById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found."));
+    }
+
+    private Book getBookById(Integer bookId) throws SQLException {
+        validateId(bookId);
+        return bookRepository.getById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("Book not found."));
+    }
+
+    private boolean memberCanBorrow(Member member) {
+        String status = member.getStatus();
+        return status != null && !"suspended".equalsIgnoreCase(status);
+    }
+
+    private String getBookTitle(Integer bookId) throws SQLException {
+        return bookRepository.getById(bookId)
+                .map(Book::getTitle)
+                .orElse("Unknown book");
+    }
+
+    private String getMemberName(Integer memberId) throws SQLException {
+        return memberRepository.getById(memberId)
+                .map(member -> (member.getFirstName() + " " + member.getLastName()).trim())
+                .orElse("Unknown member");
     }
 }
