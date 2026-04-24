@@ -32,7 +32,10 @@ public class ReaderMenuController {
                 case 1 -> showBooksMenu();
                 case 2 -> showMyLoansMenu(currentMember);
                 case 3 -> showMyProfileMenu(currentMember);
-                case 0 -> AuthController.logout();
+                case 0 -> {
+                    AuthController.logout();
+                    return;
+                }
             }
         }
     }
@@ -93,10 +96,8 @@ public class ReaderMenuController {
 
         while (myProfileMenu.showMenu()) {
             switch (myProfileMenu.getChoice()) {
-                //case 1 -> System.out.println("MemberController.showCurrentMemberProfile(currentMember)");
                 case 1 -> MemberController.showCurrentMemberProfile(currentMember);
                 case 2 -> MemberController.updateOwnProfile(currentMember);
-                //case 2 -> System.out.println("MemberController.changePassword(currentMember)");
                 case 3 -> MemberController.changePassword(currentMember);
             }
         }

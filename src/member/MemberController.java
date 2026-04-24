@@ -1,7 +1,8 @@
 package member;
 
 import base.BaseController;
-import ui.ANSI;
+import loan.LoanService;
+import loan.LoanSummaryDto;
 import ui.ConsolePrinter;
 
 import java.sql.SQLException;
@@ -9,38 +10,21 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.LinkedHashMap;
-
 
 public class MemberController extends BaseController<Member, Integer> {
 
-    // =========================================================
-    // UI dependencies
-    // =========================================================
-
     private static final Scanner scanner = new Scanner(System.in);
-    static final ConsolePrinter printer = new ConsolePrinter();
 
     // =========================================================
     // READER MEMBER ACTIONS
     // =========================================================
 
-    // 1 showCurrentMemberProfile (MemberController) +
-    //    -> 2 getProfileById (MemberService)
-    //       -> 3 validateId (MemberService)
-    //          -> 4 validateId (BaseService)
-    //       -> 5 getById (MemberRepository)
-    //       -> 6 toProfileDto (MemberMapper)
-    //    -> 7 printProfileMember (MemberController)
-    //    -> 8 printError (ConsolePrinter)
-
-    // 1. View my profile
     public static void showCurrentMemberProfile(Member currentMember) {
         MemberService service = new MemberService();
 
         try {
             if (currentMember == null) {
-                printer.printError("No authorized user.");
+                ConsolePrinter.printError("No authorized user.");
                 return;
             }
 
@@ -49,116 +33,89 @@ public class MemberController extends BaseController<Member, Integer> {
             if (optionalMember.isPresent()) {
                 printProfileMember(optionalMember.get());
             } else {
-                printer.printError("Profile not found.");
+                ConsolePrinter.printError("Profile not found.");
             }
 
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
-    // 2. Update profile info
-    public static void updateOwnProfile(Member currentMember){
+    public static void updateOwnProfile(Member currentMember) {
         MemberService service = new MemberService();
-        try{
+
+        try {
             if (currentMember == null) {
-                printer.printError("No authorized user.");
+                ConsolePrinter.printError("No authorized user.");
                 return;
             }
 
             Optional<MemberProfileDto> optionalMember = service.getProfileById(currentMember.getId());
             if (optionalMember.isEmpty()) {
-                printer.printError("Member not found.");
+                ConsolePrinter.printError("Member not found.");
                 return;
             }
+
             MemberProfileDto currentDto = optionalMember.get();
-            printer.printSuccess("Your current data:");
+            ConsolePrinter.printSuccess("Your current data:");
             printProfileMember(currentDto);
 
             UpdateMyProfileDto updateDto = buildUpdatedMyProfileFromInput(currentDto);
-            //MemberValidator.validateUpdateMyProfileDto(updateDto);
+            Optional<MemberProfileDto> updatedMember = service.updateOwnProfile(currentMember.getId(), updateDto);
 
-            Optional<MemberProfileDto> updatedMember = service.updateOwnProfile(currentMember.getId(),updateDto);
             if (updatedMember.isEmpty()) {
-                printer.printError("Profile was not updated.");
+                ConsolePrinter.printError("Profile was not updated.");
                 return;
             }
 
-            printer.printSuccess("Profile updated successfully.");
+            ConsolePrinter.printSuccess("Profile updated successfully.");
             printProfileMember(updatedMember.get());
 
         } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
-
     }
 
-    private static UpdateMyProfileDto buildUpdatedMyProfileFromInput(MemberProfileDto currentDto) {
-        UpdateMyProfileDto dto = new UpdateMyProfileDto();
-        dto.setFirstName(readUpdatedString("Enter new first name", currentDto.getFirstName()));
-        dto.setLastName(readUpdatedString("Enter new last name", currentDto.getLastName()));
-        dto.setEmail(readUpdatedString("Enter new email", currentDto.getEmail()));
-        return dto;
-    }
-
-    // 3. Change password
     public static void changePassword(Member currentMember) {
         MemberService service = new MemberService();
 
         try {
             if (currentMember == null) {
-                printer.printError("No authorized user.");
+                ConsolePrinter.printError("No authorized user.");
                 return;
             }
 
             ChangePasswordDto dto = buildChangePasswordDto(currentMember);
-
             boolean changed = service.changeOwnPassword(dto);
 
             if (!changed) {
-                printer.printError("Password was not changed.");
+                ConsolePrinter.printError("Password was not changed.");
                 return;
             }
 
-            printer.printSuccess("Password changed successfully.");
+            ConsolePrinter.printSuccess("Password changed successfully.");
 
         } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
-    private static ChangePasswordDto buildChangePasswordDto(Member currentMember) {
-        ChangePasswordDto dto = new ChangePasswordDto();
-        dto.setMemberId(currentMember.getId());
-        dto.setCurrentPassword(readRequiredInput("Enter current password"));
-        dto.setNewPassword(readRequiredInput("Enter new password"));
-        dto.setConfirmNewPassword(readRequiredInput("Confirm new password"));
-        return dto;
-    }
-
 
     // =========================================================
     // ADMIN MEMBER ACTIONS
     // =========================================================
 
-    /**
-     * Loads and displays all members in admin view.
-     * Uses MemberService.getAllForAdminView().
-     * Prints every member through printAdminMember().
-     */
-    // SUB 1. View All Readers
     public static void showAllMembersForAdmin(Member currentMember) {
         MemberService service = new MemberService();
 
         try {
-            service.validateLibrarianAccess(currentMember);
-            List<MemberAdminDto> members = service.getAllForAdminView();
+            List<MemberAdminDto> members = service.getAllForAdminView(currentMember);
 
             if (members.isEmpty()) {
-                printer.printError("No readers found.");
+                ConsolePrinter.printError("No readers found.");
                 return;
             }
 
@@ -167,230 +124,271 @@ public class MemberController extends BaseController<Member, Integer> {
             }
 
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
-    /**
-     * Finds one member by email and displays it in admin view.
-     * Uses findMemberByEmail() to read input and MemberService to search member data.
-     * Prints result through printAdminMember().
-     */
-    // SUB 2. Search Readers
-    public static void showMemberByEmail(Member currentMember) {
+    public static Optional<MemberAdminDto> showMember(Member currentMember) {
         MemberService service = new MemberService();
 
         try {
-            service.validateLibrarianAccess(currentMember);
-            //Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
-            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
             if (optionalMember.isEmpty()) {
-                printer.printError("Member not found.");
-                return;
+                ConsolePrinter.printError("Member not found.");
+                return Optional.empty();
             }
 
             printAdminMember(optionalMember.get());
+            return optionalMember;
 
         } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
+
+        return Optional.empty();
     }
 
-    // 2. Add Reader
-    public static void addMemberByAdmin(Member currentMember){
+    public static void addMemberByAdmin(Member currentMember) {
         MemberService service = new MemberService();
 
         try {
-            service.validateLibrarianAccess(currentMember);
+            //service.validateLibrarianAccess(currentMember);
 
             CreateMemberDto createDto = buildCreateMemberFromInput();
-            Optional<MemberAdminDto> createdDto = service.createMemberByAdmin(createDto);
+            Optional<MemberAdminDto> createdDto = service.createMemberByAdmin(currentMember,createDto);
 
             if (createdDto.isEmpty()) {
-                printer.printError("Member was not created.");
+                ConsolePrinter.printError("Member was not created.");
                 return;
             }
-            printer.printSuccess("Member created successfully.");
+
+            ConsolePrinter.printSuccess("Member created successfully.");
             printAdminMember(createdDto.get());
 
-        } catch (IllegalArgumentException e){
-            printer.printError(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
-    private static CreateMemberDto buildCreateMemberFromInput() {
-        CreateMemberDto dto = new CreateMemberDto();
 
-        dto.setFirstName(readRequiredInput("Enter first name"));
-        dto.setLastName(readRequiredInput("Enter last name"));
-        dto.setEmail(readRequiredInput("Enter email"));
-        dto.setPassword(readRequiredInput("Enter password"));
-        return dto;
-    }
-
-    /**
-     * Updates member data in librarian/admin flow.
-     * Uses findMemberByEmail() to locate member, buildUpdatedMemberFromInput() to collect changes,
-     * and MemberService.updateMemberByAdmin() to save updated data.
-     */
-//1. найти участника
-//2. показать текущие данные
-//3. собрать новые данные
-//4. вызвать service.updateMemberByAdmin(dto)
-//5. показать результат
-//Это и есть controller flow.
-    //  3. Update Reader
     public static void updateMemberByAdmin(Member currentMember) {
         MemberService service = new MemberService();
 
-
-
         try {
-            service.validateLibrarianAccess(currentMember);
-            //Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
-            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
             if (optionalMember.isEmpty()) {
-                printer.printError("Member not found.");
+                ConsolePrinter.printError("Member not found.");
                 return;
             }
 
-            MemberAdminDto currentDto = optionalMember.get();
-
-            printer.printSuccess("Current member data:");
-            printAdminMember(currentDto);
-
-            UpdateMemberDto updateDto = buildUpdatedMemberFromInput(currentDto);
-            Optional<MemberAdminDto> updatedDto = service.updateMemberByAdmin(updateDto);
-
-            if (updatedDto.isEmpty()) {
-                printer.printError("Member was not updated.");
-                return;
-            }
-
-            printer.printSuccess("Member updated successfully.");
-            printAdminMember(updatedDto.get());
+            updateMemberByAdmin(currentMember, optionalMember.get());
 
         } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
-    // 4. Delete Reader
-// 4. Delete Reader
-    public static void deleteMemberByAdmin(Member currentMember) {
+    public static void updateMemberByAdmin(Member currentMember, MemberAdminDto currentDto) {
         MemberService service = new MemberService();
 
         try {
-            service.validateLibrarianAccess(currentMember);
+            ConsolePrinter.printSuccess("Current member data:");
+            printAdminMember(currentDto);
 
-            //Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
-            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
+            UpdateMemberDto updateDto = buildUpdatedMemberFromInput(currentDto);
+            Optional<MemberAdminDto> updatedDto = service.updateMemberByAdmin(currentMember, updateDto);
 
-            if (optionalMember.isEmpty()) {
-                printer.printError("Member not found.");
+            if (updatedDto.isEmpty()) {
+                ConsolePrinter.printError("Member was not updated.");
                 return;
             }
 
-            MemberAdminDto targetMember = optionalMember.get();
-
-            printer.printSuccess("Selected member:");
-            printAdminMember(targetMember);
-
-            String confirm = readRequiredInput("Type DELETE to confirm member deletion");
-
-            if (!"DELETE".equals(confirm)) {
-                printer.printError("Deletion cancelled.");
-                return;
-            }
-
-            boolean deleted = service.deleteMemberByAdmin(targetMember.getId());
-
-            if (!deleted) {
-                printer.printError("Member was not deleted.");
-                return;
-            }
-
-            printer.printSuccess("Member deleted successfully.");
+            ConsolePrinter.printSuccess("Member updated successfully.");
+            printAdminMember(updatedDto.get());
 
         } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
     }
 
-    // 5. Change password
+    public static void deleteMemberByAdmin(Member currentMember) {
+        MemberService memberService = new MemberService();
+
+        try {
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(memberService, currentMember);
+
+            if (optionalMember.isEmpty()) {
+                ConsolePrinter.printError("Member not found.");
+                return;
+            }
+
+            deleteMemberByAdmin(currentMember, optionalMember.get());
+
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    public static void deleteMemberByAdmin(Member currentMember, MemberAdminDto targetMember) {
+
+        MemberService memberService = new MemberService();
+        LoanService loanService = new LoanService();
+
+        try {
+            ConsolePrinter.printSuccess("Selected member:");
+            printAdminMember(targetMember);
+
+            List<LoanSummaryDto> activeLoans = loanService.getActiveLoansByMember(targetMember.getId());
+
+            if (!activeLoans.isEmpty()) {
+                ConsolePrinter.printError(MemberConsoleView.activeLoansDeleteLine1());
+                ConsolePrinter.printPrompt(MemberConsoleView.activeLoansDeleteLine2());
+                printMemberActiveLoans(activeLoans);
+                return;
+            }
+
+            String confirm = promptRequired("Type DELETE to confirm member deletion");
+
+            if (!"DELETE".equals(confirm)) {
+                ConsolePrinter.printError("Deletion cancelled.");
+                return;
+            }
+
+            boolean deleted = memberService.deleteMemberByAdmin(currentMember, targetMember.getId());
+
+            if (!deleted) {
+                ConsolePrinter.printError("Member was not deleted.");
+                return;
+            }
+
+            ConsolePrinter.printSuccess("Member deleted successfully.");
+
+        } catch (MemberException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Database error: " + e.getMessage());
+        }
+    }
+
     public static void changeMemberPasswordByAdmin(Member currentMember) {
         MemberService service = new MemberService();
 
         try {
-            service.validateLibrarianAccess(currentMember);
-
-            //Optional<MemberAdminDto> optionalMember = findMemberByEmail(service);
-            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
             if (optionalMember.isEmpty()) {
-                printer.printError("Member not found.");
+                ConsolePrinter.printError("Member not found.");
                 return;
             }
 
-            MemberAdminDto targetMember = optionalMember.get();
+            changeMemberPasswordByAdmin(currentMember, optionalMember.get());
 
-            printer.printSuccess("Selected member:");
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    public static void changeMemberPasswordByAdmin(Member currentMember, MemberAdminDto targetMember) {
+        MemberService service = new MemberService();
+
+        try {
+            ConsolePrinter.printSuccess("Selected member:");
             printAdminMember(targetMember);
 
             AdminChangePasswordDto dto = buildAdminChangePasswordDto(targetMember);
-
             boolean changed = service.changeMemberPasswordByAdmin(currentMember, dto);
 
             if (!changed) {
-                printer.printError("Password was not changed.");
+                ConsolePrinter.printError("Password was not changed.");
                 return;
             }
 
-            printer.printSuccess("Password changed successfully.");
+            ConsolePrinter.printSuccess("Password changed successfully.");
 
         } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
+            ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+            ConsolePrinter.printError("Database error: " + e.getMessage());
         }
+    }
+
+    // =========================================================
+    // FLOW HELPERS
+    // =========================================================
+
+    private static UpdateMyProfileDto buildUpdatedMyProfileFromInput(MemberProfileDto currentDto) {
+        UpdateMyProfileDto dto = new UpdateMyProfileDto();
+        dto.setFirstName(promptTextOrKeepCurrent("Enter new first name", currentDto.getFirstName()));
+        dto.setLastName(promptTextOrKeepCurrent("Enter new last name", currentDto.getLastName()));
+        dto.setEmail(promptTextOrKeepCurrent("Enter new email", currentDto.getEmail()));
+        return dto;
+    }
+
+    private static ChangePasswordDto buildChangePasswordDto(Member currentMember) {
+        ChangePasswordDto dto = new ChangePasswordDto();
+        dto.setMemberId(currentMember.getId());
+        dto.setCurrentPassword(promptRequired("Enter current password"));
+        dto.setNewPassword(promptRequired("Enter new password"));
+        dto.setConfirmNewPassword(promptRequired("Confirm new password"));
+        return dto;
+    }
+
+    private static CreateMemberDto buildCreateMemberFromInput() {
+        CreateMemberDto dto = new CreateMemberDto();
+        dto.setFirstName(promptRequired("Enter first name"));
+        dto.setLastName(promptRequired("Enter last name"));
+        dto.setEmail(promptRequired("Enter email"));
+        dto.setPassword(promptRequired("Enter password"));
+        return dto;
+    }
+
+    private static UpdateMemberDto buildUpdatedMemberFromInput(MemberAdminDto currentDto) {
+        UpdateMemberDto dto = new UpdateMemberDto();
+        dto.setId(currentDto.getId());
+        dto.setFirstName(promptTextOrKeepCurrent("Enter new first name", currentDto.getFirstName()));
+        dto.setLastName(promptTextOrKeepCurrent("Enter new last name", currentDto.getLastName()));
+        dto.setEmail(promptTextOrKeepCurrent("Enter new email", currentDto.getEmail()));
+        dto.setMembershipDate(promptDateOrKeepCurrent("Enter new membership date", currentDto.getMembershipDate()));
+        dto.setMembershipType(promptTextOrKeepCurrent(
+                "Enter new membership type " + ConsolePrinter.colorOptions("standard/premium"),
+                currentDto.getMembershipType()
+        ));
+        dto.setStatus(promptTextOrKeepCurrent(
+                "Enter new status " + ConsolePrinter.colorOptions("active/suspended/expired"),
+                currentDto.getStatus()
+        ));
+        return dto;
     }
 
     private static AdminChangePasswordDto buildAdminChangePasswordDto(MemberAdminDto member) {
         AdminChangePasswordDto dto = new AdminChangePasswordDto();
         dto.setMemberId(member.getId());
-        dto.setNewPassword(readRequiredInput("Enter new password"));
-        dto.setConfirmNewPassword(readRequiredInput("Confirm new password"));
+        dto.setNewPassword(promptRequired("Enter new password"));
+        dto.setConfirmNewPassword(promptRequired("Confirm new password"));
         return dto;
     }
 
-    // =========================================================
-    // Input helper methods
-    // =========================================================
+    private static Optional<MemberAdminDto> findMemberByKeyword(MemberService service, Member currentMember) throws SQLException {
+        ConsolePrinter.printPrompt(MemberConsoleView.memberSearchPromptLine1());
+        ConsolePrinter.printPrompt(MemberConsoleView.memberSearchPromptLine2());
+        String keyword = promptRequired("Enter");
 
-    /**
-     * Reads member email from console and requests member data from MemberService.
-     * Returns admin DTO if member exists.
-     */
-    private static Optional<MemberAdminDto> findMemberByEmail(MemberService service) throws SQLException {
-        String email = readRequiredInput("Enter member email");
-        return service.getByEmailForViewForAdmin(email);
-    }
-
-    private static Optional<MemberAdminDto> findMemberByKeyword(MemberService service) throws SQLException {
-        String keyword = readRequiredInput(
-                "Enter member id, first name, last name, email, membership type, status, role, or membership date"
-        );
-
-        List<MemberAdminDto> foundMembers = service.searchMembersForAdmin(keyword);
+        List<MemberAdminDto> foundMembers = service.searchMembersForAdmin(currentMember, keyword);
 
         if (foundMembers.isEmpty()) {
             return Optional.empty();
@@ -400,12 +398,12 @@ public class MemberController extends BaseController<Member, Integer> {
             return Optional.of(foundMembers.get(0));
         }
 
-        printer.printSuccess("Found members:");
+        ConsolePrinter.printSuccess("Found members:");
         for (MemberAdminDto member : foundMembers) {
             printAdminMember(member);
         }
 
-        Integer selectedId = readRequiredInt("Enter member id");
+        Integer selectedId = promptRequiredInt("Enter member id");
         for (MemberAdminDto member : foundMembers) {
             if (member.getId().equals(selectedId)) {
                 return Optional.of(member);
@@ -414,80 +412,46 @@ public class MemberController extends BaseController<Member, Integer> {
 
         return Optional.empty();
     }
-    private static Integer readRequiredInt(String label) {
-        while (true) {
-            try {
-                ConsolePrinter.printPrompt(label + ": ");
-                String input = scanner.nextLine().trim();
-                return Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                printer.printError("Invalid number.");
-            }
-        }
-    }
-    /**
-     * Builds UpdateMemberDto from console input.
-     * Keeps old values when user enters empty input.
-     * Used in admin member update flow.
-     */
-    private static UpdateMemberDto buildUpdatedMemberFromInput(MemberAdminDto currentDto) {
-        UpdateMemberDto dto = new UpdateMemberDto();
-        dto.setId(currentDto.getId());
 
-        dto.setFirstName(readUpdatedString("Enter new first name", currentDto.getFirstName()));
-        dto.setLastName(readUpdatedString("Enter new last name", currentDto.getLastName()));
-        dto.setEmail(readUpdatedString("Enter new email", currentDto.getEmail()));
-        dto.setMembershipDate(readUpdatedDate("Enter new membership date", currentDto.getMembershipDate()));
-        dto.setMembershipType(readUpdatedString(
-                "Enter new membership type " + colorOptions("standard/premium"),
-                currentDto.getMembershipType()
-        ));
-        dto.setStatus(readUpdatedString(
-                "Enter new status " + colorOptions("active/suspended/expired"),
-                currentDto.getStatus()
-        ));
+    // =========================================================
+    // INPUT HELPERS
+    // =========================================================
 
-        return dto;
+    private static String prompt(String label) {
+        ConsolePrinter.printPromptInline(label + ": ");
+        return scanner.nextLine().trim();
     }
 
-    /**
-     * Reads required text input from console.
-     * Repeats until user enters non-empty value.
-     */
-    private static String readRequiredInput(String label) {
+    private static String promptRequired(String label) {
         while (true) {
-            ConsolePrinter.printPrompt(label + ": ");
-            String input = scanner.nextLine().trim();
+            String input = prompt(label);
 
             if (!input.isBlank()) {
                 return input;
             }
 
-            printer.printError("Input cannot be empty.");
+            ConsolePrinter.printError("Input cannot be empty.");
         }
     }
 
-    /**
-     * Reads editable string value from console.
-     * Returns current value if input is empty.
-     */
-    private static String readUpdatedString(String label, String currentValue) {
-        System.out.print("\t" + label + " " + colorCurrentValue(currentValue) + ": ");
-        String input = scanner.nextLine().trim();
+    private static int promptRequiredInt(String label) {
+        while (true) {
+            try {
+                return Integer.parseInt(promptRequired(label));
+            } catch (NumberFormatException e) {
+                ConsolePrinter.printError("Invalid number.");
+            }
+        }
+    }
+
+    private static String promptTextOrKeepCurrent(String label, String currentValue) {
+        String input = prompt(label + " " + ConsolePrinter.colorCurrentValue(currentValue));
         return input.isBlank() ? currentValue : input;
     }
 
-    /**
-     * Reads editable LocalDate value from console.
-     * Returns current value if input is empty.
-     * Repeats until user enters date in yyyy-mm-dd format.
-     */
-    private static LocalDate readUpdatedDate(String label, LocalDate currentValue) {
+    private static LocalDate promptDateOrKeepCurrent(String label, LocalDate currentValue) {
         while (true) {
-            System.out.print(
-                    "\t" + label + " " + colorHint("yyyy-mm-dd") + " " + colorCurrentValue(currentValue) + ": "
-            );
-            String input = scanner.nextLine().trim();
+            String input = prompt(label + " " + ConsolePrinter.colorHint("yyyy-mm-dd") + " " + ConsolePrinter.colorCurrentValue(currentValue));
 
             if (input.isBlank()) {
                 return currentValue;
@@ -496,71 +460,26 @@ public class MemberController extends BaseController<Member, Integer> {
             try {
                 return LocalDate.parse(input);
             } catch (java.time.format.DateTimeParseException e) {
-                printer.printError("Invalid date format. Use yyyy-mm-dd.");
+                ConsolePrinter.printError("Invalid date format. Use yyyy-mm-dd.");
             }
         }
     }
 
     // =========================================================
-    // Output helper methods
+    // OUTPUT HELPERS
     // =========================================================
 
-        public static void printProfileMember(MemberProfileDto member) {
-            LinkedHashMap<String, Object> fields = new LinkedHashMap<>();
-            fields.put("First name", member.getFirstName());
-            fields.put("Last name", member.getLastName());
-            fields.put("Email", member.getEmail());
-            fields.put("Membership date", member.getMembershipDate());
-            fields.put("Membership type", member.getMembershipType());
-            fields.put("Status", formatStatus(member.getStatus()));
-
-            ConsolePrinter.printFields("My Profile", fields);
-        }
-
-        public static void printAdminMember(MemberAdminDto member) {
-            LinkedHashMap<String, Object> fields = new LinkedHashMap<>();
-            fields.put("Member Id", member.getId());
-            fields.put("First name", member.getFirstName());
-            fields.put("Last name", member.getLastName());
-            fields.put("Email", member.getEmail());
-            fields.put("Membership date", member.getMembershipDate());
-            fields.put("Membership type", member.getMembershipType());
-            fields.put("Status", formatStatus(member.getStatus()));
-            fields.put("Member Role", member.getRole());
-
-            ConsolePrinter.printFields("Member Info", fields);
-        }
-
-    // =========================================================
-    // Formatting helpers
-    // =========================================================
-
-    /**
-     * Formats member status with ANSI colors for console output.
-     * Used in profile and admin member printing.
-     */
-    private static String formatStatus(String status) {
-        if (status == null) {
-            return ANSI.BRIGHT_BLACK + "[UNKNOWN]" + ANSI.DEFAULT_FG;
-        }
-
-        return switch (status.toLowerCase()) {
-            case "active" -> ANSI.BRIGHT_GREEN + ANSI.BOLD + "[ACTIVE]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
-            case "suspended" -> ANSI.BRIGHT_YELLOW + ANSI.BOLD + "[SUSPENDED]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
-            case "expired" -> ANSI.BRIGHT_RED + ANSI.BOLD + "[EXPIRED]" + ANSI.NO_BOLD + ANSI.DEFAULT_FG;
-            default -> ANSI.BRIGHT_BLACK + "[" + status.toUpperCase() + "]" + ANSI.DEFAULT_FG;
-        };
+    public static void printProfileMember(MemberProfileDto member) {
+        ConsolePrinter.printFields("My Profile", MemberConsoleView.buildProfileFields(member));
     }
 
-    private static String colorCurrentValue(Object value) {
-        return ANSI.BRIGHT_BLACK + "[" + value + "]" + ANSI.DEFAULT_FG;
+    public static void printAdminMember(MemberAdminDto member) {
+        ConsolePrinter.printFields("Member Info", MemberConsoleView.buildAdminMemberFields(member));
     }
 
-    private static String colorHint(String hint) {
-        return ANSI.BRIGHT_BLACK + "(" + hint + ")" + ANSI.DEFAULT_FG;
-    }
-
-    private static String colorOptions(String options) {
-        return ANSI.BRIGHT_BLACK + "(" + options + ")" + ANSI.DEFAULT_FG;
+    private static void printMemberActiveLoans(List<LoanSummaryDto> activeLoans) {
+        for (LoanSummaryDto loan : activeLoans) {
+            ConsolePrinter.printFields("Active Loan", MemberConsoleView.buildActiveLoanFields(loan));
+        }
     }
 }

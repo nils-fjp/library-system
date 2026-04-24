@@ -37,6 +37,9 @@ public class Main {
 //          READER Expired:
 //                          ava.white25@email.com
 //                          NyUiOpAs
+//          READER Suspended:
+//                          amelia.wright8@email.com
+//                          CrFvTgBy
 //          READER Active:
 //                          abigail.thomas4@email.com
 //                          PlMnBcXa

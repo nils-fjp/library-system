@@ -27,7 +27,7 @@ public final class MemberValidator {
             throw new IllegalArgumentException("Email cannot be empty.");
         }
 
-        if (!email.contains("@")) {
+        if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
             throw new IllegalArgumentException("Email format is invalid.");
         }
     }
@@ -88,23 +88,10 @@ public final class MemberValidator {
             throw new IllegalArgumentException("Member data is required.");
         }
 
-        if (dto.getFirstName() == null || dto.getFirstName().isBlank()) {
-            throw new IllegalArgumentException("First name cannot be empty.");
-        }
-
-        if (dto.getLastName() == null || dto.getLastName().isBlank()) {
-            throw new IllegalArgumentException("Last name cannot be empty.");
-        }
-
-        if (dto.getEmail() == null || dto.getEmail().isBlank()) {
-            throw new IllegalArgumentException("Email cannot be empty.");
-        }
-
+        validateName(dto.getFirstName(), "First name");
+        validateName(dto.getLastName(), "Last name");
         validateEmail(dto.getEmail());
-
-        if (dto.getPassword() == null || dto.getPassword().isBlank()) {
-            throw new IllegalArgumentException("Password cannot be empty.");
-        }
+        validatePassword(dto.getPassword());
     }
 
     public static void validateChangePasswordDto(ChangePasswordDto dto) {
@@ -170,14 +157,10 @@ public final class MemberValidator {
     public static void validateLoginAccess(Member member) {
         validateMember(member);
 
-        String status = member.getStatus();
+        String status = getNormalizedStatus(member);
 
-        if (status == null || status.isBlank()) {
-            throw new IllegalArgumentException("Member status is missing.");
-        }
-
-        if ("expired".equalsIgnoreCase(status.trim())) {
-            throw new MembershipExpiredException("Your membership has expired. Login is not allowed.");
+        if ("expired".equals(status)) {
+            throw new MemberException("Your membership has expired. Login is not allowed.");
         }
     }
 
@@ -191,5 +174,21 @@ public final class MemberValidator {
         }
 
         return status.trim().toLowerCase();
+    }
+
+    public static void validateReaderActionAccess(Member member) {
+        String status = getNormalizedStatus(member);
+
+        if ("suspended".equals(status)) {
+            throw new MemberException(
+                    "Your account is suspended. Borrowing, reserving, and renewing are not allowed."
+            );
+        }
+
+        if ("expired".equals(status)) {
+            throw new MemberException(
+                    "Your membership has expired. Borrowing, reserving, and renewing are not allowed."
+            );
+        }
     }
 }

@@ -6,9 +6,8 @@ import java.util.Map;
 import static ui.ANSI.*;
 import static ui.Constants.*;
 
-//import static member.MemberController.printer;
-
 public class ConsolePrinter {
+
     private static final String ANSI_ESCAPE_REGEX = "\u001B\\[[;\\d?]*[ -/]*[@-~]";
 
     public static void printStyledHeader(String headerText, String ansiTextColor, String ansiLineColor) {
@@ -37,6 +36,11 @@ public class ConsolePrinter {
         message = fit(safe(message), INNER_WIDTH);
         String centerFlex = " ".repeat((INNER_WIDTH - visibleLength(message)) / 4);
         System.out.println(" ".repeat(MARGIN) + YELLOW + message + centerFlex + DEFAULT_FG);
+    }
+
+    public static void printPromptInline(String message) {
+        message = safe(message);
+        System.out.print(" ".repeat(MARGIN) + YELLOW + message + DEFAULT_FG);
     }
 
     public static void printFields(String title, LinkedHashMap<String, Object> fields) {
@@ -142,6 +146,18 @@ public class ConsolePrinter {
         }
 
         return i;
+    }
+
+    public static String colorCurrentValue(Object value) {
+        return ANSI.BRIGHT_BLACK + "[" + value + "]" + ANSI.DEFAULT_FG;
+    }
+
+    public static String colorHint(String hint) {
+        return ANSI.BRIGHT_BLACK + "(" + hint + ")" + ANSI.DEFAULT_FG;
+    }
+
+    public static String colorOptions(String options) {
+        return ANSI.BRIGHT_BLACK + "(" + options + ")" + ANSI.DEFAULT_FG;
     }
 
 }
