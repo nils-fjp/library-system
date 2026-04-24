@@ -129,25 +129,27 @@ public class MemberController extends BaseController<Member, Integer> {
         }
     }
 
-    public static void showMember(Member currentMember) {
+    public static Optional<MemberAdminDto> showMember(Member currentMember) {
         MemberService service = new MemberService();
 
         try {
-            //service.validateLibrarianAccess(currentMember);
             Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
 
             if (optionalMember.isEmpty()) {
                 ConsolePrinter.printError("Member not found.");
-                return;
+                return Optional.empty();
             }
 
             printAdminMember(optionalMember.get());
+            return optionalMember;
 
         } catch (IllegalArgumentException e) {
             ConsolePrinter.printError(e.getMessage());
         } catch (SQLException e) {
             ConsolePrinter.printError("Database error: " + e.getMessage());
         }
+
+        return Optional.empty();
     }
 
     public static void addMemberByAdmin(Member currentMember) {
@@ -178,7 +180,6 @@ public class MemberController extends BaseController<Member, Integer> {
         MemberService service = new MemberService();
 
         try {
-            //service.validateLibrarianAccess(currentMember);
             Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
 
             if (optionalMember.isEmpty()) {
@@ -186,8 +187,19 @@ public class MemberController extends BaseController<Member, Integer> {
                 return;
             }
 
-            MemberAdminDto currentDto = optionalMember.get();
+            updateMemberByAdmin(currentMember, optionalMember.get());
 
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    public static void updateMemberByAdmin(Member currentMember, MemberAdminDto currentDto) {
+        MemberService service = new MemberService();
+
+        try {
             ConsolePrinter.printSuccess("Current member data:");
             printAdminMember(currentDto);
 
@@ -211,11 +223,8 @@ public class MemberController extends BaseController<Member, Integer> {
 
     public static void deleteMemberByAdmin(Member currentMember) {
         MemberService memberService = new MemberService();
-        LoanService loanService = new LoanService();
 
         try {
-            //memberService.validateLibrarianAccess(currentMember);
-
             Optional<MemberAdminDto> optionalMember = findMemberByKeyword(memberService);
 
             if (optionalMember.isEmpty()) {
@@ -223,8 +232,20 @@ public class MemberController extends BaseController<Member, Integer> {
                 return;
             }
 
-            MemberAdminDto targetMember = optionalMember.get();
+            deleteMemberByAdmin(currentMember, optionalMember.get());
 
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    public static void deleteMemberByAdmin(Member currentMember, MemberAdminDto targetMember) {
+        MemberService memberService = new MemberService();
+        LoanService loanService = new LoanService();
+
+        try {
             ConsolePrinter.printSuccess("Selected member:");
             printAdminMember(targetMember);
 
@@ -266,7 +287,6 @@ public class MemberController extends BaseController<Member, Integer> {
         MemberService service = new MemberService();
 
         try {
-            //service.validateLibrarianAccess(currentMember);
             Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service);
 
             if (optionalMember.isEmpty()) {
@@ -274,8 +294,19 @@ public class MemberController extends BaseController<Member, Integer> {
                 return;
             }
 
-            MemberAdminDto targetMember = optionalMember.get();
+            changeMemberPasswordByAdmin(currentMember, optionalMember.get());
 
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError(e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Database error: " + e.getMessage());
+        }
+    }
+
+    public static void changeMemberPasswordByAdmin(Member currentMember, MemberAdminDto targetMember) {
+        MemberService service = new MemberService();
+
+        try {
             ConsolePrinter.printSuccess("Selected member:");
             printAdminMember(targetMember);
 

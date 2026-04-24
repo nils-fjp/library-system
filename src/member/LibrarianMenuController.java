@@ -6,6 +6,7 @@ import loan.LoanController;
 import ui.ANSI;
 import ui.AuthController;
 import ui.Menu;
+import java.util.Optional;
 
 import java.sql.SQLException;
 
@@ -130,20 +131,31 @@ public class LibrarianMenuController {
     //3. Manage Readers
     private static void showManageReadersMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
-        menu.setTopTitle("Manage Readers");
-        menu.addMenuOption("View readers");
-        menu.addMenuOption("Add reader");
-        menu.addMenuOption("Modify reader");
-        menu.addMenuOption("Delete reader");
-        menu.addMenuOption("Change reader password");
+        menu.setTopTitle("Librarian Menu » Manage Readers");
+        menu.setMainTitle("Manage Readers");
+        menu.setMenuInfo(ANSI.ITALIC + "Manage readers." + ANSI.NO_ITALIC);
+        menu.setExitOption("Back to Librarian Menu");
+
+        menu.addMenuOption("View All Readers");
+        menu.addMenuOption("Search Reader");
+        menu.addMenuOption("Add Reader");
+        menu.addMenuOption("Update Reader");
+        menu.addMenuOption("Delete Reader");
+        menu.addMenuOption("Change Reader Password");
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> showViewReadersSubMenu(currentMember);
-                case 2 -> MemberController.addMemberByAdmin(currentMember);
-                case 3 -> MemberController.updateMemberByAdmin(currentMember);
-                case 4 -> MemberController.deleteMemberByAdmin(currentMember);
-                case 5 -> MemberController.changeMemberPasswordByAdmin(currentMember);
+                case 1 -> MemberController.showAllMembersForAdmin(currentMember);
+                case 2 ->  {
+                    Optional<MemberAdminDto> optionalReader = MemberController.showMember(currentMember);
+                    if (optionalReader.isPresent()) {
+                        showReaderActionsMenu(currentMember, optionalReader.get());
+                    }
+                }
+                case 3 -> MemberController.addMemberByAdmin(currentMember);
+                case 4 -> MemberController.updateMemberByAdmin(currentMember);
+                case 5 -> MemberController.deleteMemberByAdmin(currentMember);
+                case 6 -> MemberController.changeMemberPasswordByAdmin(currentMember);
                 case 0 -> {
                     return;
                 }
@@ -152,16 +164,30 @@ public class LibrarianMenuController {
         }
     }
 
-    private static void showViewReadersSubMenu(Member currentMember) throws SQLException {
+    private static void showReaderActionsMenu(Member currentMember, MemberAdminDto reader) throws SQLException {
+
         Menu menu = new Menu();
-        menu.setTopTitle("View Readers");
-        menu.addMenuOption("View all readers");
-        menu.addMenuOption("Search reader");
+//        menu.setTopTitle("Manage Readers » Reader Actions");
+//        menu.setMainTitle("Reader Actions");
+        menu.setMenuInfo(
+                ANSI.ITALIC +
+                        "Selected reader: " + reader.getFirstName() + " " + reader.getLastName() +
+                        ANSI.NO_ITALIC
+        );
+        menu.setExitOption("Back to Manage Readers");
+
+        menu.addMenuOption("Update Reader");
+        menu.addMenuOption("Delete Reader");
+        menu.addMenuOption("Change Reader Password");
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> MemberController.showAllMembersForAdmin(currentMember);
-                case 2 -> MemberController.showMember(currentMember);
+                case 1 -> MemberController.updateMemberByAdmin(currentMember, reader);
+                case 2 -> {
+                    MemberController.deleteMemberByAdmin(currentMember, reader);
+                    return;
+                }
+                case 3 -> MemberController.changeMemberPasswordByAdmin(currentMember, reader);
                 case 0 -> {
                     return;
                 }
@@ -177,7 +203,7 @@ public class LibrarianMenuController {
         menu.addMenuOption("View authors");
         menu.addMenuOption("Add author");
         menu.addMenuOption("Modify author");
-        menu.addMenuOption("Delete author");
+        //menu.addMenuOption("Delete author");
         menu.addMenuOption("Find author");
 
         while (menu.showMenu()) {
@@ -185,8 +211,8 @@ public class LibrarianMenuController {
                 case 1 -> AuthorController.showAllAuthors(currentMember);
                 case 2 -> AuthorController.addAuthor(currentMember);
                 case 3 -> AuthorController.updateAuthor(currentMember);
-                case 4 -> AuthorController.deleteAuthor(currentMember);
-                case 5 -> AuthorController.showAuthor(currentMember);
+                //case 4 -> AuthorController.deleteAuthor(currentMember);
+                case 4 -> AuthorController.showAuthor(currentMember);
                 case 0 -> {
                     return;
                 }
