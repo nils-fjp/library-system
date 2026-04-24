@@ -71,15 +71,32 @@ public class BookService extends BaseService<Book, Integer> {
                 .toList();
     }
 
-    public void removeBookCopy(Integer bookId) throws SQLException {
+
+    private BookManageDTO getBookManageById(Integer bookId) throws SQLException {
+        return getAllBooksForAdmin().stream()
+                .filter(b -> b.getId() == bookId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Book not found."));
+    }
+
+    public String removeBookCopy(Integer bookId) throws SQLException {
         if (bookId == null || bookId <= 0) {
             throw new IllegalArgumentException("Invalid book id.");
         }
-        boolean removed = bookRepository.reduceBookCopy(bookId);
-        if (!removed) {
-            throw new IllegalArgumentException("Book not found or not available copies to remove.");
+        BookManageDTO before = getBookManageById(bookId);
+        if (before.getAvailableCopies() <= 0) {
+            throw new IllegalArgumentException("Cannot remove copy: no removable copies available.");
         }
 
+        boolean removed = bookRepository.reduceBookCopy(bookId);
+        if (!removed) {
+            throw new IllegalArgumentException("Book not found or no available copies to remove.");
+        }
+
+        BookManageDTO after = getBookManageById(bookId);
+        return "One book copy removed! Total copies: " + before.getTotalCopies() +
+                " -> " + after.getTotalCopies()
+                + ", Available copies: " + before.getAvailableCopies() + " -> " + after.getAvailableCopies();
     }
 
     public void deleteBook(Integer bookId) throws SQLException {
@@ -98,39 +115,42 @@ public class BookService extends BaseService<Book, Integer> {
     }
 
 
-    public void addBook(String title, String isbn, int year, int totalCopies,
-                        String summary, String lanuage, int pageCount,
-                        String firstName, String lastName, int categoryId) throws SQLException {
-        // Validering
-        if (title == null || title.isBlank()) throw new IllegalArgumentException("Title cannot be empty");
-        if (isbn == null || isbn.isBlank()) throw new IllegalArgumentException("ISBN cannot be empty");
-        if (year < 0) throw new IllegalArgumentException("Year cannot be lesser than 0.");
-        if (totalCopies < 1) throw new IllegalArgumentException("Total copies cannot be lesser than 1.");
+    public void addBook(BookCreateDTO dto) throws SQLException {
+        validateCreateDto(dto);
+        ensureCatExists(dto.getCategoryId());
 
-        // Sätter ihop objektet från rå input(String) från Controller
-        // Bygg Author & Category
+        Book book = bookMapper.toEntity(dto);
+
+//        // Sätter ihop objektet från rå input(String) från Controller
+//        // Bygg Author & Category
         Author author = new Author();
-        author.setFirstName(firstName);
-        author.setLastName(lastName);
+        author.setFirstName(dto.getAuthorFirstName().trim());
+        author.setLastName(dto.getAuthorLastName().trim());
 
         Category cat = new Category();
-        cat.setId(categoryId);
+        cat.setId(dto.getCategoryId());
 
-        // Bygga Bok - sätter ihop ett komplett Book-objekt med alla relationer innan der skickas till repository
-        Book book = new Book();
-        book.setTitle(title);
-        book.setIsbn(isbn);
-        book.setYearPublished(year);
-        book.setTotalCopies(totalCopies);
-        book.setAvailableCopies(totalCopies);
-        book.setSummary(summary);
-        book.setLang(lanuage);
-        book.setPageCount(pageCount);
         book.getAuthors().add(author);
         book.getCategories().add(cat);
 
         bookRepository.save(book);
 
-
     }
+
+    private void validateCreateDto(BookCreateDTO dto) {
+        if (dto == null) throw new IllegalArgumentException("Book data is required.");
+        if (dto.getTitle() == null || dto.getTitle().isBlank())
+            throw new IllegalArgumentException("Title is required.");
+        if (dto.getIsbn() == null || dto.getIsbn().isBlank()) throw new IllegalArgumentException("ISBN is required.");
+        if (dto.getYearPublished() < 0) throw new IllegalArgumentException("Invalid year.");
+        if (dto.getTotalCopies() < 1) throw new IllegalArgumentException("Total copies must be at least 1");
+    }
+
+    private void ensureCatExists(int categoryId) throws SQLException {
+        boolean exists = categoryRepository.getAll().stream()
+                .anyMatch(c -> c.getId() == categoryId);
+        if (!exists) throw new IllegalArgumentException("Category does not exists.");
+    }
+
+
 }

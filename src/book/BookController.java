@@ -46,6 +46,7 @@ public class BookController extends BaseController {
         }
     }
 
+
     // Librarian
 
     // 2. Search Books - Admin
@@ -57,18 +58,22 @@ public class BookController extends BaseController {
             List<BookManageDTO> books = bookService.AdminSearch(keyword);
 
             if (books.isEmpty()) {
-                ConsolePrinter.printError("No books found.");
-                return;
+                if (bookService.hasRemovedBookMatch(keyword)) {
+                    ConsolePrinter.printError("This book has been removed.");
+                } else {
+                    ConsolePrinter.printError("No books found.");
+//                    return;
+                }
             }
 
             for (BookManageDTO book : books) {
                 LinkedHashMap<String, Object> fields = new LinkedHashMap<>();
-                fields.put("Title", book.getTitle());
-                fields.put("Author/s", book.getAuthorNames());
-                fields.put("Available", book.getAvailableCopies());
-                fields.put("Genre", book.getCategoryNames());
-                fields.put("Total copies", book.getTotalCopies());
-                ConsolePrinter.printFields("Book Info: ", fields);
+                fields.put("Title ", book.getTitle());
+                fields.put("Author/s ", book.getAuthorNames());
+                fields.put("Genre ", book.getCategoryNames());
+                fields.put("Total Copies ", book.getTotalCopies());
+                fields.put("Available Copies ", book.getAvailableCopies());
+                ConsolePrinter.printFields("Book Info ", fields);
             }
         } catch (SQLException e) {
             ConsolePrinter.printError("Error: " + e.getMessage());
@@ -86,12 +91,13 @@ public class BookController extends BaseController {
     }
 
 
+    // Tar bort en kopia av en bok
+    // 4. Update Book
     public static void updateBookForAdmin(Member currentMember) {
-
         try {
             int bookId = searchAndSelect("Remove Book Copy");
-            bookService.removeBookCopy(bookId);
-            ConsolePrinter.printSuccess("Book copy removed!");
+            String mesage = bookService.removeBookCopy(bookId);
+            ConsolePrinter.printSuccess(mesage);
 
         } catch (IllegalArgumentException e) {
             ConsolePrinter.printError("Invalid input: " + e.getMessage());
@@ -100,6 +106,7 @@ public class BookController extends BaseController {
         }
     }
 
+    // 5. Delete Book
     public static void deleteBookForAdmin(Member currentMember) {
         try {
             int bookId = searchAndSelect("Delete book");
@@ -113,61 +120,47 @@ public class BookController extends BaseController {
         }
     }
 
+    // Hjälpmetod - Sök efter en bok och välj genom ID
     private static int searchAndSelect(String header) throws SQLException {
         ConsolePrinter.printHeader(header);
         ConsolePrinter.printPrompt("Search title, author or genre: ");
         String keyword = scanner.nextLine();
 
-        List<BookManageDTO> bookManageDTOS = bookService.AdminSearch(keyword);
-        if (bookManageDTOS.isEmpty()) {
-            ConsolePrinter.printError("No books found.");
+        List<BookManageDTO> books = bookService.AdminSearch(keyword);
+        if (books.isEmpty()) {
+            throw new IllegalArgumentException("No books found for that search");
         }
 
-        for (BookManageDTO book : bookManageDTOS) {
-            ConsolePrinter.printField(String.valueOf(book.getId()), book.getTitle());
+        for (BookManageDTO book : books) {
+            ConsolePrinter.printField(String.valueOf(book.getId()), book.getTitle()
+                    + " (" + "Total copies: " + book.getTotalCopies() + ") ");
         }
         ConsolePrinter.printPrompt("Enter book id: ");
-        return Integer.parseInt(scanner.nextLine());
+        String input = scanner.nextLine();
+        int selectedBookId;
+        try {
+            selectedBookId = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Book ID must be a number.");
+        }
+
+        boolean idExistsInResult = books.stream()
+                .anyMatch(book -> book.getId() == selectedBookId);
+
+        if (!idExistsInResult) {
+            throw new IllegalArgumentException("Choose a listed book ID.");
+        }
+        return selectedBookId;
     }
 
 
     //  3. Add Book
     public static void addBookForAdmin(Member currentMember) {
-        ConsolePrinter.printPrompt("Enter title: ");
-        String title = scanner.nextLine();
-        ConsolePrinter.printPrompt("ISBN: ");
-        String isbn = scanner.nextLine();
-        ConsolePrinter.printPrompt("Year Published: ");
-        int year = Integer.parseInt(scanner.nextLine());
-        ConsolePrinter.printPrompt("Total Copies: ");
-        int totalCopies = Integer.parseInt(scanner.nextLine());
-        ConsolePrinter.printPrompt("Summary: ");
-        String summary = scanner.nextLine();
-        ConsolePrinter.printPrompt("Language: ");
-        String language = scanner.nextLine();
-        ConsolePrinter.printPrompt("Page Count: ");
-        int pageCount = Integer.parseInt(scanner.nextLine());
-
-        ConsolePrinter.printPrompt("Author first name: ");
-        String firstName = scanner.nextLine();
-        ConsolePrinter.printPrompt("Author last name: ");
-        String lastName = scanner.nextLine();
-//        ConsolePrinter.printPrompt("Category: ");
-//        String category = scanner.nextLine();
-
-        int categoryId = 0;
         try {
-            List<Category> categories = bookService.getAllCategories();
-            ConsolePrinter.printHeader("Choose from categories: ");
-            for (Category c : categories) {
-                ConsolePrinter.printField(String.valueOf(c.getId()), c.getName());
-            }
-            ConsolePrinter.printFooter();
-
-            ConsolePrinter.printPrompt("Choose category (id): ");
-            categoryId = Integer.parseInt(scanner.nextLine());
-            bookService.addBook(title, isbn, year, totalCopies, summary, language, pageCount, firstName, lastName, categoryId);
+            BookCreateDTO dto = createBookForAdmin();
+            bookService.addBook(dto);
             ConsolePrinter.printSuccess("Book added succesfully!");
+
         } catch (IllegalArgumentException e) {
             ConsolePrinter.printError("Invalid input: " + e.getMessage()); // validering från service
         } catch (SQLException e) {
@@ -175,18 +168,49 @@ public class BookController extends BaseController {
         }
     }
 
+    // Hjälp metod för addBookForAdmin
+    private static BookCreateDTO createBookForAdmin() throws SQLException {
+        BookCreateDTO dto = new BookCreateDTO();
+        ConsolePrinter.printPrompt("Enter Title: ");
+        dto.setTitle(scanner.nextLine());
+        ConsolePrinter.printPrompt("ISBN: ");
+        dto.setIsbn(scanner.nextLine());
+        ConsolePrinter.printPrompt("Year Published: ");
+        dto.setYearPublished(Integer.parseInt(scanner.nextLine()));
+        ConsolePrinter.printPrompt("Total Copies: ");
+        dto.setTotalCopies(Integer.parseInt(scanner.nextLine()));
+        ConsolePrinter.printPrompt("Summary: ");
+        dto.setSummary(scanner.nextLine());
+        ConsolePrinter.printPrompt("Language: ");
+        dto.setLanguage(scanner.nextLine());
+        ConsolePrinter.printPrompt("Page Count: ");
+        dto.setPageCount(Integer.parseInt(scanner.nextLine()));
+        ConsolePrinter.printPrompt("Author first name: ");
+        dto.setAuthorFirstName(scanner.nextLine());
+        ConsolePrinter.printPrompt("Author last name: ");
+        dto.setAuthorLastName(scanner.nextLine());
 
-    // Hjälp metod -
+
+        List<Category> categories = bookService.getAllCategories();
+        ConsolePrinter.printHeader("Choose from categories: ");
+        for (Category c : categories) {
+            ConsolePrinter.printField(String.valueOf(c.getId()), c.getName());
+        }
+        ConsolePrinter.printFooter();
+
+        ConsolePrinter.printPrompt("Choose category (id): ");
+        dto.setCategoryId(Integer.parseInt(scanner.nextLine()));
+        return dto;
+    }
+
+
+    // Hjälp metod - View and Search Books Reader
     private static void printBooks(List<? extends BookDetailDTO> books) {
         if (books.isEmpty()) {
             ConsolePrinter.printError("No Books Found.");
             return;
         }
         for (BookDetailDTO book : books) {
-//            System.out.println(book.getTitle());
-//            System.out.println(book.getAuthorNames() + " , " + book.getYearPublished());
-//            System.out.println("Genre: " + book.getCategoryNames());
-//            System.out.println("Available: " + book.getAvailableCopies());
             LinkedHashMap<String, Object> fields = new LinkedHashMap<>();
             fields.put("Title", book.getTitle());
             fields.put("Author/s", book.getAuthorNames());
@@ -195,7 +219,7 @@ public class BookController extends BaseController {
             ConsolePrinter.printFields("Book Info: ", fields);
 
             if (book instanceof BookManageDTO manageDTO) {
-                ConsolePrinter.printField("Total Copies: ", manageDTO.getTotalCopies());
+                ConsolePrinter.printField("Total Copies ", manageDTO.getTotalCopies());
             }
         }
     }

@@ -49,13 +49,13 @@ public class ReaderMenuController {
         showBooksMenu.setExitOption("Back to Main Menu");
         showBooksMenu.addMenuOption("View All Books");
         showBooksMenu.addMenuOption("Search Books");
-        showBooksMenu.addMenuOption("Search Authors");
+//        showBooksMenu.addMenuOption("Search Authors");
 
         while (showBooksMenu.showMenu()) {
             switch (showBooksMenu.getChoice()) {
                 case 1 -> BookController.showAllBooks();
                 case 2 -> BookController.searchForBooks();
-                case 3 -> showBooksMenu.setMenuInfo("BookController.searchForAuthors()");
+//                case 3 -> showBooksMenu.setMenuInfo("BookController.searchForAuthors()");
             }
         }
     }
