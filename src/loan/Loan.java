@@ -34,14 +34,6 @@ public class Loan {
         this.id = id;
     }
 
-    public int getLoanId() {
-        return id;
-    }
-
-    public void setLoanId(int loanId) {
-        this.id = loanId;
-    }
-
     public int getBookId() {
         return bookId;
     }
