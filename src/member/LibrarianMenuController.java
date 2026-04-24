@@ -39,21 +39,24 @@ public class LibrarianMenuController {
 
     //1. Manage Books
     private static void showManageBooksMenu(Member currentMember) throws SQLException {
-        Menu menu = new Menu();
-        menu.setTopTitle("Librarian Menu » Manage Books");
-        menu.addMenuOption("View Books");
-        menu.addMenuOption("Search");
-        menu.addMenuOption("Add Book");
-        menu.addMenuOption("Update Book");
-        menu.addMenuOption("Delete Book");
+        Menu manageBooksMenu = new Menu();
+        manageBooksMenu.setTopTitle("Librarian Menu » Manage Books");
+        manageBooksMenu.setMainTitle("Manage Books");
+        manageBooksMenu.setMenuInfo(ANSI.ITALIC + "Manage books." + ANSI.NO_ITALIC);
+        manageBooksMenu.setExitOption("Back to Librarian Menu");
+        manageBooksMenu.addMenuOption("View Books");
+        manageBooksMenu.addMenuOption("Search Books");
+        manageBooksMenu.addMenuOption("Add Book");
+        manageBooksMenu.addMenuOption("Update Book");
+        manageBooksMenu.addMenuOption("Delete Book");
 
-        while (menu.showMenu()) {
-            switch (menu.getChoice()) {
+        while (manageBooksMenu.showMenu()) {
+            switch (manageBooksMenu.getChoice()) {
                 case 1 -> BookController.showAllBooksForAdmin(currentMember);
                 case 2 -> BookController.AdminSearchForBooks(currentMember);
-                case 3 -> BookController.addBookForAdmin(currentMember);
-                case 4 -> BookController.updateBookForAdmin(currentMember);
-                case 5 -> BookController.deleteBookForAdmin(currentMember);
+//                case 3 -> BookController.addBookForAdmin(currentMember);
+//                case 4 -> BookController.updateBookForAdmin(currentMember);
+//                case 5 -> BookController.deleteBookForAdmin(currentMember);
             }
         }
     }
@@ -68,12 +71,14 @@ public class LibrarianMenuController {
         manageLoansMenu.addMenuOption("View All Active Loans");
         manageLoansMenu.addMenuOption("Add Loan");
         manageLoansMenu.addMenuOption("Update Loan");
+        manageLoansMenu.addMenuOption("Delete Loan");
 
         while (manageLoansMenu.showMenu()) {
             switch (manageLoansMenu.getChoice()) {
-                case 1 -> LoanController.showAllActiveLoans(currentMember);
-                case 2 -> LoanController.createLoan(currentMember);
-                case 3 -> LoanController.registerReturnedLoan(currentMember);
+                case 1 -> LoanController.showAllActiveLoans();
+                case 2 -> manageLoansMenu.setTemporaryPrePrompt(LoanController.createLoan(currentMember));
+                case 3 -> LoanController.showUpdateLoanMenu();
+//                case 4 -> LoanController.deleteLoan(currentMember);
             }
         }
     }
