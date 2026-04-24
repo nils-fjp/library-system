@@ -33,7 +33,10 @@ public class ReaderMenuController {
                 case 1 -> showBooksMenu();
                 case 2 -> showMyLoansMenu(currentMember);
                 case 3 -> showMyProfileMenu(currentMember);
-                case 0 -> AuthController.logout();
+                case 0 -> {
+                    AuthController.logout();
+                    return;
+                }
             }
         }
     }

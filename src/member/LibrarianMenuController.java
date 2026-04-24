@@ -17,6 +17,7 @@ public class LibrarianMenuController {
         menu.setTopTitle("Main Menu » Librarian Menu");
         menu.setMainTitle("Librarian Menu");
         menu.setMenuInfo(ANSI.ITALIC + ANSI.BRIGHT_GREEN + "Welcome, " + currentMember.getFirstName() + "!" + ANSI.NO_ITALIC + ANSI.DEFAULT_FG);
+        menu.setExitOption("Logout"); /////
         menu.addMenuOption("Manage Books");
         menu.addMenuOption("Manage Loans");
         menu.addMenuOption("Manage Readers");
