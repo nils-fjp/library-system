@@ -12,7 +12,6 @@ import java.sql.SQLException;
 
 public class LibrarianMenuController {
 
-    // endast test kod meny - ta bort senare
     public static void showLibrarianMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Main Menu » Librarian Menu");
@@ -22,7 +21,6 @@ public class LibrarianMenuController {
         menu.addMenuOption("Manage Loans");
         menu.addMenuOption("Manage Readers");
         menu.addMenuOption("Manage Authors");
-        menu.addMenuOption("Manage Categories");
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
@@ -30,7 +28,6 @@ public class LibrarianMenuController {
                 case 2 -> showManageLoansMenu(currentMember);
                 case 3 -> showManageReadersMenu(currentMember);
                 case 4 -> showManageAuthorsMenu(currentMember);
-                case 5 -> showManageCategoriesMenu();
                 case 0 -> {
                     AuthController.logout();
                     return;
@@ -59,54 +56,6 @@ public class LibrarianMenuController {
             }
         }
     }
-
-//    private static void showManageBooksMenu() throws SQLException {
-//        Menu menu = new Menu();
-//        menu.setTopTitle("Manage Books");
-//        menu.addMenuOption("View Books");
-//        menu.addMenuOption("Add book");
-//        menu.addMenuOption("Modify book");
-//        menu.addMenuOption("Delete book");
-//
-//        while (menu.showMenu()) {
-//            switch (menu.getChoice()) {
-//                case 1 -> showViewBooksSubMenu();
-//                case 2 -> System.out.println("BookController.addBook()");
-//                // case 2 -> BookController.addBook();
-//                case 3 -> System.out.println("BookController.updateBook()");
-//                // case 3 -> BookController.updateBook();
-//                case 4 -> System.out.println("BookController.deleteBook()");
-//                // case 4 -> BookController.deleteBook();
-//                case 0 -> {
-//                    return;
-//                }
-//                default -> System.out.println("Invalid option.");
-//            }
-//        }
-//    }
-//
-//    private static void showViewBooksSubMenu() throws SQLException {
-//        Menu menu = new Menu();
-//        menu.setTopTitle("View Books");
-//        menu.addMenuOption("View all books");
-//        menu.addMenuOption("Search Books");
-//        menu.addMenuOption("Search Authors");
-//
-//        while (menu.showMenu()) {
-//            switch (menu.getChoice()) {
-//                case 1 -> System.out.println("BookController.showAllBooksForAdmin()");
-//                // case 1 -> BookController.showAllBooksForAdmin();
-//                case 2 -> System.out.println("BookController.searchBooksForAdmin()");
-//                // case 2 -> BookController.searchBooksForAdmin();
-//                case 3 -> System.out.println("BookController.searchAuthorsForAdmin()");
-//                // case 3 -> BookController.searchAuthorsForAdmin();
-//                case 0 -> {
-//                    return;
-//                }
-//                default -> System.out.println("Invalid option.");
-//            }
-//        }
-//    }
 
     //2. Manage Loans
     public static void showManageLoansMenu(Member currentMember) {
@@ -163,12 +112,9 @@ public class LibrarianMenuController {
             }
         }
     }
-
     private static void showReaderActionsMenu(Member currentMember, MemberAdminDto reader) throws SQLException {
 
         Menu menu = new Menu();
-//        menu.setTopTitle("Manage Readers » Reader Actions");
-//        menu.setMainTitle("Reader Actions");
         menu.setMenuInfo(
                 ANSI.ITALIC +
                         "Selected reader: " + reader.getFirstName() + " " + reader.getLastName() +
@@ -213,33 +159,6 @@ public class LibrarianMenuController {
                 case 3 -> AuthorController.updateAuthor(currentMember);
                 //case 4 -> AuthorController.deleteAuthor(currentMember);
                 case 4 -> AuthorController.showAuthor(currentMember);
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid option.");
-            }
-        }
-    }
-
-    //5. Manage Categories
-    private static void showManageCategoriesMenu() throws SQLException {
-        Menu menu = new Menu();
-        menu.setTopTitle("Manage Categories");
-        menu.addMenuOption("View categories");
-        menu.addMenuOption("Add category");
-        menu.addMenuOption("Modify category");
-        menu.addMenuOption("Delete category");
-
-        while (menu.showMenu()) {
-            switch (menu.getChoice()) {
-                case 1 -> System.out.println("CategoryController.showAllCategories()");
-                // case 1 -> CategoryController.showAllCategories();
-                case 2 -> System.out.println("CategoryController.addCategory()");
-                // case 2 -> CategoryController.addCategory();
-                case 3 -> System.out.println("CategoryController.updateCategory()");
-                // case 3 -> CategoryController.updateCategory();
-                case 4 -> System.out.println("CategoryController.deleteCategory()");
-                // case 4 -> CategoryController.deleteCategory();
                 case 0 -> {
                     return;
                 }
