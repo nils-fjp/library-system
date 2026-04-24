@@ -8,13 +8,20 @@ import java.util.Scanner;
 
 
 public class AuthController {
-    private static final Scanner scanner = new Scanner(System.in);
-    private static final ConsolePrinter printer = new ConsolePrinter();
+    private final Scanner scanner;
+    private final MemberService memberService;
     private static Member currentMember;
 
-    public static void login() {
-        MemberService memberService = new MemberService();
+    public AuthController() {
+        this(new Scanner(System.in), new MemberService());
+    }
 
+    public AuthController(Scanner scanner, MemberService memberService) {
+        this.scanner = scanner;
+        this.memberService = memberService;
+    }
+
+    public void login() {
         try {
             System.out.print("Enter email: ");
             String email = scanner.nextLine().trim();
@@ -25,16 +32,16 @@ public class AuthController {
             Optional<Member> optionalMember = memberService.authenticate(email, password);
 
             if (optionalMember.isEmpty()) {
-                printer.printError("Invalid email or password.");
+                ConsolePrinter.printError("Invalid email or password.");
                 return;
             }
 
             currentMember = optionalMember.get();
-            printer.printSuccess("Welcome, " + currentMember.getFirstName() + "!");
+            ConsolePrinter.printSuccess("Welcome, " + currentMember.getFirstName() + "!");
 
             String status = MemberValidator.getNormalizedStatus(currentMember);
             if ("suspended".equals(status)) {
-                printer.printError("\"Your account is suspended. You can view your account and search books, \n" +
+                ConsolePrinter.printError("\"Your account is suspended. You can view your account and search books, \n" +
                                     "but you cannot borrow, reserve, or renew items.");
             }
             if ("LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
@@ -43,16 +50,12 @@ public class AuthController {
                 ReaderMenuController.showReaderMenu(currentMember);
             }
 
-        } catch (MemberException e) {
-            printer.printError(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            printer.printError(e.getMessage());
-        } catch (SQLException e) {
-            printer.printError("Database error: " + e.getMessage());
+        } catch (MemberException | IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void logout() {
+    public void logout() {
         currentMember = null;
     }
 }

@@ -12,9 +12,19 @@ import java.util.Optional;
 
 public class MemberService extends BaseService<Member, Integer> {
 
-    private final MemberRepository memberRepository = new MemberRepository();
-    private final LoanService loanService = new LoanService();
-    private final MemberMapper memberMapper = new MemberMapper();
+    private final MemberRepository memberRepository;
+    private final LoanService loanService;
+    private final MemberMapper memberMapper;
+
+    public MemberService() {
+        this(new MemberRepository(), new LoanService(), new MemberMapper());
+    }
+
+    public MemberService(MemberRepository memberRepository, LoanService loanService, MemberMapper memberMapper) {
+        this.memberRepository = memberRepository;
+        this.loanService = loanService;
+        this.memberMapper = memberMapper;
+    }
 
     // =========================================================
     // BaseService implementation

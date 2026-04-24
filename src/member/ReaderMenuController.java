@@ -12,6 +12,8 @@ import java.util.Scanner;
 public class ReaderMenuController {
 
     private static final Scanner SCANNER = new Scanner(System.in);
+    private static final AuthController AUTH_CONTROLLER = new AuthController();
+    private static final MemberController MEMBER_CONTROLLER = new MemberController();
 
     // Min kod - ta bort senare - bara test kod meny
     // =========================================================
@@ -33,7 +35,7 @@ public class ReaderMenuController {
                 case 2 -> showMyLoansMenu(currentMember);
                 case 3 -> showMyProfileMenu(currentMember);
                 case 0 -> {
-                    AuthController.logout();
+                    AUTH_CONTROLLER.logout();
                     return;
                 }
             }
@@ -96,9 +98,9 @@ public class ReaderMenuController {
 
         while (myProfileMenu.showMenu()) {
             switch (myProfileMenu.getChoice()) {
-                case 1 -> MemberController.showCurrentMemberProfile(currentMember);
-                case 2 -> MemberController.updateOwnProfile(currentMember);
-                case 3 -> MemberController.changePassword(currentMember);
+                case 1 -> MEMBER_CONTROLLER.showCurrentMemberProfile(currentMember);
+                case 2 -> MEMBER_CONTROLLER.updateOwnProfile(currentMember);
+                case 3 -> MEMBER_CONTROLLER.changePassword(currentMember);
             }
         }
     }

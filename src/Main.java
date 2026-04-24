@@ -1,4 +1,5 @@
 import ui.Menu;
+import ui.AuthController;
 
 import java.sql.SQLException;
 
@@ -8,6 +9,7 @@ public class Main {
 
     static void main(String[] args) throws SQLException {
         Menu mainMenu = new Menu();
+        AuthController authController = new AuthController();
 
         //ui.ConsolePrinter.printStyledHeader("Welcome to the Library System", BOLD + CYAN, BRIGHT_BLACK);
         //ui.ConsolePrinter.printHeader("Welcome to the Library System");
@@ -25,7 +27,7 @@ public class Main {
             switch (mainMenu.getChoice()) {
                 case 1 -> member.ReaderMenuController.showBooksMenu();
 //                case 2 -> book.BookController.searchForBooks();
-                case 2 -> ui.AuthController.login();
+                case 2 -> authController.login();
             }
         }
         System.out.print(CLEAR_SCREEN);
