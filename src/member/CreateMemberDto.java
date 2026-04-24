@@ -1,7 +1,5 @@
 package member;
 
-import javax.imageio.plugins.jpeg.JPEGImageReadParam;
-
 public class CreateMemberDto {
     private String firstName;
     private String lastName;

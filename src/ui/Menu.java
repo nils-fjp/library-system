@@ -204,9 +204,11 @@ public class Menu {
             int endExclusive = Math.min(this.menuOptions.size(), startIndex + OPTIONS_PER_PAGE);
 
             System.out.print(CLEAR_SCREEN);
-            drawTopBorderRow(this.topTitle);
-            drawCenteredRow(safe(this.mainTitle).toUpperCase());
-            drawBottomBorderRow();
+            if (!safe(this.topTitle).isEmpty() || !safe(this.mainTitle).isEmpty()) {
+                drawTopBorderRow(this.topTitle);
+                drawCenteredRow(safe(this.mainTitle).toUpperCase());
+                drawBottomBorderRow();
+            }
 
             String[] infoLines = safe(this.menuInfo).split("\\R", -1);
             if (infoLines.length == 1) {

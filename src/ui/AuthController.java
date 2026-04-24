@@ -34,7 +34,8 @@ public class AuthController {
 
             String status = MemberValidator.getNormalizedStatus(currentMember);
             if ("suspended".equals(status)) {
-                printer.printError("Your account is suspended. You can view your account and search books, but you cannot borrow, reserve, or renew items.");
+                printer.printError("\"Your account is suspended. You can view your account and search books, \n" +
+                                    "but you cannot borrow, reserve, or renew items.");
             }
             if ("LIBRARIAN".equalsIgnoreCase(currentMember.getRole())) {
                 LibrarianMenuController.showLibrarianMenu(currentMember);
@@ -42,7 +43,7 @@ public class AuthController {
                 ReaderMenuController.showReaderMenu(currentMember);
             }
 
-        } catch (MembershipExpiredException e) {
+        } catch (MemberException e) {
             printer.printError(e.getMessage());
         } catch (IllegalArgumentException e) {
             printer.printError(e.getMessage());
