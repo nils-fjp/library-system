@@ -28,6 +28,27 @@ public class BookRepository extends BaseRepository<Book, Integer> {
     //Search for book by ID
     @Override
     public Optional<Book> getById(Integer id) throws SQLException {
+        String sql = """
+                SELECT b.id, b.title, b.isbn, b.year_published, b.available_copies, b.total_copies,
+                       bd.summary, bd.language, bd.page_count
+                FROM books b
+                LEFT JOIN book_descriptions bd ON b.id = bd.book_id
+                WHERE b.id = ?
+                """;
+
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setInt(1, id);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(mapBook(resultSet));
+                }
+            }
+        }
+
         return Optional.empty();
     }
 
@@ -46,9 +67,11 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                 "JOIN book_categories bc ON b.id = bc.book_id " +
                 "JOIN categories c ON c.id = bc.category_id ";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet rs = statement.executeQuery()) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet rs = statement.executeQuery()
+        ) {
             mapBooks(books, rs);
         }
         return books;
@@ -71,8 +94,10 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                 "WHERE b.is_active = 1 AND (b.title LIKE ? " +
                 "OR CONCAT(a.first_name, ' ', a.last_name) LIKE ? " +
                 "OR c.name LIKE ?) ";
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
             statement.setString(1, keyword);
             statement.setString(2, keyword);
             statement.setString(3, keyword);
@@ -94,8 +119,10 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                 "OR CONCAT(a.first_name, ' ', a.last_name) LIKE ? " +
                 "OR c.name LIKE ?) " +
                 "LIMIT 1";
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
             statement.setString(1, keyword);
             statement.setString(2, keyword);
             statement.setString(3, keyword);
@@ -115,7 +142,12 @@ public class BookRepository extends BaseRepository<Book, Integer> {
             connection.setAutoCommit(false); // Transaktion - allt eller inget
             int bookId;
 
-            try (PreparedStatement bookStmt = connection.prepareStatement(bookSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            try (
+                    PreparedStatement bookStmt = connection.prepareStatement(
+                            bookSql,
+                            PreparedStatement.RETURN_GENERATED_KEYS
+                    )
+            ) {
                 // RETRUN_GENERATED_KEYS - sparar den id:et databasen generenar
 
                 bookStmt.setString(1, entity.getTitle());
@@ -194,8 +226,10 @@ public class BookRepository extends BaseRepository<Book, Integer> {
     public boolean isBookOnLoan(Integer bookId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM loans WHERE book_id = ? AND return_date IS NULL";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
             statement.setInt(1, bookId);
 
             try (ResultSet rs = statement.executeQuery()) {
@@ -214,13 +248,14 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                 "AND total_copies > 0 " +
                 "AND available_copies > 0";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;
         }
     }
-
 
     // Hjälpmetod för getAll och searchBooks
     private Book mapBook(ResultSet resultSet) throws SQLException {
@@ -250,7 +285,6 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
-
 
             boolean authorExists = book.getAuthors().stream()
                     .anyMatch(a -> a.getFirstName().equals(firstName)
