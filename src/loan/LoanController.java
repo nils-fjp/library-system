@@ -38,16 +38,6 @@ public class LoanController extends BaseController<Loan, Integer> {
         }
     }
 
-    public static void showLoanHistoryMenu(Member currentMember) {
-        Menu loanHistoryMenu = new Menu();
-        loanHistoryMenu.setTopTitle("My Loans » View Loan History");
-        loanHistoryMenu.setMainTitle("View Loan History");
-        loanHistoryMenu.setExitOption("Back to My Loans");
-
-        loadLoanHistoryScreen(loanHistoryMenu, currentMember.getId());
-        loanHistoryMenu.showMenu();
-    }
-
     public static void showUpdateLoanMenu() {
         Menu updateLoanMenu = new Menu();
         updateLoanMenu.setTopTitle("Librarian Menu » Manage Loans » Update Loan");
@@ -184,6 +174,18 @@ public class LoanController extends BaseController<Loan, Integer> {
         }
     }
 
+    // Visar historikskärmen för den inloggade medlemmen.
+    public static void showLoanHistoryMenu(Member currentMember) {
+        Menu loanHistoryMenu = new Menu();
+        loanHistoryMenu.setTopTitle("My Loans » View Loan History");
+        loanHistoryMenu.setMainTitle("View Loan History");
+        loanHistoryMenu.setExitOption("Back to My Loans");
+
+        loadLoanHistoryScreen(loanHistoryMenu, currentMember.getId());
+        loanHistoryMenu.showMenu();
+    }
+
+    // Hämtar lånehistoriken via service och fyller menyn med innehåll.
     private static void loadLoanHistoryScreen(Menu menu, Integer memberId) {
         try {
             List<LoanHistoryDto> loans = loanService.getLoanHistoryByMember(memberId);
@@ -193,6 +195,23 @@ public class LoanController extends BaseController<Loan, Integer> {
         } catch (SQLException e) {
             menu.setMenuInfo(ANSI.RED + "Database error: " + e.getMessage() + ANSI.DEFAULT_FG);
         }
+    }
+
+    // Formaterar varje historikpost till rader som passar informationsvyn.
+    private static ArrayList<String> buildLoanHistoryLines(List<LoanHistoryDto> loans) {
+        ArrayList<String> lines = new ArrayList<>();
+
+        for (int i = 0; i < loans.size(); i++) {
+            LoanHistoryDto loan = loans.get(i);
+            lines.add(Menu.formatInfoColumns(loan.bookTitle(), "returned: " + loan.returnDate()));
+            lines.add(Menu.formatInfoColumns("loaned: " + loan.loanDate(), "due: " + loan.dueDate()));
+
+            if (i < loans.size() - 1) {
+                lines.add("");
+            }
+        }
+
+        return lines;
     }
 
     private static List<ActiveLoanDto> refreshUpdateLoanMenu(Menu menu) {
@@ -269,22 +288,6 @@ public class LoanController extends BaseController<Loan, Integer> {
         }
 
         return optionTexts;
-    }
-
-    private static ArrayList<String> buildLoanHistoryLines(List<LoanHistoryDto> loans) {
-        ArrayList<String> lines = new ArrayList<>();
-
-        for (int i = 0; i < loans.size(); i++) {
-            LoanHistoryDto loan = loans.get(i);
-            lines.add(Menu.formatInfoColumns(loan.bookTitle(), "returned: " + loan.returnDate()));
-            lines.add(Menu.formatInfoColumns("loaned: " + loan.loanDate(), "due: " + loan.dueDate()));
-
-            if (i < loans.size() - 1) {
-                lines.add("");
-            }
-        }
-
-        return lines;
     }
 
     private static ArrayList<String> buildAllActiveLoanLines(List<ActiveLoanDto> loans) {
