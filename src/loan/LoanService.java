@@ -5,6 +5,7 @@ import base.BaseRepository;
 import base.BaseService;
 import book.Book;
 import book.BookRepository;
+import category.CategoryRepository;
 import member.Member;
 import member.MemberRepository;
 
@@ -19,7 +20,7 @@ public class LoanService extends BaseService<Loan, Integer> {
 
     private final LoanRepository loanRepository = new LoanRepository();
     private final MemberRepository memberRepository = new MemberRepository();
-    private final BookRepository bookRepository = new BookRepository(new AuthorRepository());
+    private final BookRepository bookRepository = new BookRepository(new AuthorRepository(), new CategoryRepository());
 
     @Override
     protected BaseRepository<Loan, Integer> getRepository() {
