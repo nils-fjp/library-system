@@ -55,18 +55,18 @@ public class BookMapper {
         );
     }
 
-    // När bibliotekarien skapr/redigerar
-    public Book toEntity(BookManageDTO dto) {
-        Book book = new Book();
+    // När bibliotekarien skapar/redigerar
+    public Book toEntity(BookCreateDTO dto) {
 
+        Book book = new Book();
         book.setIsbn(dto.getIsbn());
         book.setTitle(dto.getTitle());
         book.setYearPublished(dto.getYearPublished());
-        book.setAvailableCopies(dto.getAvailableCopies());
-        book.setSummary(dto.getSummary());
-        book.setLang(dto.getLang());
-        book.setPageCount(dto.getPageCount());
         book.setTotalCopies(dto.getTotalCopies());
+        book.setAvailableCopies(dto.getTotalCopies());
+        book.setSummary(dto.getSummary());
+        book.setLang(dto.getLanguage());
+        book.setPageCount(dto.getPageCount());
         // author och categories sätts av BookService
         return book;
     }

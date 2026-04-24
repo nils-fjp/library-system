@@ -13,7 +13,6 @@ public class AuthorService extends BaseService<Author, Integer> {
     private final AuthorRepository authorRepository = new AuthorRepository();
 
 
-
     @Override
     protected BaseRepository<Author, Integer> getRepository() {
         return authorRepository;

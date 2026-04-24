@@ -36,11 +36,11 @@ public class CategoryRepository extends BaseRepository<Category, Integer> {
         return categories;
     }
 
-    public void saveBookCategories(int bookId, int categoryId) throws SQLException {
-        String sql = "INSERT INTO book_categories (book_id, category_id)";
+    public void saveBookCategories(Connection connection, int bookId, int categoryId) throws SQLException {
+        String sql = "INSERT INTO book_categories (book_id, category_id) " +
+                "VALUES (?, ?)";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, bookId);
             statement.setInt(2, categoryId);
             statement.executeUpdate();

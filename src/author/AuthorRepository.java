@@ -9,13 +9,14 @@ import java.util.Optional;
 
 public class AuthorRepository extends BaseRepository<Author, Integer> {
 
-    public Optional<Author> findByName(String firstName, String lastName) throws SQLException {
+    public Optional<Author> findByName(Connection connection, String firstName, String lastName) throws SQLException {
         String sql = "SELECT id, first_name, last_name, nationality, birth_date " +
-                "FROM authors WHERE first_name LIKE ? OR last_name LIKE ? ";
+                "FROM authors " +
+                "WHERE LOWER(TRIM(first_name)) = LOWER(TRIM(?)) " +
+                "AND LOWER(TRIM(last_name)) = LOWER(TRIM(?)) " +
+                "LIMIT 1";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, firstName);
             statement.setString(2, lastName);
 
@@ -39,8 +40,8 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
         return Optional.empty();
     }
 
-    public Author findOrSave(Author author, int bookId) throws SQLException {
-        Optional<Author> existing = findByName(author.getFirstName(), author.getLastName());
+    public Author findOrSave(Connection connection, Author author) throws SQLException {
+        Optional<Author> existing = findByName(connection, author.getFirstName(), author.getLastName());
 
         // Om author redan finns returnera den
         if (existing.isPresent()) {
@@ -49,6 +50,19 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
         save(author); // Om det inte finns, spara och sätt id på author
         return author;
     }
+
+
+    public void saveBookAuthor(Connection connection, int bookId, int authorId) throws SQLException {
+        String linkSql = "INSERT INTO book_authors (book_id, author_id) " +
+                "VALUES (?, ?) ";
+
+        try (PreparedStatement statement = connection.prepareStatement(linkSql)) {
+            statement.setInt(1, bookId);
+            statement.setInt(2, authorId);
+            statement.executeUpdate();
+        }
+    }
+
 
     public List<Author> search(String keyword) throws SQLException {
         List<Author> authors = new ArrayList<>();

@@ -86,7 +86,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
     public boolean hasInactiveMatch(String keyword) throws SQLException {
         String sql = "SELECT 1 FROM books b " +
-                "JOIN books_authors ba ON b.id = ba.book_id " +
+                "JOIN book_authors ba ON b.id = ba.book_id " +
                 "JOIN authors a ON a.id = ba.author_id " +
                 "JOIN book_categories bc ON b.id = bc.book_id " +
                 "JOIN categories c ON c.id = bc.category_id " +
@@ -110,10 +110,10 @@ public class BookRepository extends BaseRepository<Book, Integer> {
     public void save(Book entity) throws SQLException {
         String bookSql = "INSERT INTO books (title, isbn, year_published, total_copies, available_copies)" +
                 "VALUES(?, ?, ?, ?, ?)";
-        String descSql = "INSERT INTO book_descriptions (book_id, summary, language, page_count) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false); // Transaktion - allt eller inget
+            int bookId;
 
             try (PreparedStatement bookStmt = connection.prepareStatement(bookSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
                 // RETRUN_GENERATED_KEYS - sparar den id:et databasen generenar
@@ -127,19 +127,30 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
                 // Hämtar det nya id:et
                 try (ResultSet generatedKeys = bookStmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        int bookId = generatedKeys.getInt(1);
-
-                        // Anropa metoder från Author och Category
-                        saveDescription(connection, bookId, entity);
-//                        authorRepository.save(bookId, entity);
-//                        categoryRepository.saveBookCategories(bookId, entity);
+                    if (!generatedKeys.next()) {
+//                        int bookId = generatedKeys.getInt(1);
+                        throw new SQLException("Book was created, but no id was returned.");
                     }
+                    bookId = generatedKeys.getInt(1);
                 }
+                entity.setId(bookId);
+                // Anropa metoder från Author och Category
+                saveDescription(connection, bookId, entity);
+                for (Author author : entity.getAuthors()) {
+                    Author persisted = authorRepository.findOrSave(connection, author);
+                    authorRepository.saveBookAuthor(connection, bookId, persisted.getId());
+                }
+
+                for (Category category : entity.getCategories()) {
+                    categoryRepository.saveBookCategories(connection, bookId, category.getId());
+                }
+
                 connection.commit();
-            } catch (SQLException e) {
+            } catch (SQLException | RuntimeException e) {
                 connection.rollback();
                 throw e;
+            } finally {
+                connection.setAutoCommit(true);
             }
         }
     }
@@ -159,11 +170,9 @@ public class BookRepository extends BaseRepository<Book, Integer> {
 
     @Override
     public void update(Book entity) throws SQLException {
-
     }
 
     @Override
-    //TODO: fråga gruppen om man ska lägga till en ny kolumn i databsen(is_active) eller ändra book_id i loans (ej NN)
     public void deleteById(Integer id) throws SQLException {
         String deletesql = "UPDATE books SET is_active = 0 WHERE id = ?"; // Soft delete
 
@@ -197,7 +206,6 @@ public class BookRepository extends BaseRepository<Book, Integer> {
         }
         return false;
     }
-
 
     public boolean reduceBookCopy(Integer id) throws SQLException {
         String sql = "UPDATE books SET total_copies = total_copies -1, " +

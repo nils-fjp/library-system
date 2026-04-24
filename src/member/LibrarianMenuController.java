@@ -59,53 +59,6 @@ public class LibrarianMenuController {
         }
     }
 
-//    private static void showManageBooksMenu() throws SQLException {
-//        Menu menu = new Menu();
-//        menu.setTopTitle("Manage Books");
-//        menu.addMenuOption("View Books");
-//        menu.addMenuOption("Add book");
-//        menu.addMenuOption("Modify book");
-//        menu.addMenuOption("Delete book");
-//
-//        while (menu.showMenu()) {
-//            switch (menu.getChoice()) {
-//                case 1 -> showViewBooksSubMenu();
-//                case 2 -> System.out.println("BookController.addBook()");
-//                // case 2 -> BookController.addBook();
-//                case 3 -> System.out.println("BookController.updateBook()");
-//                // case 3 -> BookController.updateBook();
-//                case 4 -> System.out.println("BookController.deleteBook()");
-//                // case 4 -> BookController.deleteBook();
-//                case 0 -> {
-//                    return;
-//                }
-//                default -> System.out.println("Invalid option.");
-//            }
-//        }
-//    }
-//
-//    private static void showViewBooksSubMenu() throws SQLException {
-//        Menu menu = new Menu();
-//        menu.setTopTitle("View Books");
-//        menu.addMenuOption("View all books");
-//        menu.addMenuOption("Search Books");
-//        menu.addMenuOption("Search Authors");
-//
-//        while (menu.showMenu()) {
-//            switch (menu.getChoice()) {
-//                case 1 -> System.out.println("BookController.showAllBooksForAdmin()");
-//                // case 1 -> BookController.showAllBooksForAdmin();
-//                case 2 -> System.out.println("BookController.searchBooksForAdmin()");
-//                // case 2 -> BookController.searchBooksForAdmin();
-//                case 3 -> System.out.println("BookController.searchAuthorsForAdmin()");
-//                // case 3 -> BookController.searchAuthorsForAdmin();
-//                case 0 -> {
-//                    return;
-//                }
-//                default -> System.out.println("Invalid option.");
-//            }
-//        }
-//    }
 
     //2. Manage Loans
     public static void showManageLoansMenu(Member currentMember) {
