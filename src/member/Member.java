@@ -97,20 +97,7 @@ public class Member {
         this.password = password;
     }
 
-    public void setRole(String reader) {
+    public void setRole(String role) {
+        this.role = role;
     }
-
-
-//    @Override
-//    public String toString() {
-    //        return "Member.Member{" +
-//                "id=" + id +
-//                ", firstName='" + firstName + '\'' +
-//                ", lastName='" + lastName + '\'' +
-//                ", email='" + email + '\'' +
-//                ", membershipDate=" + membershipDate +
-//                ", membershipType='" + membershipType + '\'' +
-//                ", status='" + status + '\'' +
-//                '}';
-//    }
 }

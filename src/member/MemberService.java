@@ -72,6 +72,20 @@ public class MemberService extends BaseService<Member, Integer> {
 
         return result;
     }
+    public List<MemberAdminDto> searchMembersForAdmin(String keyword) throws SQLException {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new IllegalArgumentException("Search keyword cannot be empty.");
+        }
+
+        List<Member> members = memberRepository.search(keyword.trim());
+        List<MemberAdminDto> result = new ArrayList<>();
+
+        for (Member member : members) {
+            result.add(memberMapper.toAdminDto(member));
+        }
+
+        return result;
+    }
 
     //update
     public Optional<MemberAdminDto> updateMemberByAdmin(UpdateMemberDto dto) throws SQLException {

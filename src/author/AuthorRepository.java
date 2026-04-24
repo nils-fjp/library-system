@@ -9,46 +9,46 @@ import java.util.Optional;
 
 public class AuthorRepository extends BaseRepository<Author, Integer> {
 
-//    public List<Author> searchByName(String keyword) throws SQLException {
-//        String sql = """
-//        SELECT id, first_name, last_name, nationality, birth_date
-//        FROM library.authors
-//        WHERE first_name LIKE ?
-//           OR last_name LIKE ?
-//           OR CONCAT(first_name, ' ', last_name) LIKE ?
-//        ORDER BY last_name, first_name
-//        """;
-//
-//        List<Author> authors = new ArrayList<>();
-//
-//        try (Connection connection = getConnection();
-//             PreparedStatement statement = connection.prepareStatement(sql)) {
-//
-//            String pattern = "%" + keyword.trim() + "%";
-//            statement.setString(1, pattern);
-//            statement.setString(2, pattern);
-//            statement.setString(3, pattern);
-//
-//            try (ResultSet rs = statement.executeQuery()) {
-//                while (rs.next()) {
-//                    Author author = new Author();
-//                    author.setId(rs.getInt("id"));
-//                    author.setFirstName(rs.getString("first_name"));
-//                    author.setLastName(rs.getString("last_name"));
-//                    author.setNationality(rs.getString("nationality"));
-//
-//                    Date birthDate = rs.getDate("birth_date");
-//                    if (birthDate != null) {
-//                        author.setBirthDate(birthDate.toLocalDate());
-//                    }
-//
-//                    authors.add(author);
-//                }
-//            }
-//        }
-//
-//        return authors;
-//    }
+    public Optional<Author> findByName(String firstName, String lastName) throws SQLException {
+        String sql = "SELECT id, first_name, last_name, nationality, birth_date " +
+                "FROM authors WHERE first_name LIKE ? OR last_name LIKE ? ";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    Author author = new Author();
+                    author.setId(rs.getInt("id"));
+                    author.setFirstName(rs.getString("first_name"));
+                    author.setLastName(rs.getString("last_name"));
+                    author.setNationality(rs.getString("nationality"));
+
+                    Date birthDate = rs.getDate("birth_date");
+                    if (birthDate != null) {
+                        author.setBirthDate(birthDate.toLocalDate());
+                    }
+
+                    return Optional.of(author);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Author findOrSave(Author author, int bookId) throws SQLException {
+        Optional<Author> existing = findByName(author.getFirstName(), author.getLastName());
+
+        // Om author redan finns returnera den
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+        save(author); // Om det inte finns, spara och sätt id på author
+        return author;
+    }
 
     public List<Author> search(String keyword) throws SQLException {
         List<Author> authors = new ArrayList<>();
@@ -58,22 +58,22 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
         String sql;
         if (isIdSearch) {
             sql = """
-            SELECT id, first_name, last_name, nationality, birth_date
-            FROM library.authors
-            WHERE id = ?
-            ORDER BY last_name, first_name
-            """;
+                    SELECT id, first_name, last_name, nationality, birth_date
+                    FROM library.authors
+                    WHERE id = ?
+                    ORDER BY last_name, first_name
+                    """;
         } else {
             sql = """
-            SELECT id, first_name, last_name, nationality, birth_date
-            FROM library.authors
-            WHERE first_name LIKE ?
-               OR last_name LIKE ?
-               OR nationality LIKE ?
-               OR CAST(birth_date AS CHAR) LIKE ?
-               OR CONCAT(first_name, ' ', last_name) LIKE ?
-            ORDER BY last_name, first_name
-            """;
+                    SELECT id, first_name, last_name, nationality, birth_date
+                    FROM library.authors
+                    WHERE first_name LIKE ?
+                       OR last_name LIKE ?
+                       OR nationality LIKE ?
+                       OR CAST(birth_date AS CHAR) LIKE ?
+                       OR CONCAT(first_name, ' ', last_name) LIKE ?
+                    ORDER BY last_name, first_name
+                    """;
         }
 
         try (Connection connection = getConnection();
@@ -110,16 +110,17 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
 
         return authors;
     }
+
     @Override
     public void save(Author entity) throws SQLException {
         String sql = """
-            INSERT INTO library.authors (
-                first_name,
-                last_name,
-                nationality,
-                birth_date
-            ) VALUES (?, ?, ?, ?)
-            """;
+                INSERT INTO library.authors (
+                    first_name,
+                    last_name,
+                    nationality,
+                    birth_date
+                ) VALUES (?, ?, ?, ?)
+                """;
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -156,10 +157,10 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
     @Override
     public Optional<Author> getById(Integer id) throws SQLException {
         String sql = """
-            SELECT id, first_name, last_name, nationality, birth_date
-            FROM library.authors
-            WHERE id = ?
-            """;
+                SELECT id, first_name, last_name, nationality, birth_date
+                FROM library.authors
+                WHERE id = ?
+                """;
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -190,9 +191,9 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
     @Override
     public List<Author> getAll() throws SQLException {
         String sql = """
-            SELECT id, first_name, last_name, nationality, birth_date
-            FROM library.authors
-            """;
+                SELECT id, first_name, last_name, nationality, birth_date
+                FROM library.authors
+                """;
 
         List<Author> authors = new ArrayList<>();
 
@@ -222,10 +223,10 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
     @Override
     public void update(Author entity) throws SQLException {
         String sql = """
-            UPDATE library.authors
-            SET first_name = ?, last_name = ?, nationality = ?, birth_date = ?
-            WHERE id = ?
-            """;
+                UPDATE library.authors
+                SET first_name = ?, last_name = ?, nationality = ?, birth_date = ?
+                WHERE id = ?
+                """;
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

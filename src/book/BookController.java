@@ -1,6 +1,7 @@
 package book;
 
 import base.BaseController;
+import category.Category;
 import member.Member;
 import ui.ConsolePrinter;
 
@@ -22,8 +23,15 @@ public class BookController extends BaseController {
         String keyword = scanner.nextLine();
 
         try {
-
-            printBooks(bookService.search(keyword));
+            List<BookDetailDTO> books = bookService.search(keyword);
+            if (books.isEmpty()) {
+                if (bookService.hasRemovedBookMatch(keyword)) {
+                    ConsolePrinter.printError("Book removed!");
+                } else {
+                    ConsolePrinter.printError("No books found.");
+                }
+            }
+            printBooks(books);
         } catch (SQLException e) {
             ConsolePrinter.printError("Error: " + e.getMessage());
         }
@@ -77,30 +85,88 @@ public class BookController extends BaseController {
         }
     }
 
-    //  3. Add Book (+lägga böcker i kategorier) +
+
+    public static void updateBookForAdmin(Member currentMember) {
+
+        try {
+            int bookId = searchAndSelect("Remove Book Copy");
+            bookService.removeBookCopy(bookId);
+            ConsolePrinter.printSuccess("Book copy removed!");
+
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Error: " + e.getMessage());
+        }
+    }
+
+    public static void deleteBookForAdmin(Member currentMember) {
+        try {
+            int bookId = searchAndSelect("Delete book");
+            bookService.deleteBook(bookId);
+            ConsolePrinter.printSuccess("Book deleted!");
+
+        } catch (IllegalArgumentException e) {
+            ConsolePrinter.printError("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            ConsolePrinter.printError("Error: " + e.getMessage());
+        }
+    }
+
+    private static int searchAndSelect(String header) throws SQLException {
+        ConsolePrinter.printHeader(header);
+        ConsolePrinter.printPrompt("Search title, author or genre: ");
+        String keyword = scanner.nextLine();
+
+        List<BookManageDTO> bookManageDTOS = bookService.AdminSearch(keyword);
+        if (bookManageDTOS.isEmpty()) {
+            ConsolePrinter.printError("No books found.");
+        }
+
+        for (BookManageDTO book : bookManageDTOS) {
+            ConsolePrinter.printField(String.valueOf(book.getId()), book.getTitle());
+        }
+        ConsolePrinter.printPrompt("Enter book id: ");
+        return Integer.parseInt(scanner.nextLine());
+    }
+
+
+    //  3. Add Book
     public static void addBookForAdmin(Member currentMember) {
         ConsolePrinter.printPrompt("Enter title: ");
         String title = scanner.nextLine();
-
         ConsolePrinter.printPrompt("ISBN: ");
         String isbn = scanner.nextLine();
-
         ConsolePrinter.printPrompt("Year Published: ");
         int year = Integer.parseInt(scanner.nextLine());
-
         ConsolePrinter.printPrompt("Total Copies: ");
         int totalCopies = Integer.parseInt(scanner.nextLine());
+        ConsolePrinter.printPrompt("Summary: ");
+        String summary = scanner.nextLine();
+        ConsolePrinter.printPrompt("Language: ");
+        String language = scanner.nextLine();
+        ConsolePrinter.printPrompt("Page Count: ");
+        int pageCount = Integer.parseInt(scanner.nextLine());
 
         ConsolePrinter.printPrompt("Author first name: ");
         String firstName = scanner.nextLine();
-
         ConsolePrinter.printPrompt("Author last name: ");
         String lastName = scanner.nextLine();
+//        ConsolePrinter.printPrompt("Category: ");
+//        String category = scanner.nextLine();
 
-        ConsolePrinter.printPrompt("Category: ");
-        String category = scanner.nextLine();
+        int categoryId = 0;
         try {
-            bookService.addBook(title, isbn, year, totalCopies, firstName, lastName, category);
+            List<Category> categories = bookService.getAllCategories();
+            ConsolePrinter.printHeader("Choose from categories: ");
+            for (Category c : categories) {
+                ConsolePrinter.printField(String.valueOf(c.getId()), c.getName());
+            }
+            ConsolePrinter.printFooter();
+
+            ConsolePrinter.printPrompt("Choose category (id): ");
+            categoryId = Integer.parseInt(scanner.nextLine());
+            bookService.addBook(title, isbn, year, totalCopies, summary, language, pageCount, firstName, lastName, categoryId);
             ConsolePrinter.printSuccess("Book added succesfully!");
         } catch (IllegalArgumentException e) {
             ConsolePrinter.printError("Invalid input: " + e.getMessage()); // validering från service

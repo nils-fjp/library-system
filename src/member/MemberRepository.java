@@ -73,6 +73,75 @@ public class MemberRepository extends BaseRepository<Member, Integer> {
         return Optional.empty();
     }
 
+    public List<Member> search(String keyword) throws SQLException {
+        List<Member> members = new ArrayList<>();
+
+        boolean isIdSearch = keyword != null && keyword.trim().matches("\\d+");
+
+        String sql;
+        if (isIdSearch) {
+            sql = """
+            SELECT *
+            FROM library.members
+            WHERE id = ?
+            ORDER BY last_name, first_name
+            """;
+        } else {
+            sql = """
+            SELECT *
+            FROM library.members
+            WHERE first_name LIKE ?
+               OR last_name LIKE ?
+               OR email LIKE ?
+               OR membership_type LIKE ?
+               OR status LIKE ?
+               OR role LIKE ?
+               OR CAST(membership_date AS CHAR) LIKE ?
+               OR CONCAT(first_name, ' ', last_name) LIKE ?
+            ORDER BY last_name, first_name
+            """;
+        }
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            if (isIdSearch) {
+                statement.setInt(1, Integer.parseInt(keyword.trim()));
+            } else {
+                String pattern = "%" + keyword.trim() + "%";
+                statement.setString(1, pattern);
+                statement.setString(2, pattern);
+                statement.setString(3, pattern);
+                statement.setString(4, pattern);
+                statement.setString(5, pattern);
+                statement.setString(6, pattern);
+                statement.setString(7, pattern);
+                statement.setString(8, pattern);
+            }
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    Member member = new Member(
+                            rs.getInt("id"),
+                            rs.getString("first_name"),
+                            rs.getString("last_name"),
+                            rs.getString("email"),
+                            rs.getDate("membership_date").toLocalDate(),
+                            rs.getString("membership_type"),
+                            rs.getString("status"),
+                            rs.getString("password"),
+                            rs.getString("role")
+                    );
+
+                    members.add(member);
+                }
+            }
+        }
+
+        return members;
+    }
+
+
     @Override
     public List<Member> getAll() throws SQLException {
         ArrayList<Member> members = new ArrayList<>();

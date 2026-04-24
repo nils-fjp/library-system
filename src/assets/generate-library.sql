@@ -195,7 +195,8 @@ CREATE TABLE books (
     isbn            VARCHAR(20)  NOT NULL UNIQUE,
     year_published  INT,
     total_copies    INT          NOT NULL DEFAULT 1,
-    available_copies INT         NOT NULL DEFAULT 1
+    available_copies INT         NOT NULL DEFAULT 1,
+    is_active       TINYINT(1)            DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

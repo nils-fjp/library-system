@@ -52,6 +52,9 @@ public class LibrarianMenuController {
             switch (menu.getChoice()) {
                 case 1 -> BookController.showAllBooksForAdmin(currentMember);
                 case 2 -> BookController.AdminSearchForBooks(currentMember);
+                case 3 -> BookController.addBookForAdmin(currentMember);
+                case 4 -> BookController.updateBookForAdmin(currentMember);
+                case 5 -> BookController.deleteBookForAdmin(currentMember);
             }
         }
     }
