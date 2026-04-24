@@ -2,6 +2,7 @@ package author;
 
 import base.BaseController;
 import member.Member;
+import ui.ConsoleExceptionHandler;
 import ui.ConsolePrinter;
 
 import java.sql.SQLException;
@@ -14,15 +15,23 @@ import java.util.Scanner;
 
 public class AuthorController extends BaseController<Author, Integer> {
 
-    private static final Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner;
+    private final AuthorService service;
+
+    public AuthorController() {
+        this(new Scanner(System.in), new AuthorService());
+    }
+
+    public AuthorController(Scanner scanner, AuthorService service) {
+        this.scanner = scanner;
+        this.service = service;
+    }
 
     // =========================================================
     // AUTHOR ACTIONS
     // =========================================================
 
-    public static void showAllAuthors(Member currentMember) {
-        AuthorService service = new AuthorService();
-
+    public void showAllAuthors(Member currentMember) {
         try {
             List<Author> authors = service.getAllAuthors();
 
@@ -35,16 +44,12 @@ public class AuthorController extends BaseController<Author, Integer> {
                 printAuthor(author);
             }
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void showAuthor(Member currentMember) {
-        AuthorService service = new AuthorService();
-
+    public void showAuthor(Member currentMember) {
         try {
             Optional<Author> optionalAuthor = findAuthorByKeyword(service);
 
@@ -55,16 +60,12 @@ public class AuthorController extends BaseController<Author, Integer> {
 
             printAuthor(optionalAuthor.get());
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void addAuthor(Member currentMember) {
-        AuthorService service = new AuthorService();
-
+    public void addAuthor(Member currentMember) {
         try {
             ConsolePrinter.printHeader("Create author");
 
@@ -79,16 +80,12 @@ public class AuthorController extends BaseController<Author, Integer> {
             ConsolePrinter.printSuccess("Author created successfully.");
             printAuthor(createdAuthor.get());
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void updateAuthor(Member currentMember) {
-        AuthorService service = new AuthorService();
-
+    public void updateAuthor(Member currentMember) {
         try {
             Optional<Author> optionalAuthor = findAuthorByKeyword(service);
 
@@ -113,16 +110,12 @@ public class AuthorController extends BaseController<Author, Integer> {
             ConsolePrinter.printSuccess("Author updated successfully.");
             printAuthor(savedAuthor.get());
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void deleteAuthor(Member currentMember) {
-        AuthorService service = new AuthorService();
-
+    public void deleteAuthor(Member currentMember) {
         try {
             Optional<Author> optionalAuthor = findAuthorByKeyword(service);
 
@@ -153,10 +146,8 @@ public class AuthorController extends BaseController<Author, Integer> {
 
             ConsolePrinter.printSuccess("Author deleted successfully.");
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
@@ -164,7 +155,7 @@ public class AuthorController extends BaseController<Author, Integer> {
     // FLOW HELPERS
     // =========================================================
 
-    private static Author buildAuthorFromInput() {
+    private Author buildAuthorFromInput() {
         Author author = new Author();
         author.setFirstName(promptRequired("Enter first name"));
         author.setLastName(promptRequired("Enter last name"));
@@ -173,7 +164,7 @@ public class AuthorController extends BaseController<Author, Integer> {
         return author;
     }
 
-    private static Author buildUpdatedAuthorFromInput(Author currentAuthor) {
+    private Author buildUpdatedAuthorFromInput(Author currentAuthor) {
         Author author = new Author();
         author.setId(currentAuthor.getId());
         author.setFirstName(promptTextOrKeepCurrent("Enter new first name", currentAuthor.getFirstName()));
@@ -183,7 +174,7 @@ public class AuthorController extends BaseController<Author, Integer> {
         return author;
     }
 
-    private static Optional<Author> findAuthorByKeyword(AuthorService service) throws SQLException {
+    private Optional<Author> findAuthorByKeyword(AuthorService service) throws SQLException {
         ConsolePrinter.printPrompt("Search author by id, name, nationality,");
         ConsolePrinter.printPrompt("or birth date.");
         String keyword = promptRequired("Enter");
@@ -217,12 +208,12 @@ public class AuthorController extends BaseController<Author, Integer> {
     // INPUT HELPERS
     // =========================================================
 
-    private static String prompt(String label) {
+    private String prompt(String label) {
         ConsolePrinter.printPromptInline(label + ": ");
         return scanner.nextLine().trim();
     }
 
-    private static String promptRequired(String label) {
+    private String promptRequired(String label) {
         while (true) {
             String input = prompt(label);
 
@@ -234,7 +225,7 @@ public class AuthorController extends BaseController<Author, Integer> {
         }
     }
 
-    private static int promptRequiredInt(String label) {
+    private int promptRequiredInt(String label) {
         while (true) {
             try {
                 return Integer.parseInt(promptRequired(label));
@@ -244,12 +235,12 @@ public class AuthorController extends BaseController<Author, Integer> {
         }
     }
 
-    private static String promptTextOrKeepCurrent(String label, String currentValue) {
+    private String promptTextOrKeepCurrent(String label, String currentValue) {
         String input = prompt(label + " " + ConsolePrinter.colorCurrentValue(currentValue));
         return input.isBlank() ? currentValue : input;
     }
 
-    private static LocalDate promptRequiredDate(String label) {
+    private LocalDate promptRequiredDate(String label) {
         while (true) {
             String input = promptRequired(label + " " + ConsolePrinter.colorHint("yyyy-mm-dd"));
 
@@ -261,7 +252,7 @@ public class AuthorController extends BaseController<Author, Integer> {
         }
     }
 
-    private static LocalDate promptDateOrKeepCurrent(String label, LocalDate currentValue) {
+    private LocalDate promptDateOrKeepCurrent(String label, LocalDate currentValue) {
         while (true) {
             String input = prompt(label + " " + ConsolePrinter.colorHint("yyyy-mm-dd") + " " + ConsolePrinter.colorCurrentValue(currentValue));
 

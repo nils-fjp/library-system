@@ -12,6 +12,10 @@ import java.util.Optional;
 
 public class LibrarianMenuController {
 
+    private static final AuthController AUTH_CONTROLLER = new AuthController();
+    private static final MemberController MEMBER_CONTROLLER = new MemberController();
+    private static final AuthorController AUTHOR_CONTROLLER = new AuthorController();
+
     public static void showLibrarianMenu(Member currentMember) throws SQLException {
         Menu menu = new Menu();
         menu.setTopTitle("Main Menu » Librarian Menu");
@@ -30,7 +34,7 @@ public class LibrarianMenuController {
                 case 3 -> showManageReadersMenu(currentMember);
                 case 4 -> showManageAuthorsMenu(currentMember);
                 case 0 -> {
-                    AuthController.logout();
+                    AUTH_CONTROLLER.logout();
                     return;
                 }
             }
@@ -100,17 +104,17 @@ public class LibrarianMenuController {
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> MemberController.showAllMembersForAdmin(currentMember);
-                case 2 -> {
-                    Optional<MemberAdminDto> optionalReader = MemberController.showMember(currentMember);
+                case 1 -> MEMBER_CONTROLLER.showAllMembersForAdmin(currentMember);
+                case 2 ->  {
+                    Optional<MemberAdminDto> optionalReader = MEMBER_CONTROLLER.showMember(currentMember);
                     if (optionalReader.isPresent()) {
                         showReaderActionsMenu(currentMember, optionalReader.get());
                     }
                 }
-                case 3 -> MemberController.addMemberByAdmin(currentMember);
-                case 4 -> MemberController.updateMemberByAdmin(currentMember);
-                case 5 -> MemberController.deleteMemberByAdmin(currentMember);
-                case 6 -> MemberController.changeMemberPasswordByAdmin(currentMember);
+                case 3 -> MEMBER_CONTROLLER.addMemberByAdmin(currentMember);
+                case 4 -> MEMBER_CONTROLLER.updateMemberByAdmin(currentMember);
+                case 5 -> MEMBER_CONTROLLER.deleteMemberByAdmin(currentMember);
+                case 6 -> MEMBER_CONTROLLER.changeMemberPasswordByAdmin(currentMember);
                 case 0 -> {
                     return;
                 }
@@ -135,12 +139,12 @@ public class LibrarianMenuController {
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> MemberController.updateMemberByAdmin(currentMember, reader);
+                case 1 -> MEMBER_CONTROLLER.updateMemberByAdmin(currentMember, reader);
                 case 2 -> {
-                    MemberController.deleteMemberByAdmin(currentMember, reader);
+                    MEMBER_CONTROLLER.deleteMemberByAdmin(currentMember, reader);
                     return;
                 }
-                case 3 -> MemberController.changeMemberPasswordByAdmin(currentMember, reader);
+                case 3 -> MEMBER_CONTROLLER.changeMemberPasswordByAdmin(currentMember, reader);
                 case 0 -> {
                     return;
                 }
@@ -161,11 +165,11 @@ public class LibrarianMenuController {
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
-                case 1 -> AuthorController.showAllAuthors(currentMember);
-                case 2 -> AuthorController.addAuthor(currentMember);
-                case 3 -> AuthorController.updateAuthor(currentMember);
-                //case 4 -> AuthorController.deleteAuthor(currentMember);
-                case 4 -> AuthorController.showAuthor(currentMember);
+                case 1 -> AUTHOR_CONTROLLER.showAllAuthors(currentMember);
+                case 2 -> AUTHOR_CONTROLLER.addAuthor(currentMember);
+                case 3 -> AUTHOR_CONTROLLER.updateAuthor(currentMember);
+                //case 4 -> AUTHOR_CONTROLLER.deleteAuthor(currentMember);
+                case 4 -> AUTHOR_CONTROLLER.showAuthor(currentMember);
                 case 0 -> {
                     return;
                 }

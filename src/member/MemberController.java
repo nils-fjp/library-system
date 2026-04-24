@@ -3,6 +3,7 @@ package member;
 import base.BaseController;
 import loan.LoanService;
 import loan.LoanSummaryDto;
+import ui.ConsoleExceptionHandler;
 import ui.ConsolePrinter;
 
 import java.sql.SQLException;
@@ -13,15 +14,25 @@ import java.util.Scanner;
 
 public class MemberController extends BaseController<Member, Integer> {
 
-    private static final Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner;
+    private final MemberService service;
+    private final LoanService loanService;
+
+    public MemberController() {
+        this(new Scanner(System.in), new MemberService(), new LoanService());
+    }
+
+    public MemberController(Scanner scanner, MemberService service, LoanService loanService) {
+        this.scanner = scanner;
+        this.service = service;
+        this.loanService = loanService;
+    }
 
     // =========================================================
     // READER MEMBER ACTIONS
     // =========================================================
 
-    public static void showCurrentMemberProfile(Member currentMember) {
-        MemberService service = new MemberService();
-
+    public void showCurrentMemberProfile(Member currentMember) {
         try {
             if (currentMember == null) {
                 ConsolePrinter.printError("No authorized user.");
@@ -37,13 +48,11 @@ public class MemberController extends BaseController<Member, Integer> {
             }
 
         } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void updateOwnProfile(Member currentMember) {
-        MemberService service = new MemberService();
-
+    public void updateOwnProfile(Member currentMember) {
         try {
             if (currentMember == null) {
                 ConsolePrinter.printError("No authorized user.");
@@ -71,16 +80,12 @@ public class MemberController extends BaseController<Member, Integer> {
             ConsolePrinter.printSuccess("Profile updated successfully.");
             printProfileMember(updatedMember.get());
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void changePassword(Member currentMember) {
-        MemberService service = new MemberService();
-
+    public void changePassword(Member currentMember) {
         try {
             if (currentMember == null) {
                 ConsolePrinter.printError("No authorized user.");
@@ -97,10 +102,8 @@ public class MemberController extends BaseController<Member, Integer> {
 
             ConsolePrinter.printSuccess("Password changed successfully.");
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
@@ -108,9 +111,7 @@ public class MemberController extends BaseController<Member, Integer> {
     // ADMIN MEMBER ACTIONS
     // =========================================================
 
-    public static void showAllMembersForAdmin(Member currentMember) {
-        MemberService service = new MemberService();
-
+    public void showAllMembersForAdmin(Member currentMember) {
         try {
             List<MemberAdminDto> members = service.getAllForAdminView(currentMember);
 
@@ -124,13 +125,11 @@ public class MemberController extends BaseController<Member, Integer> {
             }
 
         } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static Optional<MemberAdminDto> showMember(Member currentMember) {
-        MemberService service = new MemberService();
-
+    public Optional<MemberAdminDto> showMember(Member currentMember) {
         try {
             Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
@@ -142,18 +141,14 @@ public class MemberController extends BaseController<Member, Integer> {
             printAdminMember(optionalMember.get());
             return optionalMember;
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
 
         return Optional.empty();
     }
 
-    public static void addMemberByAdmin(Member currentMember) {
-        MemberService service = new MemberService();
-
+    public void addMemberByAdmin(Member currentMember) {
         try {
             //service.validateLibrarianAccess(currentMember);
 
@@ -168,16 +163,12 @@ public class MemberController extends BaseController<Member, Integer> {
             ConsolePrinter.printSuccess("Member created successfully.");
             printAdminMember(createdDto.get());
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void updateMemberByAdmin(Member currentMember) {
-        MemberService service = new MemberService();
-
+    public void updateMemberByAdmin(Member currentMember) {
         try {
             Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
@@ -188,16 +179,12 @@ public class MemberController extends BaseController<Member, Integer> {
 
             updateMemberByAdmin(currentMember, optionalMember.get());
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void updateMemberByAdmin(Member currentMember, MemberAdminDto currentDto) {
-        MemberService service = new MemberService();
-
+    public void updateMemberByAdmin(Member currentMember, MemberAdminDto currentDto) {
         try {
             ConsolePrinter.printSuccess("Current member data:");
             printAdminMember(currentDto);
@@ -213,18 +200,14 @@ public class MemberController extends BaseController<Member, Integer> {
             ConsolePrinter.printSuccess("Member updated successfully.");
             printAdminMember(updatedDto.get());
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void deleteMemberByAdmin(Member currentMember) {
-        MemberService memberService = new MemberService();
-
+    public void deleteMemberByAdmin(Member currentMember) {
         try {
-            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(memberService, currentMember);
+            Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
             if (optionalMember.isEmpty()) {
                 ConsolePrinter.printError("Member not found.");
@@ -233,17 +216,12 @@ public class MemberController extends BaseController<Member, Integer> {
 
             deleteMemberByAdmin(currentMember, optionalMember.get());
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void deleteMemberByAdmin(Member currentMember, MemberAdminDto targetMember) {
-
-        MemberService memberService = new MemberService();
-        LoanService loanService = new LoanService();
+    public void deleteMemberByAdmin(Member currentMember, MemberAdminDto targetMember) {
 
         try {
             ConsolePrinter.printSuccess("Selected member:");
@@ -265,7 +243,7 @@ public class MemberController extends BaseController<Member, Integer> {
                 return;
             }
 
-            boolean deleted = memberService.deleteMemberByAdmin(currentMember, targetMember.getId());
+            boolean deleted = service.deleteMemberByAdmin(currentMember, targetMember.getId());
 
             if (!deleted) {
                 ConsolePrinter.printError("Member was not deleted.");
@@ -274,18 +252,12 @@ public class MemberController extends BaseController<Member, Integer> {
 
             ConsolePrinter.printSuccess("Member deleted successfully.");
 
-        } catch (MemberException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (MemberException | IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void changeMemberPasswordByAdmin(Member currentMember) {
-        MemberService service = new MemberService();
-
+    public void changeMemberPasswordByAdmin(Member currentMember) {
         try {
             Optional<MemberAdminDto> optionalMember = findMemberByKeyword(service, currentMember);
 
@@ -296,16 +268,12 @@ public class MemberController extends BaseController<Member, Integer> {
 
             changeMemberPasswordByAdmin(currentMember, optionalMember.get());
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
-    public static void changeMemberPasswordByAdmin(Member currentMember, MemberAdminDto targetMember) {
-        MemberService service = new MemberService();
-
+    public void changeMemberPasswordByAdmin(Member currentMember, MemberAdminDto targetMember) {
         try {
             ConsolePrinter.printSuccess("Selected member:");
             printAdminMember(targetMember);
@@ -320,10 +288,8 @@ public class MemberController extends BaseController<Member, Integer> {
 
             ConsolePrinter.printSuccess("Password changed successfully.");
 
-        } catch (IllegalArgumentException e) {
-            ConsolePrinter.printError(e.getMessage());
-        } catch (SQLException e) {
-            ConsolePrinter.printError("Database error: " + e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            ConsoleExceptionHandler.print(e);
         }
     }
 
@@ -331,7 +297,7 @@ public class MemberController extends BaseController<Member, Integer> {
     // FLOW HELPERS
     // =========================================================
 
-    private static UpdateMyProfileDto buildUpdatedMyProfileFromInput(MemberProfileDto currentDto) {
+    private UpdateMyProfileDto buildUpdatedMyProfileFromInput(MemberProfileDto currentDto) {
         UpdateMyProfileDto dto = new UpdateMyProfileDto();
         dto.setFirstName(promptTextOrKeepCurrent("Enter new first name", currentDto.getFirstName()));
         dto.setLastName(promptTextOrKeepCurrent("Enter new last name", currentDto.getLastName()));
@@ -339,7 +305,7 @@ public class MemberController extends BaseController<Member, Integer> {
         return dto;
     }
 
-    private static ChangePasswordDto buildChangePasswordDto(Member currentMember) {
+    private ChangePasswordDto buildChangePasswordDto(Member currentMember) {
         ChangePasswordDto dto = new ChangePasswordDto();
         dto.setMemberId(currentMember.getId());
         dto.setCurrentPassword(promptRequired("Enter current password"));
@@ -348,7 +314,7 @@ public class MemberController extends BaseController<Member, Integer> {
         return dto;
     }
 
-    private static CreateMemberDto buildCreateMemberFromInput() {
+    private CreateMemberDto buildCreateMemberFromInput() {
         CreateMemberDto dto = new CreateMemberDto();
         dto.setFirstName(promptRequired("Enter first name"));
         dto.setLastName(promptRequired("Enter last name"));
@@ -357,7 +323,7 @@ public class MemberController extends BaseController<Member, Integer> {
         return dto;
     }
 
-    private static UpdateMemberDto buildUpdatedMemberFromInput(MemberAdminDto currentDto) {
+    private UpdateMemberDto buildUpdatedMemberFromInput(MemberAdminDto currentDto) {
         UpdateMemberDto dto = new UpdateMemberDto();
         dto.setId(currentDto.getId());
         dto.setFirstName(promptTextOrKeepCurrent("Enter new first name", currentDto.getFirstName()));
@@ -375,7 +341,7 @@ public class MemberController extends BaseController<Member, Integer> {
         return dto;
     }
 
-    private static AdminChangePasswordDto buildAdminChangePasswordDto(MemberAdminDto member) {
+    private AdminChangePasswordDto buildAdminChangePasswordDto(MemberAdminDto member) {
         AdminChangePasswordDto dto = new AdminChangePasswordDto();
         dto.setMemberId(member.getId());
         dto.setNewPassword(promptRequired("Enter new password"));
@@ -383,7 +349,7 @@ public class MemberController extends BaseController<Member, Integer> {
         return dto;
     }
 
-    private static Optional<MemberAdminDto> findMemberByKeyword(MemberService service, Member currentMember) throws SQLException {
+    private Optional<MemberAdminDto> findMemberByKeyword(MemberService service, Member currentMember) throws SQLException {
         ConsolePrinter.printPrompt(MemberConsoleView.memberSearchPromptLine1());
         ConsolePrinter.printPrompt(MemberConsoleView.memberSearchPromptLine2());
         String keyword = promptRequired("Enter");
@@ -417,12 +383,12 @@ public class MemberController extends BaseController<Member, Integer> {
     // INPUT HELPERS
     // =========================================================
 
-    private static String prompt(String label) {
+    private String prompt(String label) {
         ConsolePrinter.printPromptInline(label + ": ");
         return scanner.nextLine().trim();
     }
 
-    private static String promptRequired(String label) {
+    private String promptRequired(String label) {
         while (true) {
             String input = prompt(label);
 
@@ -434,7 +400,7 @@ public class MemberController extends BaseController<Member, Integer> {
         }
     }
 
-    private static int promptRequiredInt(String label) {
+    private int promptRequiredInt(String label) {
         while (true) {
             try {
                 return Integer.parseInt(promptRequired(label));
@@ -444,12 +410,12 @@ public class MemberController extends BaseController<Member, Integer> {
         }
     }
 
-    private static String promptTextOrKeepCurrent(String label, String currentValue) {
+    private String promptTextOrKeepCurrent(String label, String currentValue) {
         String input = prompt(label + " " + ConsolePrinter.colorCurrentValue(currentValue));
         return input.isBlank() ? currentValue : input;
     }
 
-    private static LocalDate promptDateOrKeepCurrent(String label, LocalDate currentValue) {
+    private LocalDate promptDateOrKeepCurrent(String label, LocalDate currentValue) {
         while (true) {
             String input = prompt(label + " " + ConsolePrinter.colorHint("yyyy-mm-dd") + " " + ConsolePrinter.colorCurrentValue(currentValue));
 

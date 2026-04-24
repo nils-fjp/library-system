@@ -10,7 +10,15 @@ import java.util.Optional;
 
 public class AuthorService extends BaseService<Author, Integer> {
 
-    private final AuthorRepository authorRepository = new AuthorRepository();
+    private final AuthorRepository authorRepository;
+
+    public AuthorService() {
+        this(new AuthorRepository());
+    }
+
+    public AuthorService(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
+    }
 
     @Override
     protected BaseRepository<Author, Integer> getRepository() {
