@@ -1,5 +1,5 @@
-import ui.Menu;
 import ui.AuthController;
+import ui.Menu;
 
 import java.sql.SQLException;
 
@@ -7,7 +7,7 @@ import static ui.ANSI.CLEAR_SCREEN;
 
 public class Main {
 
-    static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException {
         Menu mainMenu = new Menu();
         AuthController authController = new AuthController();
 
