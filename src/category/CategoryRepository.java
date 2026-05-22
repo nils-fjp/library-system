@@ -12,7 +12,27 @@ import java.util.Optional;
 
 public class CategoryRepository extends BaseRepository<Category, Integer> {
     @Override
-    public Optional<Category> getById(Integer integer) throws SQLException {
+    public Optional<Category> getById(Integer id) throws SQLException {
+        String sql = "SELECT id, name, description FROM categories WHERE id = ?";
+
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+
+            statement.setInt(1, id);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    Category category = new Category();
+                    category.setId(rs.getInt("id"));
+                    category.setName(rs.getString("name"));
+                    category.setDescription(rs.getString("description"));
+                    return Optional.of(category);
+                }
+            }
+        }
+
         return Optional.empty();
     }
 
@@ -21,9 +41,11 @@ public class CategoryRepository extends BaseRepository<Category, Integer> {
         List<Category> categories = new ArrayList<>();
         String sql = "SELECT id, name, description FROM categories";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet rs = statement.executeQuery()) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet rs = statement.executeQuery()
+        ) {
 
             while (rs.next()) {
                 Category category = new Category();
@@ -46,18 +68,18 @@ public class CategoryRepository extends BaseRepository<Category, Integer> {
         }
     }
 
-
     @Override
     public void save(Category entity) throws SQLException {
+        throw new UnsupportedOperationException("Category creation is not implemented.");
     }
 
     @Override
     public void update(Category entity) throws SQLException {
-
+        throw new UnsupportedOperationException("Category updates are not implemented.");
     }
 
     @Override
     public void deleteById(Integer integer) throws SQLException {
-
+        throw new UnsupportedOperationException("Category deletion is not implemented.");
     }
 }
