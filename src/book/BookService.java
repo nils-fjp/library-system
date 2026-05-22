@@ -147,9 +147,9 @@ public class BookService extends BaseService<Book, Integer> {
     }
 
     private void ensureCatExists(int categoryId) throws SQLException {
-        boolean exists = categoryRepository.getAll().stream()
-                .anyMatch(c -> c.getId() == categoryId);
-        if (!exists) throw new IllegalArgumentException("Category does not exists.");
+        if (categoryRepository.getById(categoryId).isEmpty()) {
+            throw new IllegalArgumentException("Category does not exists.");
+        }
     }
 
 

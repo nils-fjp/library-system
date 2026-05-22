@@ -33,7 +33,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                        bd.summary, bd.language, bd.page_count
                 FROM books b
                 LEFT JOIN book_descriptions bd ON b.id = bd.book_id
-                WHERE b.id = ?
+                WHERE b.id = ? AND b.is_active = 1
                 """;
 
         try (
@@ -65,7 +65,8 @@ public class BookRepository extends BaseRepository<Book, Integer> {
                 "JOIN book_authors ba ON b.id = ba.book_id " +
                 "JOIN authors a ON a.id = ba.author_id " +
                 "JOIN book_categories bc ON b.id = bc.book_id " +
-                "JOIN categories c ON c.id = bc.category_id ";
+                "JOIN categories c ON c.id = bc.category_id " +
+                "WHERE b.is_active = 1";
 
         try (
                 Connection connection = getConnection();
@@ -245,6 +246,7 @@ public class BookRepository extends BaseRepository<Book, Integer> {
         String sql = "UPDATE books SET total_copies = total_copies -1, " +
                 "available_copies = available_copies -1 " + // tar bort en kopia åt gången
                 "WHERE id = ? " +
+                "AND is_active = 1 " +
                 "AND total_copies > 0 " +
                 "AND available_copies > 0";
 
