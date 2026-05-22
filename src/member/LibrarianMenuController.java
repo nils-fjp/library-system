@@ -51,7 +51,7 @@ public class LibrarianMenuController {
         manageBooksMenu.addMenuOption("View Books");
         manageBooksMenu.addMenuOption("Search Books");
         manageBooksMenu.addMenuOption("Add Book");
-        manageBooksMenu.addMenuOption("Update Book");
+        manageBooksMenu.addMenuOption("Remove Book Copy");
         manageBooksMenu.addMenuOption("Delete Book");
 
         while (manageBooksMenu.showMenu()) {
@@ -75,14 +75,12 @@ public class LibrarianMenuController {
         manageLoansMenu.addMenuOption("View All Active Loans");
         manageLoansMenu.addMenuOption("Add Loan");
         manageLoansMenu.addMenuOption("Update Loan");
-        manageLoansMenu.addMenuOption("Delete Loan");
 
         while (manageLoansMenu.showMenu()) {
             switch (manageLoansMenu.getChoice()) {
                 case 1 -> LoanController.showAllActiveLoans();
                 case 2 -> manageLoansMenu.setTemporaryPrePrompt(LoanController.createLoan(currentMember));
                 case 3 -> LoanController.showUpdateLoanMenu();
-//                case 4 -> LoanController.deleteLoan(currentMember);
             }
         }
     }
@@ -160,16 +158,12 @@ public class LibrarianMenuController {
         menu.addMenuOption("View authors");
         menu.addMenuOption("Add author");
         menu.addMenuOption("Modify author");
-        //menu.addMenuOption("Delete author");
-        menu.addMenuOption("Find author");
 
         while (menu.showMenu()) {
             switch (menu.getChoice()) {
                 case 1 -> AUTHOR_CONTROLLER.showAllAuthors(currentMember);
                 case 2 -> AUTHOR_CONTROLLER.addAuthor(currentMember);
                 case 3 -> AUTHOR_CONTROLLER.updateAuthor(currentMember);
-                //case 4 -> AUTHOR_CONTROLLER.deleteAuthor(currentMember);
-                case 4 -> AUTHOR_CONTROLLER.showAuthor(currentMember);
                 case 0 -> {
                     return;
                 }

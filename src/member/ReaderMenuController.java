@@ -15,7 +15,6 @@ public class ReaderMenuController {
     private static final AuthController AUTH_CONTROLLER = new AuthController();
     private static final MemberController MEMBER_CONTROLLER = new MemberController();
 
-    // Min kod - ta bort senare - bara test kod meny
     // =========================================================
     //  NAVIGATION
     // =========================================================
@@ -51,13 +50,11 @@ public class ReaderMenuController {
         showBooksMenu.setExitOption("Back to Main Menu");
         showBooksMenu.addMenuOption("View All Books");
         showBooksMenu.addMenuOption("Search Books");
-//        showBooksMenu.addMenuOption("Search Authors");
 
         while (showBooksMenu.showMenu()) {
             switch (showBooksMenu.getChoice()) {
                 case 1 -> BookController.showAllBooks();
                 case 2 -> BookController.searchForBooks();
-//                case 3 -> showBooksMenu.setMenuInfo("BookController.searchForAuthors()");
             }
         }
     }
@@ -73,14 +70,12 @@ public class ReaderMenuController {
         myLoansMenu.addMenuOption("View Active Loans");
         myLoansMenu.addMenuOption("View Loan History");
         myLoansMenu.addMenuOption("Loan a Book");
-        //myLoansMenu.addMenuOption("View Fines");
 
         while (myLoansMenu.showMenu()) {
             switch (myLoansMenu.getChoice()) {
                 case 1 -> LoanController.showActiveLoansMenu(currentMember);
                 case 2 -> LoanController.showLoanHistoryMenu(currentMember);
                 case 3 -> myLoansMenu.setTemporaryPrePrompt(LoanController.createLoan(currentMember));
-//                case 4 -> showFinesMenu(currentMember);
             }
         }
     }
