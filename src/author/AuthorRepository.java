@@ -47,8 +47,40 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
         if (existing.isPresent()) {
             return existing.get();
         }
-        save(author); // Om det inte finns, spara och sätt id på author
+        save(connection, author); // Om det inte finns, spara och sätt id på author
         return author;
+    }
+
+    private void save(Connection connection, Author entity) throws SQLException {
+        String sql = """
+                INSERT INTO library.authors (
+                    first_name,
+                    last_name,
+                    nationality,
+                    birth_date
+                ) VALUES (?, ?, ?, ?)
+                """;
+
+        try (PreparedStatement statement = connection.prepareStatement(
+                sql,
+                Statement.RETURN_GENERATED_KEYS
+        )) {
+            fillAuthorStatement(statement, entity);
+
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new SQLException("Author was not created.");
+            }
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    entity.setId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Author was created, but id was not returned.");
+                }
+            }
+        }
     }
 
 
@@ -141,16 +173,7 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                      sql,
                      Statement.RETURN_GENERATED_KEYS
              )) {
-
-            statement.setString(1, entity.getFirstName());
-            statement.setString(2, entity.getLastName());
-            statement.setString(3, entity.getNationality());
-
-            if (entity.getBirthDate() != null) {
-                statement.setDate(4, Date.valueOf(entity.getBirthDate()));
-            } else {
-                statement.setNull(4, Types.DATE);
-            }
+            fillAuthorStatement(statement, entity);
 
             int rowsAffected = statement.executeUpdate();
 
@@ -165,6 +188,18 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                     throw new SQLException("Author was created, but id was not returned.");
                 }
             }
+        }
+    }
+
+    private void fillAuthorStatement(PreparedStatement statement, Author entity) throws SQLException {
+        statement.setString(1, entity.getFirstName());
+        statement.setString(2, entity.getLastName());
+        statement.setString(3, entity.getNationality());
+
+        if (entity.getBirthDate() != null) {
+            statement.setDate(4, Date.valueOf(entity.getBirthDate()));
+        } else {
+            statement.setNull(4, Types.DATE);
         }
     }
 
