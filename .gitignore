@@ -1,5 +1,7 @@
 database.properties
 src/database.properties
+course-docs/
+example-code/
 
 ### IDE files ###
 # IntelliJ IDEA
