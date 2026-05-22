@@ -61,10 +61,12 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                 ) VALUES (?, ?, ?, ?)
                 """;
 
-        try (PreparedStatement statement = connection.prepareStatement(
-                sql,
-                Statement.RETURN_GENERATED_KEYS
-        )) {
+        try (
+                PreparedStatement statement = connection.prepareStatement(
+                        sql,
+                        Statement.RETURN_GENERATED_KEYS
+                )
+        ) {
             fillAuthorStatement(statement, entity);
 
             int rowsAffected = statement.executeUpdate();
@@ -83,7 +85,6 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
         }
     }
 
-
     public void saveBookAuthor(Connection connection, int bookId, int authorId) throws SQLException {
         String linkSql = "INSERT INTO book_authors (book_id, author_id) " +
                 "VALUES (?, ?) ";
@@ -94,7 +95,6 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
             statement.executeUpdate();
         }
     }
-
 
     public List<Author> search(String keyword) throws SQLException {
         List<Author> authors = new ArrayList<>();
@@ -122,8 +122,10 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                     """;
         }
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
 
             if (isIdSearch) {
                 statement.setInt(1, Integer.parseInt(keyword.trim()));
@@ -168,11 +170,13 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                 ) VALUES (?, ?, ?, ?)
                 """;
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     sql,
-                     Statement.RETURN_GENERATED_KEYS
-             )) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        sql,
+                        Statement.RETURN_GENERATED_KEYS
+                )
+        ) {
             fillAuthorStatement(statement, entity);
 
             int rowsAffected = statement.executeUpdate();
@@ -211,8 +215,10 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                 WHERE id = ?
                 """;
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
 
             statement.setInt(1, id);
 
@@ -246,9 +252,11 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
 
         List<Author> authors = new ArrayList<>();
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet rs = statement.executeQuery()) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet rs = statement.executeQuery()
+        ) {
 
             while (rs.next()) {
                 Author author = new Author();
@@ -277,8 +285,10 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
                 WHERE id = ?
                 """;
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
 
             statement.setString(1, entity.getFirstName());
             statement.setString(2, entity.getLastName());
@@ -303,8 +313,10 @@ public class AuthorRepository extends BaseRepository<Author, Integer> {
     public void deleteById(Integer id) throws SQLException {
         String sql = "DELETE FROM library.authors WHERE id = ?";
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
 
             statement.setInt(1, id);
 
