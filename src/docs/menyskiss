@@ -8,8 +8,6 @@
     1. Book Menu
        1. View Books
        2. Search Books
-       3. Search Authors
-       4.
        0. Back to Main Menu --> (0. Main Menu)
 
     2. Log in
@@ -22,7 +20,6 @@
         1. Browse Books
             1. View Books
             2. Search Books
-            3. Search Authors
             0. Back to Main Menu --> (3. Reader Menu)
 
         2. My Loans
@@ -36,13 +33,11 @@
                 0. Back to My Loans     --> (2. My Loans)
             2. View loan history
             3. Loan a book
-            4. View fines ( + se mina böter) +
             0. Back to Main Menu --> (3. Reader Menu)
         3. My profile
             1. View my profile
             2. Update profile info
             3. Change password
-            4. View fines ( + se mina böter) +
         0. Log Out --> (0. Main Menu)
 
     4. Librarian Menu
@@ -50,7 +45,7 @@
             1. View Books
             2. Search Books
             3. Add Book (+lägga böcker i kategorier) +
-            4. Update Book (+lägga böcker i kategorier) +
+            4. Remove Book Copy
             5. Delete Book
             0. Back to Main Menu --> (4. Librarian Menu)
 
@@ -58,14 +53,12 @@
             1. View All Active Loans
             2. Add Loan
             3. Update Loan
-            4. Delete Loan
             0. Back to Main Menu --> (4. Librarian Menu)
 
         3. Manage Readers
             1. View Readers
                 1. View All Readers
                 2. Search Readers
-                3. View members fines ( + se mina böter) +
             2. Add Reader
             3. Update Reader ( +ändra min medlemskapsstatus ) +
             4. Delete Reader
@@ -76,11 +69,9 @@
             1. View authorName
             2. Add author +
             3. Modify author +
-            4. Delete author
             0. Back to Main Menu --> (4. Librarian Menu)
 
         0. Log Out --> (0. Main Menu)
-
 
 
 
