@@ -92,7 +92,7 @@ public class BookController extends BaseController {
 
 
     // Tar bort en kopia av en bok
-    // 4. Update Book
+    // 4. Remove Book Copy
     public static void updateBookForAdmin(Member currentMember) {
         try {
             int bookId = searchAndSelect("Remove Book Copy");
