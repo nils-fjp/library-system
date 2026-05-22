@@ -8,6 +8,7 @@ import book.BookRepository;
 import category.CategoryRepository;
 import member.Member;
 import member.MemberRepository;
+import member.MemberValidator;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -42,9 +43,7 @@ public class LoanService extends BaseService<Loan, Integer> {
         validateId(bookId);
 
         Member member = getMemberById(memberId);
-        if (!memberCanBorrow(member)) {
-            throw new IllegalStateException("Member is not allowed to borrow books.");
-        }
+        validateMemberCanBorrow(member);
 
         Book book = getBookById(bookId);
         if (book.getAvailableCopies() <= 0) {
@@ -99,9 +98,7 @@ public class LoanService extends BaseService<Loan, Integer> {
     }
 
     public void extendLoanForMember(Integer memberId, Integer loanId) throws SQLException {
-        if (!memberCanBorrow(getMemberById(memberId))) {
-            throw new IllegalStateException("Member is not allowed to extend loans.");
-        }
+        validateMemberCanBorrow(getMemberById(memberId));
 
         Loan loan = getActiveLoanForMember(memberId, loanId);
         if (loan.isOverdue()) {
@@ -168,9 +165,8 @@ public class LoanService extends BaseService<Loan, Integer> {
                 .orElseThrow(() -> new IllegalArgumentException("Book not found."));
     }
 
-    private boolean memberCanBorrow(Member member) {
-        String status = member.getStatus();
-        return status != null && !"suspended".equalsIgnoreCase(status);
+    private void validateMemberCanBorrow(Member member) {
+        MemberValidator.validateReaderActionAccess(member);
     }
 
     private String getBookTitle(Integer bookId) throws SQLException {
