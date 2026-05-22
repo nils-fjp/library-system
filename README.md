@@ -101,7 +101,7 @@ Databasen läses in via en lokal `database.properties`-fil.
 
 ### Förutsättningar
 
-- En installerad JDK
+- JDK 21 eller senare
 - En lokal MySQL-server
 - En IDE, till exempel IntelliJ IDEA
 
@@ -110,7 +110,7 @@ Databasen läses in via en lokal `database.properties`-fil.
 1. Skapa databasen genom att köra `src/assets/generate-library.sql` i MySQL.
 2. Skapa filen `src/database.properties` och lägg in era lokala uppgifter.
 3. Kontrollera att `src/assets/mysql-connector-j-9.6.0.jar` finns med på projektets classpath.
-4. Öppna projektet i er IDE och starta applikationen via `Main`.
+4. Starta applikationen via `Main` i er IDE, eller från terminalen med `bash ./test.sh`.
 
 Exempel på `src/database.properties`:
 
@@ -120,8 +120,8 @@ DB_USERNAME=root
 DB_PASSWORD=your_password
 ```
 
-Projektet är idag uppsatt som ett vanligt Java-projekt utan Maven eller Gradle, så beroenden och körning hanteras främst
-via IDE.
+Projektet är idag uppsatt som ett vanligt Java-projekt utan Maven eller Gradle. Skriptet `test.sh` kompilerar koden till
+en temporär katalog och startar sedan `Main`.
 
 ## Demokonton
 
@@ -144,8 +144,7 @@ kan logga in.
 ## Avgränsningar
 
 - Projektet är en konsolapplikation och har inget webbgränssnitt.
-- Adminfunktionen för att "uppdatera bok" fungerar i nuläget som en justering av antal exemplar, inte som full
-  redigering av bokmetadata.
+- Adminfunktionen "Remove Book Copy" justerar antal exemplar för en bok, inte bokmetadata.
 - Kategorier används när böcker skapas men har ingen egen färdig meny för administration.
 - Författare kan visas, sökas, skapas och uppdateras. Borttagning finns förberedd i koden men är inte aktiverad i
   bibliotekariemenyn.
