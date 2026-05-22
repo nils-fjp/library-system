@@ -183,7 +183,7 @@ public class LoanRepository extends BaseRepository<Loan, Integer> {
                     PreparedStatement bookStatement = connection.prepareStatement("""
                             UPDATE books
                             SET available_copies = available_copies - 1
-                            WHERE id = ? AND available_copies > 0
+                            WHERE id = ? AND is_active = 1 AND available_copies > 0
                             """);
                     PreparedStatement loanStatement = connection.prepareStatement(
                             """
