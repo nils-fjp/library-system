@@ -322,10 +322,14 @@ public class Menu {
 
     private int getDisplayRowCount() {
         if (this.renderMode == RenderMode.LIST) {
-            return OPTIONS_PER_PAGE;
+            return Math.max(0, MENU_BODY_ROWS - getListFooterRowCount());
         }
 
         return Math.max(0, MENU_BODY_ROWS - getStandardFooterRowCount());
+    }
+
+    private int getListFooterRowCount() {
+        return 5;
     }
 
     private int getPageCount() {
