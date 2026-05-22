@@ -182,10 +182,6 @@ public class LoanController extends BaseController<Loan, Integer> {
             LoanHistoryDto loan = loans.get(i);
             lines.add(Menu.formatInfoColumns(loan.bookTitle(), "returned: " + loan.returnDate()));
             lines.add(Menu.formatInfoColumns("loaned: " + loan.loanDate(), "due: " + loan.dueDate()));
-
-            if (i < loans.size() - 1) {
-                lines.add("");
-            }
         }
 
         return lines;
@@ -223,10 +219,6 @@ public class LoanController extends BaseController<Loan, Integer> {
                     "loaned: " + loan.loanDate(),
                     formatActiveLoanRightText(loan.overdue(), loan.dueDate().toString())
             ));
-
-            if (i < loans.size() - 1) {
-                lines.add("");
-            }
         }
 
         return lines;
